@@ -60,6 +60,17 @@ img {
 }
 
 table {
-  width: 100%;
-  border-collapse: collapse;
+overflow: hidden;
+border: 0.4rem solid;
+/* border-collapse:collapse ; */
+border-spacing: 0px;
+border-radius: 6px;
+
+}
+
+th, td {
+    border: 0.1rem solid;
+    overflow: hidden;
+    padding: 2px;
+    padding-right: 7px;
 }
