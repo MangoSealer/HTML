@@ -1,72 +1,65 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap");
 
 input {
-    border: 1px solid gray;
-    border-radius: 7px;
+  border: 1px solid gray;
+  border-radius: 7px;
 }
 
 input::placeholder {
-    color: #cbbba7;
+  color: #cbbba7;
 }
-
 
 input[type="text"],
 [type="password"] {
-    width: 100%;
-    border: 2px solid;
-    padding: 0.4rem;
-    outline: none;
-    border-radius: 7px;
+  width: 100%;
+  border: 2px solid;
+  padding: 0.4rem;
+  outline: none;
+  border-radius: 7px;
 }
 
 body {
-    background-color: #F4f0ea;
-    font-family: "Roboto Mono", monospace;
-    font-weight: 400;
+  background-color: #f4f0ea;
+  font-family: "Roboto Mono", monospace;
+  font-weight: 400;
 }
 
-
 header {
-    text-align: center;
-    padding: 2rem;
-    border: 0.35rem solid;
-    outline: none;
-    border-radius: 0.3cm;
-
+  text-align: center;
+  padding: 2rem;
+  border: 0.35rem solid;
+  outline: none;
+  border-radius: 0.3cm;
 }
 
 h2 {
-    padding: 0%;
-    border-radius: 0%;
+  padding: 0%;
+  border-radius: 0%;
 }
 
 main {
-    padding: 1rem;
+  padding: 1rem;
 
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 input [type="text"] {
-    width: 100%;
+  width: 100%;
 }
-
 
 select {
-    cursor: pointer;
-    border: 1.5px solid;
-    border-radius: 5px;
+  cursor: pointer;
+  border: 1.5px solid;
+  border-radius: 5px;
 }
 
-img{
-    width: 5rem;
+img {
+  width: 5rem;
 }
 
 table {
-
-    width: 100%;
-    border-collapse: collapse;
-    
+  width: 100%;
+  border-collapse: collapse;
 }
-
