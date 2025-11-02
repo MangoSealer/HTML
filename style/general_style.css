@@ -61,19 +61,20 @@ img {
 }
 
 table {
-overflow: hidden;
-border: 0.4rem solid;
-/* border-collapse:collapse ; */
-border-spacing: 0px;
-border-radius: 6px;
+  overflow: hidden;
+  border: 0.4rem solid;
+  /* border-collapse:collapse ; */
+  border-spacing: 0px;
+  border-radius: 6px;
 
 }
 
-th, td {
-    border: 0.1rem solid;
-    overflow: hidden;
-    padding: 2px;
-    padding-right: 7px;
+th,
+td {
+  border: 0.1rem solid;
+  overflow: hidden;
+  padding: 2px;
+  padding-right: 7px;
 }
 
 
@@ -82,7 +83,12 @@ th, td {
 }
 
 .corzinha_bonitinha {
-      /* background-color: #239B56; */
-    /* background-color: #7DCEA0; */
-    background-color: #57c992;
+  /* background-color: #239B56; */
+  /* background-color: #7DCEA0; */
+  background-color: #57c992;
 }
+
+
+/* .tabela_tags{
+  background-image: url(../assets/background.jpg) ;
+} */
