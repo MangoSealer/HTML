@@ -92,3 +92,18 @@ td {
 /* .tabela_tags{
   background-image: url(../assets/background.jpg) ;
 } */
+
+
+.paginainicial {
+
+  
+  background-color: antiquewhite;
+  /* padding: 10px; */
+  /* padding-left: 3rem; */
+  width:20rem;
+  border: rgb(77, 77, 77) solid;
+  border-radius: 10px;
+  text-align: center;
+  margin-left: 2rem;
+  margin-top: 2rem;
+}
