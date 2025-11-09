@@ -10,21 +10,25 @@
     <meta name="description" content="Um quiz interativo para testar seus conhecimentos">
     <link rel="stylesheet" href="../style/general_style.css">
     <link rel="stylesheet" href="../style/fonte_bonitinha.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.js"></script>
+    <script src="../Scripts/modoescuro.js"></script>
+    <link rel="stylesheet" href="../style/interruptor.css">
 </head>
 
 <!-- alt z -->
 <!-- alt shift f -->
 
 <header>
+ <button class="interruptor" style="font-size: 50px; width: 25rem;">interruptor</button>
     <h1>Quiz interativo pra programadores</h1>
     <h2>Teste seus conhecimentos em programação e veja qual pontuação você consegue fazer</h2>
 </header>
 
 <main>
-<h1><a href="../index.html">Página inicial</a> <br></h1>
+    <h1><a href="../index.html">Página inicial</a> <br></h1>
     <!--Introdução-->
     <section>
-           
+
         <h2>Sobre esse quiz</h2>
         <p><b>Este quiz</b> foi desenvolvido para testar seus conhecimentos em programação, como <i>linguagens de
                 programação,</i> conceitos básicos e mais</p>
@@ -33,7 +37,8 @@
         </p>
         <p>Você poderá encontrar alguns acrônimos como <abbr title="Hypertext Markup Language">HTML</abbr> e <abbr
                 title="Cascading Style Sheets">CSS</abbr>, que são comumente usados em questões relacionadas ao
-            desenvolvimento web</p><hr>
+            desenvolvimento web</p>
+        <hr>
     </section>
 
     <!-- pergunta 1 -->
@@ -125,11 +130,11 @@
     <!-- pregunta 8 -->
     <section>
         <h2>qual linguagem de programação é representada pelo logotipo abaixo?</h2>
-        
-         <figure>
-                <img src="./assets/java.png" alt="logotipo java"><br>
-                <figcaption>Logotipo de uma linguagem de programação</figcaption>
-            </figure> 
+
+        <figure>
+            <img src="./assets/java.png" alt="logotipo java"><br>
+            <figcaption>Logotipo de uma linguagem de programação</figcaption>
+        </figure>
 
         <input type="text" id="p8" name="pergunta 8" placeholder="digite sua resposta">
 
@@ -226,7 +231,7 @@
 </main>
 <footer>
     <p>Quiz de programação&copy;</p>
-    
+
 </footer>
 </body>
 
