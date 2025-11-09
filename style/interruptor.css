@@ -1,0 +1,17 @@
+.modo-escuro {
+    background-color: black;
+    color: azure;
+}
+
+.modo-claro {
+background-color: azure;
+color: black;
+}
+
+.interruptor {
+    position: fixed;
+    top: 20px;
+    right: 30px;
+    border: 5px solid;
+    border-radius: 20px;
+}
