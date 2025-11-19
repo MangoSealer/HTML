@@ -15,4 +15,7 @@ color: black;
     border: 5px solid;
     border-radius: 20px;
     z-index: 1000;
+    cursor: pointer;
+
+
 }
