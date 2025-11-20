@@ -1,37 +1,16 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap");
 
-input {
-  border: 1px solid gray;
-  border-radius: 7px;
-}
 
-input::placeholder {
-  color: #cbbba7;
-}
 
-input[type="text"],
-[type="password"] {
-  width: 100%;
-  border: 2px solid;
-  padding: 0.4rem;
-  outline: none;
-  border-radius: 7px;
-}
 
 body {
   background-color: #000000;
   font-family: "Roboto Mono", monospace;
   font-weight: 400;
-  color: #cbbba7;
+  color: white;
+
 }
 
-header {
-  text-align: center;
-  padding: 2rem;
-  border: 0.35rem solid;
-  outline: none;
-  border-radius: 0.3cm;
-}
 
 h2 {
   padding: 0%;
@@ -46,9 +25,7 @@ main {
   gap: 1rem;
 }
 
-input [type="text"] {
-  width: 100%;
-}
+
 
 select {
   cursor: pointer;
@@ -96,11 +73,11 @@ td {
 
 .paginainicial {
 
-  
+
   background-color: antiquewhite;
   /* padding: 10px; */
   /* padding-left: 3rem; */
-  width:20rem;
+  width: 20rem;
   border: rgb(77, 77, 77) solid;
   border-radius: 10px;
   text-align: center;

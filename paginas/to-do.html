@@ -2,19 +2,54 @@
 <html lang="en">
 
 <head>
-    <script src="https://kit.fontawesome.com/a4aed1fa5c.js" crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>To-Do</title>
+    <link rel="icon" href="../assets/seasky.ico">
+    <link rel="stylesheet" href="../style/general_style.css">
+    <link rel="stylesheet" href="../style/fonte_bonitinha.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.js"></script>
+    <script src="../Scripts/modoescuro.js"></script>
+    <script src="https://kit.fontawesome.com/a4aed1fa5c.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="../style/interruptor.css">
+    <link rel="stylesheet" href="../style/to-do-list.css">
+
+
+
 </head>
+<header>
+    <h1>to-do list</h1>
+    <input type="text" id="tarefa" placeholder="digite sua tarefa">
+    <span><i class="fas fa-plus-circle" id="btn"></i></span>
+</header>
+
+
 
 <body>
-    <i class="fa-solid fa-house"></i>
+    <span class="interruptor"><i class="fa-solid fa-circle-half-stroke fa-flip"></i></span>
 
-    <!-- <i class="fa-brands fa-github"></i> -->
+    <ul id="lista">
+        <li>
+            <i class="fa-solid fa-genderless fa-sm"></i>
+            <span>arrumar o local do interruptor</span>
+            <i class="fa-solid fa-ban fa-xs"></i>
+        </li>
 
-    <i class="fa-regular fa-star"></i>
+        <li>
+            <i class="fa-solid fa-genderless fa-sm"></i>
+            <span>teste 2</span>
+            <i class="fa-solid fa-ban fa-xs"></i>
+        </li>
 
-    </body>
+        <li>
+            <i class="fa-solid fa-genderless fa-sm"></i>
+            <span>teste 3</span>
+            <i class="fa-solid fa-ban fa-xs"></i>
+        </li>
+    </ul>
+
+
+
+</body>
 
 </html>
