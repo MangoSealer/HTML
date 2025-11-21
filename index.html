@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="./style/interruptor.css">
     <link rel="icon" href="./assets/seasky.ico">
     <link rel="stylesheet" href="./style/general_style.css">
+    <link rel="manifest" href="./manifest.json">
     
 </head>
 
@@ -29,3 +30,17 @@
 </body>
 
 </html>
+
+<script>
+    if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(registration => {
+        // Sucesso no registro
+      })
+      .catch(err => {
+        // Falha no registro
+      });
+  });
+}
+</script>
