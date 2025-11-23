@@ -65,6 +65,7 @@ ul li:hover {
 
 ul li span {
     flex: 1;
+    /* text-decoration: line-through; */
 }
 
 ul li i {
