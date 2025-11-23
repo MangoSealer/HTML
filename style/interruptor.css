@@ -1,6 +1,6 @@
 .modo-escuro {
     background-color: black;
-  color:aliceblue;
+    color: aliceblue;
 }
 
 .modo-claro {
@@ -17,4 +17,17 @@
     cursor: pointer;
     padding: 10px;
 
+}
+
+.home {
+    position: fixed;
+    top: 5px;
+    left: 10px;
+    display: inline-block;
+    z-index: 1000;
+    cursor: pointer;
+    padding: 10px;
+    /* color:white; */
+    text-decoration: none;
+    color:inherit;
 }
