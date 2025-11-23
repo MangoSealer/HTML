@@ -5,7 +5,8 @@ body {
 
 header {
 
-    background-color: #2596be;
+    /* background-color: #2596be; */
+    background-color: #41007f;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -30,37 +31,45 @@ header input {
 header span {
     padding-left: 10px;
     font-size: 25px;
-    cursor: pointer;
+    /* cursor: pointer; */
 }
 
 
 ul {
-    padding: 0; 
-    margin: 0;  
+    padding: 0;
+    margin: 0;
 
 }
 
 /* LIST ITEM */
-ul li { 
+ul li {
 
-cursor: pointer;
-padding: 10px 15px;
-list-style-type: none;
-font-size: 17px;
-display: flex;
-transition: 0.7s;
-align-items:center;
-margin: 0;
-/* border-bottom: 1px solid #ccc; */
+    /* cursor: pointer; */
+    padding: 10px 15px;
+    list-style-type: none;
+    font-size: 17px;
+    display: flex;
+    transition: 0.5s;
+    align-items: center;
+    margin: 0;
+    /* border-bottom: 0.01rem solid #ccc; */
+    position: relative;
 }
 
 
-ul li:nth-child(even) {
-    background-color: #2595be57;
+.modo-claro ul li:nth-child(even) {
+    background-color: #a4a4a4;
+}
+
+.modo-escuro ul li:nth-child(even) {
+    position: relative;
+    z-index: 1;
+    background-color: #1d1d1d2d;
 }
 
 ul li:hover {
-    background-color: #2595be9b;
+    background-color: #878787;
+    z-index: 100;
 }
 
 
@@ -75,5 +84,12 @@ ul li i {
     width: 25px;
     text-align: center;
     padding-right: 1000px;
+position: relative;
+}
 
+
+.butao {
+    font-size: large;
+    padding: 1em;
+    margin: -1em;
 }

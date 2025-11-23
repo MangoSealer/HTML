@@ -1,7 +1,7 @@
 {
   "name": "Lista de Tarefas",
   "short_name": "To-Do",
-  "start_url": "/paginas/to-do.html",
+  "start_url": "/site/index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
