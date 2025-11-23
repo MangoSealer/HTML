@@ -15,7 +15,7 @@ self.addEventListener('install', event => {
     caches.open(CACHE_NAME)
       .then(cache => {
         // Armazena todos os arquivos definidos na lista
-        return cache.addAll(urlsToCache); 
+        return cache.addAll(urlsToCache);
       })
   );
 });
@@ -26,30 +26,28 @@ self.addEventListener('fetch', event => {
     caches.match(event.request) // Tenta encontrar no cache
       .then(response => {
         // Se encontrar no cache, retorna o recurso salvo
-        if (response) { 
+        if (response) {
           return response;
         }
-        
+
         // Caso contrário, vai para a rede para buscar o recurso
-        return fetch(event.request); 
+        return fetch(event.request);
       })
   );
 });
 
 
 
-self.addEventListener('activate', event => {
-  const cacheWhitelist = [CACHE_NAME];
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
-            // Exclui caches não atuais
-            return caches.delete(cacheName); 
-          }
-        })
-      );
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    caches.match(event.request).then((response) => {
+      // 1. Se o arquivo estiver no cache, retorna ele (velocidade)
+      if (response) {
+        return response;
+      }
+
+      // 2. Se NÃO estiver no cache (ex: mercado.html), busca na rede (internet/servidor)
+      return fetch(event.request);
     })
   );
-});
+})

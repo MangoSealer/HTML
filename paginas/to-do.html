@@ -1,57 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
+<!-- CTRL K CTRL , -->
 
 <head>
-
+    <!-- nadie  -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>To-Do</title>
+
+    <!-- CSS -->
     <link rel="icon" href="../assets/seasky.ico">
     <link rel="stylesheet" href="../style/general_style.css">
     <link rel="stylesheet" href="../style/fonte_bonitinha.css">
-    <script src="https://code.jquery.com/jquery-3.6.4.js"></script>
-    <script src="../Scripts/modoescuro.js"></script>
-    <script src="https://kit.fontawesome.com/a4aed1fa5c.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../style/interruptor.css">
     <link rel="stylesheet" href="../style/to-do-list.css">
 
 
-
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.4.js"></script>
+    <script src="../Scripts/modoescuro.js"></script>
+    <script src="https://kit.fontawesome.com/a4aed1fa5c.js" crossorigin="anonymous"></script>
 </head>
+
 <header>
+
+    <span class="interruptor"><i class="fa-solid fa-circle-half-stroke fa-flip"></i></span>
+
+    <h1 class="homepage"><a href="../index.html">Página inicial</a> <br></h1>
+
+    <!-- input -->
     <h1>to-do list</h1>
     <input type="text" id="tarefa" placeholder="digite sua tarefa">
     <span id="btn"><i class="fas fa-plus-circle"></i></span>
+
 </header>
 
 
 
 <body>
-    <span class="interruptor"><i class="fa-solid fa-circle-half-stroke fa-flip"></i></span>
+
 
     <ul id="lista">
-        <li>
-            <i class="fa-solid fa-genderless fa-sm check"></i>
-            <span>teste 1</span>
-            <i class="fa-solid fa-ban fa-xs close"></i>
-        </li>
-
-        <li>
-            <i class="fa-solid fa-genderless fa-sm check"></i>
-            <span>teste 2</span>
-            <i class="fa-solid fa-ban fa-xs close"></i>
-        </li>
-
-        <li>
-            <i class="fa-solid fa-genderless fa-sm check"></i>
-            <span>teste 3</span>
-            <i class="fa-solid fa-ban fa-xs close"></i>
-        </li>
     </ul>
 
     <script type="module" src="../Scripts/to-do.js"></script>
-
-
 </body>
 
 </html>

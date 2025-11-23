@@ -51,6 +51,7 @@ display: flex;
 transition: 0.7s;
 align-items:center;
 margin: 0;
+/* border-bottom: 1px solid #ccc; */
 }
 
 
@@ -65,7 +66,9 @@ ul li:hover {
 
 ul li span {
     flex: 1;
-    /* text-decoration: line-through; */
+    overflow-wrap: anywhere;
+    margin: 0 10px;
+    line-height: 1.4;
 }
 
 ul li i {
