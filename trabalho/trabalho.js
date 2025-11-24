@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc } 
 from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
+// a
 const firebaseConfig = {
     apiKey: "AIzaSyC2l6Rp1_L_udZyBuYWVuhhd9lSyRH-qPM",
     authDomain: "to-do-397d8.firebaseapp.com",
@@ -14,7 +14,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const dbCollection = collection(db, "trabalho"); 
+const dbCollection = collection(db, "teste"); 
 
 
 const tarefa = document.querySelector("#tarefa");
