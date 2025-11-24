@@ -58,7 +58,7 @@ ul li {
 
 
 .modo-claro ul li:nth-child(even) {
-    background-color: #a4a4a4;
+    background-color: #e0e0e0;
 }
 
 .modo-escuro ul li:nth-child(even) {
