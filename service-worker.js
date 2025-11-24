@@ -1,10 +1,10 @@
 const CACHE_NAME = 'to-do-v1';
 const urlsToCache = [
-  'paginas/to-do.html',
   'index.html',
-  'style/main.css',
-  'Scripts/app.js',
-  'img/icon-512x512.png'
+  'style/general_style.css',
+  'Scripts/to-do.js',
+  'img/icon-512x512.png',
+  'trabalho/index.html'
 ];
 
 
