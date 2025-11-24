@@ -14,7 +14,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const dbCollection = collection(db, "teste"); 
+const dbCollection = collection(db, "trabalho"); 
 
 
 const tarefa = document.querySelector("#tarefa");
