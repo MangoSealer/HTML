@@ -93,3 +93,7 @@ position: relative;
     padding: 1em;
     margin: -1em;
 }
+
+.adicionador {
+    cursor: pointer;
+}

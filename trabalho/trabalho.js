@@ -22,6 +22,8 @@ const btn = document.querySelector("#btn");
 const lista = document.querySelector("#lista");
 
 
+
+// enter
 tarefa.addEventListener("keypress", function(event) {
 
     if (event.key === "Enter") {
