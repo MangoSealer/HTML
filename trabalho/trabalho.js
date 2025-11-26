@@ -32,7 +32,7 @@ tarefa.addEventListener("keypress", function(event) {
     }
 });
 
-
+// adicionar tarefa
 btn.addEventListener("click", async function (event) {
     event.preventDefault();
     if (tarefa.value !== "") {
@@ -47,7 +47,7 @@ btn.addEventListener("click", async function (event) {
     }
 });
 
-
+//adicionar tarefa tambem 
 onSnapshot(dbCollection, (snapshot) => {
     lista.innerHTML = ""; 
 
@@ -65,7 +65,7 @@ onSnapshot(dbCollection, (snapshot) => {
     });
 });
 
-
+// remover tarefa
 lista.addEventListener("click", async function (event) {
 
     const botaoClicado = event.target.closest(".close");
@@ -75,11 +75,11 @@ lista.addEventListener("click", async function (event) {
         const idParaRemover = itemLi.getAttribute("data-id");
 
         if (idParaRemover) {
-            await deleteDoc(doc(db, "tarefas", idParaRemover));
+            await deleteDoc(doc(db, "trabalho", idParaRemover));
         }
     }
 
-
+// riscar (remover essa merda ou melhorar)
     if (event.target.tagName === "SPAN") {
         event.target.style.textDecoration =
             event.target.style.textDecoration === "line-through" ? "none" : "line-through";
