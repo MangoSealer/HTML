@@ -32,7 +32,7 @@ tarefa.addEventListener("keypress", function(event) {
     }
 });
 
-
+// adicionar tarefa
 btn.addEventListener("click", async function (event) {
     event.preventDefault();
     if (tarefa.value !== "") {
@@ -47,7 +47,7 @@ btn.addEventListener("click", async function (event) {
     }
 });
 
-
+//adicionar tarefa tambem 
 onSnapshot(dbCollection, (snapshot) => {
     lista.innerHTML = ""; 
 
@@ -57,18 +57,18 @@ onSnapshot(dbCollection, (snapshot) => {
 
         lista.innerHTML += `
             <li data-id="${id}">
-                <i class="fa-solid fa-genderless fa-sm butao"></i>
+                <i class="fa-solid fa-genderless fa-sm"></i>
                 <span> ${dados.nome}</span>
-                <i class="fa-solid fa-ban fa-xs close butao" style="cursor: pointer;"></i>
+                <i class="fa-solid fa-ban fa-xs close" style="cursor: pointer;"></i>
             </li>
         `;
     });
 });
 
-
+// remover tarefa
 lista.addEventListener("click", async function (event) {
 
-    const botaoClicado = event.target.closest(".butao");
+    const botaoClicado = event.target.closest(".close");
 
     if (botaoClicado) {
         const itemLi = botaoClicado.parentElement; 
@@ -79,7 +79,7 @@ lista.addEventListener("click", async function (event) {
         }
     }
 
-
+// riscar (remover essa merda ou melhorar)
     if (event.target.tagName === "SPAN") {
         event.target.style.textDecoration =
             event.target.style.textDecoration === "line-through" ? "none" : "line-through";
