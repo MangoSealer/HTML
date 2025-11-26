@@ -75,7 +75,7 @@ lista.addEventListener("click", async function (event) {
         const idParaRemover = itemLi.getAttribute("data-id");
 
         if (idParaRemover) {
-            await deleteDoc(doc(db, "tarefas", idParaRemover));
+            await deleteDoc(doc(db, "trabalho", idParaRemover));
         }
     }
 
