@@ -56,9 +56,9 @@ onSnapshot(dbCollection, (snapshot) => {
 
         lista.innerHTML += `
             <li data-id="${id}">
-                <i class="fa-solid fa-genderless fa-sm butao"></i>
+                <i class="fa-solid fa-genderless fa-sm "></i>
                 <span> ${dados.nome}</span>
-                <i class="fa-solid fa-ban fa-xs close butao" style="cursor: pointer;"></i>
+                <i class="fa-solid fa-ban fa-xs close" style="cursor: pointer;"></i>
             </li>
         `;
     });
@@ -68,7 +68,7 @@ onSnapshot(dbCollection, (snapshot) => {
 lista.addEventListener("click", async function (event) {
     // CORREÇÃO AQUI: Use 'closest' em vez de 'classList.contains'
     // Isso pega o botão mesmo se você clicar no ícone dentro dele
-    const botaoClicado = event.target.closest(".butao");
+    const botaoClicado = event.target.closest(".close");
 
     if (botaoClicado) {
         // Atenção: Agora pegamos o pai do BOTÃO encontrado
