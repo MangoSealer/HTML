@@ -2,62 +2,55 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página inicial</title>
-     <script src="https://code.jquery.com/jquery-3.6.4.js"></script>
-    <script src="./Scripts/modoescuro.js"></script>
-    <link rel="stylesheet" href="./style/interruptor.css">
-    <link rel="icon" href="./assets/seasky.ico">
-    <link rel="stylesheet" href="./style/general_style.css">
-    <link rel="manifest" href="./manifest.json">
-<link rel="apple-touch-icon" sizes="180x180" href="./img/icon-180x180.png">
-<link rel="apple-touch-icon" href="./img/icon-512x512.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Página inicial</title>
+  <script src="https://code.jquery.com/jquery-3.6.4.js"></script>
+  <script src="./Scripts/modoescuro.js"></script>
+  <link rel="stylesheet" href="./style/interruptor.css">
+  <link rel="icon" href="./assets/seasky.ico">
+  <link rel="stylesheet" href="./style/general_style.css">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" sizes="180x180" href="./img/icon-180x180.png">
+  <link rel="apple-touch-icon" href="./img/icon-512x512.png">
 
-    
-    
+
+
 </head>
 
 <body>
 
-    <div class="paginainicial">
+  <div class="paginainicial">
 
-        <h1><a href="./paginas/quiz.html">Quiz</a> <br>
-            <a href="./paginas/tags.html">Tags</a> <br>
-            <a href="./paginas/testes.html">Testes</a> <br>
-            <a href="./paginas/cores.html">Cores</a> <br>
-            <a href="./paginas/to-do.html">To-Do</a> <br>
-            <a href="./trabalho/index.html">Trabalho</a>
-        </h1>
-           <span class="interruptor"><i class="fa-solid fa-circle-half-stroke fa-flip"></i></span>
-           <span class="home"><i class="fa-solid fa-house"></i></span>
-          
-    </div>
+    <h1><a href="./paginas/quiz.html">Quiz</a> <br>
+      <a href="./paginas/tags.html">Tags</a> <br>
+      <a href="./paginas/testes.html">Testes</a> <br>
+      <a href="./paginas/cores.html">Cores</a> <br>
+      <a href="./paginas/to-do.html">To-Do</a> <br>
+      <a href="./trabalho/index.html">Trabalho</a> <br>
+      <a href="./Jogos/">jogos</a>
+    </h1>
+    <span class="interruptor"><i class="fa-solid fa-circle-half-stroke fa-flip"></i></span>
+    <span class="home"><i class="fa-solid fa-house"></i></span>
 
-<iframe 
-    src="https://jcw87.github.io/c2-smb1/" 
-    width="1280" 
-    height="720" 
-    style="border:none;"
-    allowfullscreen>
-</iframe>
+  </div>
 
 </body>
 
 </html>
 
 <script>
-    if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js')
-      .then(registration => {
-        // Sucesso no registro
-      })
-      .catch(err => {
-        // Falha no registro
-      });
-  });
-}
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then(registration => {
+          // Sucesso no registro
+        })
+        .catch(err => {
+          // Falha no registro
+        });
+    });
+  }
 
 
 </script>

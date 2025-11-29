@@ -88,14 +88,3 @@ td {
 
 
 
-
-
-.mario {
-  text-align: center;
-  background-color: #000000;
-  scale: 1.4;
-  display: flex;
-  justify-content: center;
-  margin-top: 120px;
-
-}
