@@ -64,25 +64,20 @@ onSnapshot(dbCollection, (snapshot) => {
     });
 });
 
-// 3. REMOVER E RISCAR
+// remover
 lista.addEventListener("click", async function (event) {
-    // CORREÇÃO AQUI: Use 'closest' em vez de 'classList.contains'
-    // Isso pega o botão mesmo se você clicar no ícone dentro dele
     const botaoClicado = event.target.closest(".close");
-
     if (botaoClicado) {
-        // Atenção: Agora pegamos o pai do BOTÃO encontrado
         const itemLi = botaoClicado.parentElement; 
         const idParaRemover = itemLi.getAttribute("data-id");
-
         if (idParaRemover) {
             await deleteDoc(doc(db, "tarefas", idParaRemover));
         }
     }
 
-    // Parte do SPAN continua igual (ou pode usar closest também se tiver negrito dentro do span)
-    if (event.target.tagName === "SPAN") {
-        event.target.style.textDecoration =
-            event.target.style.textDecoration === "line-through" ? "none" : "line-through";
-    }
+// riscar
+    // if (event.target.tagName === "SPAN") {
+    //     event.target.style.textDecoration =
+    //         event.target.style.textDecoration === "line-through" ? "none" : "line-through";
+    // }
 });

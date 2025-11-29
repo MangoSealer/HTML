@@ -41,7 +41,7 @@ ul li {
     align-items: center;
     margin: 0;
     position: relative;
-    cursor: pointer;
+cursor:default;
 }
 .modo-claro ul li:nth-child(even) {
     background-color: #e0e0e0;
@@ -73,4 +73,13 @@ ul li i {
 }
 .testa {
     user-select: none;
+}
+
+
+.inpute {
+    padding-left: 1rem;
+}
+
+input::placeholder {
+
 }
