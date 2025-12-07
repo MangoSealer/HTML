@@ -1,14 +1,26 @@
 .modo-escuro {
     background-color: rgb(0, 0, 0);
-    color: aliceblue;
+    color: #ebebeb;
 }
 
 .modo-claro {
     background-color: rgb(255, 255, 255);
-    color: black;
+    
     
 }
 
+.modo-claro ul li {
+    color: black;
+}
+
+.modo-escuro ul :hover {
+ 
+background-color: gray;
+}
+
+.modo-claro ul  :hover {
+    background-color: #ebebeb;
+}
 .interruptor {
     position: fixed;
     top: 5px;
@@ -34,7 +46,7 @@
 }
 
 .modo-escuro input {
-    background-color: #bcbcbc;
+    background-color: #ebebeb;
 }
 
 

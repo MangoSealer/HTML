@@ -43,14 +43,7 @@ ul li {
     position: relative;
 cursor:default;
 }
-.modo-claro ul li:nth-child(even) {
-    background-color: #e0e0e0;
-}
-.modo-escuro ul li:nth-child(even) {
-    position: relative;
-    z-index: 1;
-    background-color: #1d1d1d2d;
-}
+
 ul li span {
     flex: 1;
     overflow-wrap: anywhere;
@@ -80,6 +73,3 @@ ul li i {
     padding-left: 1rem;
 }
 
-input::placeholder {
-
-}
