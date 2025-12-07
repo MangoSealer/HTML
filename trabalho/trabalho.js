@@ -80,8 +80,8 @@ lista.addEventListener("click", async function (event) {
     }
 
 // riscar (remover essa merda ou melhorar)
-    if (event.target.tagName === "SPAN") {
-        event.target.style.textDecoration =
-            event.target.style.textDecoration === "line-through" ? "none" : "line-through";
-    }
+    // if (event.target.tagName === "SPAN") {
+    //     event.target.style.textDecoration =
+    //         event.target.style.textDecoration === "line-through" ? "none" : "line-through";
+    // }
 });
