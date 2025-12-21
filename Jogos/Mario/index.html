@@ -1,48 +1,30 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <title>Meu Emulador GBA</title>
+    <!--HTML file auto generated using EmulatorJS codehelper-->
     <style>
-        body {
+        body,
+        html {
             margin: 0;
             padding: 0;
-            background-color: #202020;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        #emulator-container {
-            width: 640px;
-            height: 480px;
-            max-width: 100%;
         }
     </style>
 </head>
 
 <body>
-
-    <div id="emulator-container">
+    <div style="width:100%;height:100%;max-width:100%">
         <div id="game"></div>
     </div>
-
     <script>
-        // Configurações do Emulador
-        var EJS_player = '#game';
-        var EJS_core = 'snes'; // Define que o núcleo é GBA
-        var EJS_gameUrl = 'mario.smc'; // CAMINHO PARA O SEU ARQUIVO ROM AQUI
-
-        // Caminho para os arquivos do sistema (usando CDN para facilitar)
-        var EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
-        var EJS_startOnLoaded = true; // Iniciar assim que carregar
-        var EJS_DEBUG_XX = true;
+        EJS_player = "#game";
+        EJS_core = "snes";
+        EJS_gameName = "mario";
+        EJS_color = "#0064ff";
+        EJS_startOnLoaded = true;
+        EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
+        EJS_gameUrl = "mario.smc";
     </script>
-
     <script src="https://cdn.emulatorjs.org/stable/data/loader.js"></script>
-
 </body>
 
 </html>
