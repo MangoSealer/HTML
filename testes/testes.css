@@ -1,4 +1,4 @@
-/* .my-form {
+ .my-form {
   --_clr-primary: #666;
   --_clr-hover: #f33195;
   --_clr-checked: #127acf;
@@ -73,7 +73,7 @@
 body {
   color: white;
   background-color: black;
-} */
+} 
  
 
 .messageBox {
