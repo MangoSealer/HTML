@@ -1,8 +1,11 @@
 body {
+
     margin: 0
 }
 header {
-    background-color: #41007f;
+
+
+    background-color: #c46338;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -38,9 +41,9 @@ ul li {
     align-items: center;
     margin: 0;
     position: relative;
-    cursor: default;
+cursor:default;
 }
- 
+
 ul li span {
     flex: 1;
     overflow-wrap: anywhere;

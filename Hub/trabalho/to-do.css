@@ -1,0 +1,75 @@
+body {
+
+    margin: 0
+}
+header {
+
+
+    background-color: #004e4c;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 20px;
+}
+header h1 {
+    width: 100%;
+    text-align: center;
+}
+header input {
+    border: none;
+    border-radius: 10px;
+    padding: 5px;
+    width: 60%;
+    font-size: 18px;
+}
+header span {
+    padding-left: 10px;
+    font-size: 25px;
+  
+}
+ul {
+    padding: 0;
+    margin: 0;
+
+}
+ul li {
+    padding: 10px 15px;
+    list-style-type: none;
+    font-size: 17px;
+    display: flex;
+    /* transition: 0.5s;  */
+    align-items: center;
+    margin: 0;
+    position: relative;
+cursor:default;
+}
+
+ul li span {
+    flex: 1;
+    overflow-wrap: anywhere;
+    margin: 0 10px;
+    line-height: 1.4;
+}
+ul li i {
+    width: 25px;
+    text-align: center;
+    padding-right: 1000px;
+    position: relative;
+}
+.butao {
+    font-size: large;
+    padding: 1em;
+    margin: -1em;
+}
+.adicionador {
+    cursor: pointer;
+}
+.testa {
+    user-select: none;
+}
+
+
+.inpute {
+    padding-left: 1rem;
+}
+
