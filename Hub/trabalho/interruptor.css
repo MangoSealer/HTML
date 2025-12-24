@@ -13,14 +13,7 @@
     color: black;
 }
 
-.modo-escuro ul :hover {
- 
-background-color: gray;
-}
 
-.modo-claro ul  :hover {
-    background-color: #ebebeb;
-}
 .interruptor {
     position: fixed;
     top: 5px;

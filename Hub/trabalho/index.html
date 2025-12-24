@@ -1,58 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-
-    <title>Trabalho</title>
-
-    <!-- irrelevantes  -->
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <link rel="apple-touch-icon" sizes="180x180" href="../../img/icon-180x180.png">
-    <link rel="apple-touch-icon" href="../../img/icon-512x512.png">
+<!-- CTRL K CTRL , -->
 
 
-    <!-- CSS -->
-    <link rel="icon" href="../../assets/seasky.ico">
-    <link rel="stylesheet" href="../../style/general_style.css">
-    <link rel="stylesheet" href="../../style/fonte_bonitinha.css">
-    <link rel="stylesheet" href="./interruptor.css">
-    <link rel="stylesheet" href="./to-do.css">
+<title>Trabalho</title>
+
+<!-- irrelevantes  -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<link rel="apple-touch-icon" sizes="180x180" href="../../img/icon-180x180.png">
+<link rel="apple-touch-icon" href="../../img/icon-512x512.png">
 
 
-    <!-- Scripts -->
-    <script src="https://code.jquery.com/jquery-3.6.4.js"></script>
-    <script src="https://kit.fontawesome.com/a4aed1fa5c.js" crossorigin="anonymous"></script>
-    <script src="../../Scripts/modoescuro.js"></script>
-    <script type="module" src="./to-do.js"></script>
+<!-- CSS -->
+<link rel="icon" href="../../assets/seasky.ico">
+<link rel="stylesheet" href="../../style/fonte_bonitinha.css">
+<link rel="stylesheet" href="./interruptor.css">
+<link rel="stylesheet" href="./to-do.css">
+
+
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.6.4.js"></script>
+<script src="https://kit.fontawesome.com/a4aed1fa5c.js" crossorigin="anonymous"></script>
+<script src="../../Scripts/modoescuro.js"></script>
+<script type="module" src="./to-do.js"></script>
 
 
 </head>
 
 <header>
 
-    <!-- botões -->
+
+
+
+    <ul class="testa">
+
+
+        <li class="cabecalho"><a href="../../index.html">Home</a></li>
+
+        <li class="dropdown cabecalho">
+            <a href="javascript:void(0)" class="dropbtn">Outras Listas</a>
+            <div class="dropdown-content">
+                <a href="../pessoal/index.html">Pessoal</a>
+                <a href="../site/index.html">Site</a>
+                <a href="../trabalho/index.html">Trabalho</a>
+                <a href="../testes/index.html">Testes</a>
+            </div>
+        </li>
+    </ul>
+
+
+
+
+
     <span class="interruptor">
-        <i class="fa-solid fa-circle-half-stroke fa-flip interruptor"></i>
+        <i class="fa-solid fa-circle-half-stroke fa-flip"></i>
     </span>
 
-    <a href="../index.html" class="home">
-        <i class="fa-solid fa-house home fa-xl"></i>
-    </a>
 
 
-    <!-- input -->
-    <h1 class="testa">Trabalho</h1>
-    <input type="text" id="tarefa" class="inpute" placeholder="digite sua tarefa">
-    <span id="btn"><i class="fas fa-plus-circle adicionador"></i></span>
+
+    <h1>Trabalho</h1>
+
+    <input type="text" id="tarefa" placeholder="digite sua tarefa">
+
+    <span id="btn"><i class="fas fa-plus-circle"></i></span>
 
 </header>
 
 
+
 <body class="modo-escuro">
+
 
     <ul id="lista">
     </ul>
+
 
 </body>
 

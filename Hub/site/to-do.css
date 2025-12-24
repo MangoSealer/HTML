@@ -1,21 +1,32 @@
+
+
+
+
 body {
 
-    margin: 0
+    margin: 0;
+    padding: 0;
 }
 
 header {
-
+    height: auto;
 
     background-color: #41007f;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    padding: 20px;
+
+    padding-bottom: 2rem;
 }
+
+
+
 
 header h1 {
     width: 100%;
     text-align: center;
+    margin-top: 1px;
+    margin-bottom: 10px;
 }
 
 header input {
@@ -43,12 +54,11 @@ ul li {
     list-style-type: none;
     font-size: 17px;
     display: flex;
-    /* transition: 0.5s;   */
+    /* transition: 0.5s;  */
     align-items: center;
     margin: 0;
     position: relative;
     cursor: default;
-    
 }
 
 ul li span {
@@ -82,4 +92,82 @@ ul li i {
 
 .inpute {
     padding-left: 1rem;
+}
+
+
+
+
+/* TESTES TESTES TESTES */
+
+.testa {
+    margin-top: 0px;
+    padding-top: 0px;
+    width: 100%;
+
+
+}
+
+
+ul {
+    list-style-type: none;
+
+    /* overflow: hidden; */
+
+}
+
+.cabecalho {
+    float: left;
+}
+
+li a,
+.dropbtn {
+    display: inline-block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+
+
+li.dropdown {
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: rgb(211, 211, 211);
+
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.modo-escuro li:hover {
+    background-color: rgba(211, 211, 211, 10%);
+ 
+  
+}
+
+.modo-claro li:hover {
+    background-color: rgba(211, 211, 211, 100%);
+ 
+  
 }
