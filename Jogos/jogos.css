@@ -1,3 +1,14 @@
+body {
+  background-color: rgb(27, 27, 27);
+  display: inline-table;
+  margin: 0;
+  padding: 0;
+  background-image: url(../assets/background.png) ;
+  background-size: 100% ;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
 a,
 a:link,
 a:visited,
@@ -19,6 +30,7 @@ img:hover {
   margin: 1.4rem;
   margin-top: 3rem;
   opacity: 40%;
+  border: 0.4px solid whrgb(89, 0, 255)
 }
 
 .emerald {
@@ -39,6 +51,7 @@ img:hover {
   margin: 1.4rem;
   margin-top: 3rem;
   opacity: 40%;
+  border: 2px solid white;
 }
 
 .pong {
@@ -48,6 +61,7 @@ img:hover {
   margin: 1.4rem;
   margin-top: 3rem;
   opacity: 40%;
+  border: 0.4px solid white;
 }
 
 .snake {
@@ -57,4 +71,6 @@ img:hover {
   margin: 1.4rem;
   margin-top: 3rem;
   opacity: 40%;
+  border: 0.4px solid rgb(167, 167, 167);
 }
+

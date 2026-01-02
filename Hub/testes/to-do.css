@@ -9,8 +9,8 @@ body {
 }
 
 header {
+    
     height: auto;
-
     background-color: var(--clr-laranxinha);
     display: flex;
     flex-wrap: wrap;
@@ -119,6 +119,7 @@ ul {
 
 .cabecalho {
     float: left;
+    
 }
 
 li a,
