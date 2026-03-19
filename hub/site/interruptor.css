@@ -5,8 +5,8 @@
 
 .modo-claro {
     background-color: rgb(255, 255, 255);
-    
-    
+    color: white;
+
 }
 
 .modo-claro ul li {
@@ -26,20 +26,7 @@
 
 }
 
-.home {
-    position: fixed;
-    top: 5px;
-    left: 10px;
-    display: inline-block;
-    z-index: 1000;
-    cursor: pointer;
-    padding: 10px;
-    text-decoration: none;
-    color:inherit;
-}
 
 .modo-escuro input {
     background-color: #ebebeb;
 }
-
-

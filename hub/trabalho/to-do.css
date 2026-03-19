@@ -1,17 +1,14 @@
 body {
-
     margin: 0;
     padding: 0;
 }
 
 header {
     height: auto;
-
     background-color: #00995c;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-
     padding-bottom: 2rem;
 }
 
@@ -36,13 +33,11 @@ header input {
 header span {
     padding-left: 10px;
     font-size: 25px;
-
 }
 
 ul {
     padding: 0;
     margin: 0;
-
 }
 
 ul li {
@@ -50,7 +45,6 @@ ul li {
     list-style-type: none;
     font-size: 17px;
     display: flex;
-    /* transition: 0.5s;  */
     align-items: center;
     margin: 0;
     position: relative;
@@ -90,25 +84,15 @@ ul li i {
     padding-left: 1rem;
 }
 
-
-
-
-/* TESTES TESTES TESTES */
-
 .testa {
     margin-top: 0px;
     padding-top: 0px;
     width: 100%;
-
-
 }
 
 
 ul {
     list-style-type: none;
-
-    /* overflow: hidden; */
-
 }
 
 .cabecalho {
@@ -123,8 +107,6 @@ li a,
     padding: 14px 16px;
     text-decoration: none;
 }
-
-
 
 li.dropdown {
     display: inline-block;
@@ -160,12 +142,10 @@ li.dropdown {
 
 .modo-escuro li:hover {
     background-color: rgba(211, 211, 211, 10%);
-
-
+    border-radius: 20px;
 }
 
 .modo-claro li:hover {
-    background-color: rgba(211, 211, 211, 100%);
-
-
+    background-color: rgba(211, 211, 211, 10%);
+    border-radius: 20px;
 }
