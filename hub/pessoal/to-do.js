@@ -34,10 +34,13 @@ tarefa.addEventListener("keypress", function (event) {
 
 btn.addEventListener("click", async function (event) {
     event.preventDefault();
+
     if (tarefa.value !== "") {
+        const valor = tarefa.value;
+        tarefa.value = "";
+
         try {
-            await addDoc(dbCollection, { nome: tarefa.value });
-            tarefa.value = "";
+            await addDoc(dbCollection, { nome: valor });
         } catch (error) {
             console.error("Erro ao adicionar: ", error);
         }

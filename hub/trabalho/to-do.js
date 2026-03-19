@@ -35,10 +35,13 @@ tarefa.addEventListener("keypress", function(event) {
 // adicionar tarefa
 btn.addEventListener("click", async function (event) {
     event.preventDefault();
+
     if (tarefa.value !== "") {
+        const valor = tarefa.value;
+        tarefa.value = "";
+
         try {
-            await addDoc(dbCollection, { nome: tarefa.value });
-            tarefa.value = "";
+            await addDoc(dbCollection, { nome: valor });
         } catch (error) {
             console.error("Erro ao adicionar: ", error);
         }
@@ -46,7 +49,6 @@ btn.addEventListener("click", async function (event) {
         alert("Escreva algo!");
     }
 });
-
 //adicionar tarefa tambem 
 onSnapshot(dbCollection, (snapshot) => {
     lista.innerHTML = ""; 
@@ -79,9 +81,5 @@ lista.addEventListener("click", async function (event) {
         }
     }
 
-// riscar (remover essa merda ou melhorar)
-    // if (event.target.tagName === "SPAN") {
-    //     event.target.style.textDecoration =
-    //         event.target.style.textDecoration === "line-through" ? "none" : "line-through";
-    // }
+
 });

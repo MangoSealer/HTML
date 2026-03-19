@@ -3,6 +3,10 @@ import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc }
     from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 
+
+
+// configurações do app
+
 const firebaseConfig = {
     apiKey: "AIzaSyC2l6Rp1_L_udZyBuYWVuhhd9lSyRH-qPM",
     authDomain: "to-do-397d8.firebaseapp.com",
@@ -12,7 +16,7 @@ const firebaseConfig = {
     appId: "1:791824707186:web:9b2e663117be126b869ceb"
 };
 
-
+// inicializar o aplicativo
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const dbCollection = collection(db, "daily");
@@ -23,21 +27,24 @@ const btn = document.querySelector("#btn");
 const lista = document.querySelector("#lista");
 
 
+// Enter
 tarefa.addEventListener("keypress", function (event) {
-
     if (event.key === "Enter") {
         event.preventDefault();
         btn.click();
     }
 });
 
-
+// Adicionador
 btn.addEventListener("click", async function (event) {
     event.preventDefault();
+
     if (tarefa.value !== "") {
+        const valor = tarefa.value;
+        tarefa.value = "";
+
         try {
-            await addDoc(dbCollection, { nome: tarefa.value });
-            tarefa.value = "";
+            await addDoc(dbCollection, { nome: valor });
         } catch (error) {
             console.error("Erro ao adicionar: ", error);
         }
@@ -46,7 +53,7 @@ btn.addEventListener("click", async function (event) {
     }
 });
 
-
+// template
 onSnapshot(dbCollection, (snapshot) => {
     lista.innerHTML = "";
 

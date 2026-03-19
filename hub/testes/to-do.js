@@ -25,7 +25,7 @@ const tarefa = document.querySelector("#tarefa");
 const btn = document.querySelector("#btn");
 const lista = document.querySelector("#lista");
 
-/* Enter adiciona */
+
 tarefa.addEventListener("keypress", (event) => {
     if (event.key === "Enter") {
         event.preventDefault();
@@ -33,25 +33,25 @@ tarefa.addEventListener("keypress", (event) => {
     }
 });
 
-/* Adicionar tarefa */
-btn.addEventListener("click", async (event) => {
+
+btn.addEventListener("click", async function (event) {
     event.preventDefault();
 
     if (tarefa.value !== "") {
+        const valor = tarefa.value;
+        tarefa.value = "";
+
         try {
-            await addDoc(dbCollection, {
-                nome: tarefa.value
-            });
-            tarefa.value = "";
+            await addDoc(dbCollection, { nome: valor });
         } catch (error) {
-            console.error("Erro ao adicionar:", error);
+            console.error("Erro ao adicionar: ", error);
         }
     } else {
         alert("Escreva algo!");
     }
 });
 
-/* Renderização */
+
 onSnapshot(dbCollection, (snapshot) => {
     lista.innerHTML = "";
 
@@ -69,7 +69,7 @@ onSnapshot(dbCollection, (snapshot) => {
     });
 });
 
-/* Remover */
+
 lista.addEventListener("click", async (event) => {
     const botaoClicado = event.target.closest(".close");
 
