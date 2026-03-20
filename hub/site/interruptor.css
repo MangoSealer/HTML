@@ -6,13 +6,11 @@
 .modo-claro {
     background-color: rgb(255, 255, 255);
     color: white;
-
 }
 
 .modo-claro ul li {
     color: black;
 }
-
 
 .interruptor {
     position: absolute;
@@ -23,9 +21,7 @@
     cursor: pointer;
     padding: 10px;
     color: inherit;
-
 }
-
 
 .modo-escuro input {
     background-color: #ebebeb;

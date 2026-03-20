@@ -9,6 +9,10 @@ body {
   background-attachment: fixed;
 }
 
+img {
+  transition: transform 0.3s ease;
+}
+
 a,
 a:link,
 a:visited,
@@ -20,8 +24,8 @@ a:hover {
 
 img:hover {
   opacity: 100%;
+  transform: scale(1.07)
 }
-
 
 .mario {
   border-radius: 15px;
@@ -41,8 +45,6 @@ img:hover {
   margin-top: 3rem;
   opacity: 40%;
 }
-
-
 
 .brickbreaker {
   border-radius: 15px;
