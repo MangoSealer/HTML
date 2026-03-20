@@ -4,59 +4,113 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Página inicial</title>
-  <script src="https://code.jquery.com/jquery-3.6.4.js"></script>
-  <script src="./Scripts/modoescuro.js"></script>
-  <link rel="stylesheet" href="./style/interruptor.css">
-  <link rel="icon" href="./assets/seasky.ico">
-  <link rel="stylesheet" href="./style/general_style.css">
-  <link rel="manifest" href="./manifest.json">
-  <link rel="apple-touch-icon" sizes="180x180" href="./img/icon-180x180.png">
-  <link rel="apple-touch-icon" href="./img/icon-512x512.png">
-
-
+  <title>Página Inicial</title>
+  <link rel="stylesheet" href="./style/cards.css">
+  <link rel="stylesheet" href="../style/fonte_bonitinha.css">
+  <link rel="icon" href="../../assets/seasky.ico">
 
 </head>
 
+
+
+
 <body>
 
-  <div class="paginainicial">
-    <div class="anchorindex">
-      <h1><a href="./paginas/quiz.html">Quiz</a> <br>
-        <a href="./paginas/tags.html">Tags</a> <br>
-        <a href="./paginas/testes.html">Testes</a> <br>
-        <a href="./paginas/cores.html">Cores</a> <br>
-        <a href="./paginas/to-do.html">To-Do</a> <br>
-        <a href="./trabalho/index.html">Trabalho</a> <br>
-        <a href="./Jogos/">jogos</a><br>
-        <a href="./hub/site/index.html">site</a> <br>
-        <a href="./paginas/Roadmap.html">Roadmap</a> <br>
-        <a href="./paginas/Deskwipe.txt">Script</a> <br>
-        <a href="./testes/index.html">Testes da Uiverse</a>
-      </h1>
-    </div>
-    
-    <span class="interruptor"><i class="fa-solid fa-circle-half-stroke fa-flip"></i></span>
-    <span class="home"><i class="fa-solid fa-house"></i></span>
+
+
+
+  <div class="cartoes">
+
+
+    <!-- checklist -->
+    <a class="cartao" href="../hub/index.html">
+      <div class="conteiner">
+        <img src="../assets/checklist_img.png" alt="checklist_img">
+        <div class="detalhes">
+          <h3>Checklists</h3>
+          <p>Hub dos checklists.</p>
+        </div>
+      </div>
+    </a>
+
+
+
+    <!-- cv -->
+    <a class="cartao" href="../curriculo/index.html">
+      <div class="conteiner">
+        <img src="../assets/resume.jpg" alt="checklist_img">
+        <div class="detalhes">
+          <h3>CV</h3>
+          <p>CV em HTML</p>
+        </div>
+      </div>
+    </a>
+
+
+
+    <!-- Jogos -->
+    <a class="cartao" href="../jogos/index.html">
+      <div class="conteiner">
+        <img class="imgjogos" src="../assets/jogos.jpg" alt="checklist_img">
+        <div class="detalhes">
+          <h3>Jogos</h3>
+          <p>Joguinhos em iFrame</p>
+        </div>
+      </div>
+    </a>
+
+
+
+
+
+    <!-- Script deskwipe -->
+    <a class="cartao" href="../paginas/Deskwipe.txt">
+      <div class="conteiner">
+        <img src="../assets/dostop.avif" alt="checklist_img">
+        <div class="detalhes">
+          <h3>DeskWipe</h3>
+          <p>Script pra limpar os nomes dos ícones no desktop</p>
+        </div>
+      </div>
+    </a>
+
+
+
+
+
+
 
   </div>
 
+
+
+
 </body>
+
+
+
+
 
 </html>
 
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/service-worker.js')
-        .then(registration => {
-          // Sucesso no registro
-        })
-        .catch(err => {
-          // Falha no registro
-        });
-    });
-  }
 
 
-</script>
+
+
+
+
+
+
+
+
+<!-- template -->
+
+<!-- <a class="cartao" href="">
+            <div class="conteiner">
+                <img src="../assets/checklist_img.png" alt="checklist_img">
+                <div class="detalhes">
+                    <h3>checklists</h3>
+                    <p>teste teste teste teste sdart asd asrasr saraiksorjmais</p>
+                </div>
+            </div>
+        </a> -->
