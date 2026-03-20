@@ -4,15 +4,11 @@
 }
 
 .modo-claro {
-    background-color: rgb(255, 255, 255);  
+    background-color: rgb(245,245,220);
 }
 
 .modo-claro ul li {
     color: black;
-}
-
-.modo-claro ul  :hover {
-    background-color: #ebebeb;
 }
 
 .interruptor {
@@ -35,11 +31,13 @@
     cursor: pointer;
     padding: 10px;
     text-decoration: none;
-    color:inherit;
+    color: inherit;
 }
 
 .modo-escuro input {
     background-color: #ebebeb;
 }
 
-
+.modo-claro a {
+    color: black;
+}

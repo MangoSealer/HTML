@@ -1,8 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc }
+import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, query, orderBy }
     from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-
 
 
 // configurações do app
@@ -22,6 +20,7 @@ const db = getFirestore(app);
 const dbCollection = collection(db, "daily");
 
 
+const q = query(dbCollection, orderBy("criadoEm"));
 const tarefa = document.querySelector("#tarefa");
 const btn = document.querySelector("#btn");
 const lista = document.querySelector("#lista");
@@ -44,7 +43,11 @@ btn.addEventListener("click", async function (event) {
         tarefa.value = "";
 
         try {
-            await addDoc(dbCollection, { nome: valor });
+
+            await addDoc(dbCollection, {
+                nome: valor,
+                criadoEm: Date.now()
+            });
         } catch (error) {
             console.error("Erro ao adicionar: ", error);
         }
@@ -54,7 +57,8 @@ btn.addEventListener("click", async function (event) {
 });
 
 // template
-onSnapshot(dbCollection, (snapshot) => {
+
+onSnapshot(q, (snapshot) => {
     lista.innerHTML = "";
 
     snapshot.forEach((item) => {
@@ -81,6 +85,4 @@ lista.addEventListener("click", async function (event) {
             await deleteDoc(doc(db, "daily", idParaRemover));
         }
     }
-
-
 });
