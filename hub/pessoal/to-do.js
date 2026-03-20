@@ -58,7 +58,7 @@ onSnapshot(dbCollection, (snapshot) => {
         const id = item.id;
 
         lista.innerHTML += `
-            <li data-id="${id}">
+            <li class="item my-form" data-id="${id}">
                 <i class="fa-solid fa-genderless fa-sm "></i>
                 <span> ${dados.nome}</span>
                 <i class="fa-solid fa-ban fa-xs close" style="cursor: pointer;"></i>

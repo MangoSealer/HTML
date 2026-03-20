@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc } 
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc }
+    from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 
 const firebaseConfig = {
@@ -15,7 +15,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const dbCollection = collection(db, "tarefas"); 
+const dbCollection = collection(db, "tarefas");
 
 
 const tarefa = document.querySelector("#tarefa");
@@ -23,11 +23,11 @@ const btn = document.querySelector("#btn");
 const lista = document.querySelector("#lista");
 
 
-tarefa.addEventListener("keypress", function(event) {
+tarefa.addEventListener("keypress", function (event) {
 
     if (event.key === "Enter") {
-        event.preventDefault(); 
-        btn.click(); 
+        event.preventDefault();
+        btn.click();
     }
 });
 
@@ -51,14 +51,14 @@ btn.addEventListener("click", async function (event) {
 
 
 onSnapshot(dbCollection, (snapshot) => {
-    lista.innerHTML = ""; 
+    lista.innerHTML = "";
 
     snapshot.forEach((item) => {
         const dados = item.data();
         const id = item.id;
 
         lista.innerHTML += `
-            <li data-id="${id}">
+            <li class="item my-form" data-id="${id}">
                 <i class="fa-solid fa-genderless fa-sm "></i>
                 <span> ${dados.nome}</span>
                 <i class="fa-solid fa-ban fa-xs close" style="cursor: pointer;"></i>
@@ -71,7 +71,7 @@ onSnapshot(dbCollection, (snapshot) => {
 lista.addEventListener("click", async function (event) {
     const botaoClicado = event.target.closest(".close");
     if (botaoClicado) {
-        const itemLi = botaoClicado.parentElement; 
+        const itemLi = botaoClicado.parentElement;
         const idParaRemover = itemLi.getAttribute("data-id");
         if (idParaRemover) {
             await deleteDoc(doc(db, "tarefas", idParaRemover));

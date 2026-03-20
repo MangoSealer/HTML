@@ -144,3 +144,12 @@ li.dropdown {
     background-color: rgba(211, 211, 211, 10%);
     border-radius: 20px;
 }
+
+
+.item {
+    background-color: #1e1e1e34;
+}
+
+.item:nth-child(odd) {
+    background-color: rgba(155, 152, 152, 0.171)
+}

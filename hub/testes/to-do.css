@@ -2,6 +2,7 @@
     --clr-laranxinha: #fc4c00;
     --clr-branco: white;
     --clr-cinza: rgb(211, 211, 211);
+
 }
 
 body {
@@ -100,7 +101,8 @@ ul {
     float: left;
 }
 
-li a,.dropbtn {
+li a,
+.dropbtn {
     display: inline-block;
     color: var(--clr-branco);
     text-align: center;
@@ -115,7 +117,7 @@ li.dropdown {
 .dropdown-content {
     display: none;
     position: absolute;
-    background-color: var(--clr-cinza) ;
+    background-color: var(--clr-cinza);
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 1;
@@ -163,7 +165,7 @@ li.dropdown {
     align-items: center;
     gap: 10px;
     padding: 12px 14px;
-    background-color: #1e1e1e59;
+    background-color: #1e1e1e34;
     border-radius: 6px;
     box-sizing: border-box;
 }
@@ -177,4 +179,11 @@ li.dropdown {
 .close {
     margin-left: auto;
     cursor: pointer;
+}
+
+
+
+
+.item:nth-child(odd) {
+    background-color: rgba(155, 152, 152, 0.171)
 }
