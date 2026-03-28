@@ -5,7 +5,8 @@ body {
 
 header {
     height: auto;
-    border-radius: 20px;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
