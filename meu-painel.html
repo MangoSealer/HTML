@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="painel-app">
+    <p id="painel-status">Carregando dados...</p>
+    
+    <div id="painel-conteudo" style="display: none;">
+        <h2>Meus Lembretes</h2>
+        <ul id="lista-lembretes"></ul>
+
+        <h2>Meus Canais</h2>
+        <ul id="lista-canais"></ul>
+    </div>
+</div>
+
+<script>
+    const backendUrl = "161.97.114.222";
+
+    function iniciarPainel() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tokenUrl = urlParams.get('token');
+
+        if (tokenUrl) {
+            localStorage.setItem('user_session_token', tokenUrl);
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+
+        const token = localStorage.getItem('user_session_token');
+
+        if (!token) {
+            document.getElementById('painel-status').innerText = 'Acesso negado. Solicite um novo link via WhatsApp.';
+            return;
+        }
+
+        carregarDados(token);
+    }
+
+    async function carregarDados(token) {
+        try {
+            const response = await fetch(`${backendUrl}/api/painel/dados`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.status === 401) {
+                document.getElementById('painel-status').innerText = 'Sessão expirada. Solicite um novo link no WhatsApp.';
+                localStorage.removeItem('user_session_token');
+                return;
+            }
+
+            const data = await response.json();
+            document.getElementById('painel-status').style.display = 'none';
+            document.getElementById('painel-conteudo').style.display = 'block';
+            
+            renderizarLembretes(data.reminders, token);
+            renderizarCanais(data.channels, token);
+        } catch (error) {
+            document.getElementById('painel-status').innerText = 'Erro de conexão com o servidor.';
+        }
+    }
+
+    function renderizarLembretes(lembretes, token) {
+        const lista = document.getElementById('lista-lembretes');
+        lista.innerHTML = '';
+        if (lembretes.length === 0) {
+            lista.innerHTML = '<li>Nenhum lembrete pendente.</li>';
+            return;
+        }
+        lembretes.forEach(r => {
+            const dataLocal = new Date(r.remind_at).toLocaleString();
+            lista.innerHTML += `
+                <li>
+                    ${r.description} - ${dataLocal} (@${r.channel_tag})
+                    <button onclick="deletarItem('lembretes', ${r.id}, '${token}')">Excluir</button>
+                </li>`;
+        });
+    }
+
+    function renderizarCanais(canais, token) {
+        const lista = document.getElementById('lista-canais');
+        lista.innerHTML = '';
+        if (canais.length === 0) {
+            lista.innerHTML = '<li>Nenhum canal customizado.</li>';
+            return;
+        }
+        canais.forEach(c => {
+            lista.innerHTML += `
+                <li>
+                    @${c.tag} - ${c.target}
+                    <button onclick="deletarItem('canais', ${c.id}, '${token}')">Excluir</button>
+                </li>`;
+        });
+    }
+
+    async function deletarItem(tipo, id, token) {
+        if (!confirm('Tem certeza que deseja excluir?')) return;
+
+        try {
+            const response = await fetch(`${backendUrl}/api/painel/${tipo}/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                carregarDados(token); // Recarrega a lista
+            } else {
+                alert('Erro ao excluir item.');
+            }
+        } catch (error) {
+            alert('Falha na comunicação com o servidor.');
+        }
+    }
+
+    iniciarPainel();
+</script>
+</body>
+</html>
