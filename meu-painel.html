@@ -140,6 +140,7 @@
 </head>
 
 <body>
+    
     <div id="painel-app">
         <p id="painel-status">Carregando dados...</p>
 
@@ -214,7 +215,7 @@
                 lista.innerHTML += `
                 <li>
                     ${r.description} - ${dataLocal} (@${r.channel_tag})
-                    <button onclick="deletarItem('lembretes', ${r.id}, '${token}')">Excluir</button>
+                    <button class="btn" onclick="deletarItem('lembretes', ${r.id}, '${token}')">Excluir</button>
                 </li>`;
             });
         }
