@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -424,6 +425,7 @@
     }
   </style>
 </head>
+
 <body>
   <div id="login-screen" class="login-screen">
     <form id="login-form" class="login-card">
@@ -492,12 +494,19 @@
       <section id="section-users" class="hidden">
         <div class="card">
           <div class="toolbar">
-            <input class="filter" id="filter-users" placeholder="Filtrar por ID, telefone ou status..." oninput="renderUsers()" />
+            <input class="filter" id="filter-users" placeholder="Filtrar por ID, telefone ou status..."
+              oninput="renderUsers()" />
           </div>
           <div class="table-wrap">
             <table>
               <thead>
-                <tr><th>ID</th><th>Telefone</th><th>Status</th><th>Criado em</th><th>Ações</th></tr>
+                <tr>
+                  <th>ID</th>
+                  <th>Telefone</th>
+                  <th>Status</th>
+                  <th>Criado em</th>
+                  <th>Ações</th>
+                </tr>
               </thead>
               <tbody id="users-body"></tbody>
             </table>
@@ -508,12 +517,22 @@
       <section id="section-reminders" class="hidden">
         <div class="card">
           <div class="toolbar">
-            <input class="filter" id="filter-reminders" placeholder="Filtrar por texto, canal, ID..." oninput="renderReminders()" />
+            <input class="filter" id="filter-reminders" placeholder="Filtrar por texto, canal, ID..."
+              oninput="renderReminders()" />
           </div>
           <div class="table-wrap">
             <table>
               <thead>
-                <tr><th>ID</th><th>Usuário</th><th>Texto</th><th>Data</th><th>Canal</th><th>Tipo</th><th>Enviado</th><th>Ações</th></tr>
+                <tr>
+                  <th>ID</th>
+                  <th>Usuário</th>
+                  <th>Texto</th>
+                  <th>Data</th>
+                  <th>Canal</th>
+                  <th>Tipo</th>
+                  <th>Enviado</th>
+                  <th>Ações</th>
+                </tr>
               </thead>
               <tbody id="reminders-body"></tbody>
             </table>
@@ -524,13 +543,22 @@
       <section id="section-channels" class="hidden">
         <div class="card">
           <div class="toolbar">
-            <input class="filter" id="filter-channels" placeholder="Filtrar por tag, tipo, destino..." oninput="renderChannels()" />
+            <input class="filter" id="filter-channels" placeholder="Filtrar por tag, tipo, destino..."
+              oninput="renderChannels()" />
             <button onclick="createChannel()">Criar canal</button>
           </div>
           <div class="table-wrap">
             <table>
               <thead>
-                <tr><th>ID</th><th>Usuário</th><th>Tag</th><th>Tipo</th><th>Destino</th><th>Ativo</th><th>Ações</th></tr>
+                <tr>
+                  <th>ID</th>
+                  <th>Usuário</th>
+                  <th>Tag</th>
+                  <th>Tipo</th>
+                  <th>Destino</th>
+                  <th>Ativo</th>
+                  <th>Ações</th>
+                </tr>
               </thead>
               <tbody id="channels-body"></tbody>
             </table>
@@ -541,13 +569,20 @@
       <section id="section-groups" class="hidden">
         <div class="card">
           <div class="toolbar">
-            <input class="filter" id="filter-groups" placeholder="Filtrar por tag, usuário, canais..." oninput="renderGroups()" />
+            <input class="filter" id="filter-groups" placeholder="Filtrar por tag, usuário, canais..."
+              oninput="renderGroups()" />
             <button onclick="createGroup()">Criar grupo</button>
           </div>
           <div class="table-wrap">
             <table>
               <thead>
-                <tr><th>ID</th><th>Usuário</th><th>Tag</th><th>Canais</th><th>Ações</th></tr>
+                <tr>
+                  <th>ID</th>
+                  <th>Usuário</th>
+                  <th>Tag</th>
+                  <th>Canais</th>
+                  <th>Ações</th>
+                </tr>
               </thead>
               <tbody id="groups-body"></tbody>
             </table>
@@ -1130,4 +1165,5 @@
     }, 3000);
   </script>
 </body>
+
 </html>
