@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -340,6 +339,54 @@
       background: #fffafa;
     }
 
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.62);
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      z-index: 50;
+    }
+
+    .modal {
+      width: min(560px, 100%);
+      background: white;
+      border-radius: 18px;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+      padding: 22px;
+      border: 1px solid var(--border);
+    }
+
+    .modal h3 {
+      margin: 0 0 16px;
+      font-size: 20px;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    .modal-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .modal textarea {
+      width: 100%;
+      min-height: 90px;
+      resize: vertical;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 14px;
+      font-family: inherit;
+    }
+
     @media (max-width: 900px) {
       .app {
         display: block;
@@ -377,7 +424,6 @@
     }
   </style>
 </head>
-
 <body>
   <div id="login-screen" class="login-screen">
     <form id="login-form" class="login-card">
@@ -446,19 +492,12 @@
       <section id="section-users" class="hidden">
         <div class="card">
           <div class="toolbar">
-            <input class="filter" id="filter-users" placeholder="Filtrar por ID, telefone ou status..."
-              oninput="renderUsers()" />
+            <input class="filter" id="filter-users" placeholder="Filtrar por ID, telefone ou status..." oninput="renderUsers()" />
           </div>
           <div class="table-wrap">
             <table>
               <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Telefone</th>
-                  <th>Status</th>
-                  <th>Criado em</th>
-                  <th>Ações</th>
-                </tr>
+                <tr><th>ID</th><th>Telefone</th><th>Status</th><th>Criado em</th><th>Ações</th></tr>
               </thead>
               <tbody id="users-body"></tbody>
             </table>
@@ -469,22 +508,12 @@
       <section id="section-reminders" class="hidden">
         <div class="card">
           <div class="toolbar">
-            <input class="filter" id="filter-reminders" placeholder="Filtrar por texto, canal, ID..."
-              oninput="renderReminders()" />
+            <input class="filter" id="filter-reminders" placeholder="Filtrar por texto, canal, ID..." oninput="renderReminders()" />
           </div>
           <div class="table-wrap">
             <table>
               <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Usuário</th>
-                  <th>Texto</th>
-                  <th>Data</th>
-                  <th>Canal</th>
-                  <th>Tipo</th>
-                  <th>Enviado</th>
-                  <th>Ações</th>
-                </tr>
+                <tr><th>ID</th><th>Usuário</th><th>Texto</th><th>Data</th><th>Canal</th><th>Tipo</th><th>Enviado</th><th>Ações</th></tr>
               </thead>
               <tbody id="reminders-body"></tbody>
             </table>
@@ -495,22 +524,13 @@
       <section id="section-channels" class="hidden">
         <div class="card">
           <div class="toolbar">
-            <input class="filter" id="filter-channels" placeholder="Filtrar por tag, tipo, destino..."
-              oninput="renderChannels()" />
+            <input class="filter" id="filter-channels" placeholder="Filtrar por tag, tipo, destino..." oninput="renderChannels()" />
             <button onclick="createChannel()">Criar canal</button>
           </div>
           <div class="table-wrap">
             <table>
               <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Usuário</th>
-                  <th>Tag</th>
-                  <th>Tipo</th>
-                  <th>Destino</th>
-                  <th>Ativo</th>
-                  <th>Ações</th>
-                </tr>
+                <tr><th>ID</th><th>Usuário</th><th>Tag</th><th>Tipo</th><th>Destino</th><th>Ativo</th><th>Ações</th></tr>
               </thead>
               <tbody id="channels-body"></tbody>
             </table>
@@ -521,20 +541,13 @@
       <section id="section-groups" class="hidden">
         <div class="card">
           <div class="toolbar">
-            <input class="filter" id="filter-groups" placeholder="Filtrar por tag, usuário, canais..."
-              oninput="renderGroups()" />
+            <input class="filter" id="filter-groups" placeholder="Filtrar por tag, usuário, canais..." oninput="renderGroups()" />
             <button onclick="createGroup()">Criar grupo</button>
           </div>
           <div class="table-wrap">
             <table>
               <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Usuário</th>
-                  <th>Tag</th>
-                  <th>Canais</th>
-                  <th>Ações</th>
-                </tr>
+                <tr><th>ID</th><th>Usuário</th><th>Tag</th><th>Canais</th><th>Ações</th></tr>
               </thead>
               <tbody id="groups-body"></tbody>
             </table>
@@ -564,6 +577,8 @@
       </section>
     </main>
   </div>
+
+  <div id="modal-root"></div>
 
   <script>
     const backendUrl = "https://painel.danilosn.work";
@@ -612,6 +627,78 @@
         .filter(value => value !== null && value !== undefined)
         .map(value => String(value).toLowerCase())
         .some(value => value.includes(filter));
+    }
+
+    function openFormModal(title, fields, onSubmit) {
+      const root = document.getElementById("modal-root");
+
+      const fieldsHtml = fields.map(field => {
+        const value = escapeHtml(field.value ?? "");
+        const label = escapeHtml(field.label);
+        const id = `modal-field-${field.name}`;
+
+        if (field.type === "textarea") {
+          return `
+            <div class="field">
+              <label for="${id}">${label}</label>
+              <textarea id="${id}" data-name="${escapeHtml(field.name)}">${value}</textarea>
+            </div>
+          `;
+        }
+
+        if (field.type === "select") {
+          const options = (field.options || []).map(option => `
+            <option value="${escapeHtml(option.value)}" ${String(option.value) === String(field.value) ? "selected" : ""}>
+              ${escapeHtml(option.label)}
+            </option>
+          `).join("");
+
+          return `
+            <div class="field">
+              <label for="${id}">${label}</label>
+              <select id="${id}" data-name="${escapeHtml(field.name)}">${options}</select>
+            </div>
+          `;
+        }
+
+        return `
+          <div class="field">
+            <label for="${id}">${label}</label>
+            <input id="${id}" data-name="${escapeHtml(field.name)}" value="${value}" />
+          </div>
+        `;
+      }).join("");
+
+      root.innerHTML = `
+        <div class="modal-backdrop">
+          <form class="modal" id="modal-form">
+            <h3>${escapeHtml(title)}</h3>
+            <div class="modal-grid">${fieldsHtml}</div>
+            <div class="modal-actions">
+              <button type="button" class="ghost" id="modal-cancel">Cancelar</button>
+              <button type="submit">Salvar</button>
+            </div>
+          </form>
+        </div>
+      `;
+
+      document.getElementById("modal-cancel").addEventListener("click", closeModal);
+
+      document.getElementById("modal-form").addEventListener("submit", async event => {
+        event.preventDefault();
+
+        const values = {};
+        root.querySelectorAll("[data-name]").forEach(input => {
+          values[input.dataset.name] = input.value;
+        });
+
+        await onSubmit(values);
+        closeModal();
+      });
+    }
+
+    function closeModal() {
+      document.getElementById("modal-root").innerHTML = "";
     }
 
     async function apiRequest(path, options = {}) {
@@ -823,21 +910,20 @@
       const item = state.reminders.find(reminder => reminder.id === id);
       if (!item) return;
 
-      const description = prompt("Novo texto do lembrete:", item.description);
-      if (description === null) return;
+      openFormModal("Editar lembrete", [
+        { name: "description", label: "Texto", type: "textarea", value: item.description },
+        { name: "channel_tag", label: "Canal real", value: item.channel_tag || "whatsapp" }
+      ], async values => {
+        await apiRequest(`/admin/api/lembretes/${id}`, {
+          method: "PUT",
+          body: JSON.stringify({
+            description: values.description.trim(),
+            channel_tag: normalizeTag(values.channel_tag)
+          })
+        });
 
-      const channelTag = prompt("Canal real:", item.channel_tag || "whatsapp");
-      if (channelTag === null) return;
-
-      await apiRequest(`/admin/api/lembretes/${id}`, {
-        method: "PUT",
-        body: JSON.stringify({
-          description: description.trim(),
-          channel_tag: normalizeTag(channelTag)
-        })
+        await loadAll();
       });
-
-      await loadAll();
     }
 
     async function deleteReminder(id) {
@@ -847,58 +933,75 @@
     }
 
     async function createChannel() {
-      const userId = prompt("ID do usuário:");
-      if (!userId) return;
+      openFormModal("Criar canal", [
+        { name: "user_id", label: "ID do usuário", value: "" },
+        { name: "tag", label: "Tag do canal", value: "" },
+        {
+          name: "type",
+          label: "Tipo",
+          type: "select",
+          value: "email",
+          options: [
+            { value: "email", label: "Email" },
+            { value: "whatsapp", label: "WhatsApp" }
+          ]
+        },
+        { name: "target", label: "Destino", value: "" }
+      ], async values => {
+        await apiRequest("/admin/api/canais", {
+          method: "POST",
+          body: JSON.stringify({
+            user_id: Number(values.user_id),
+            tag: normalizeTag(values.tag),
+            type: values.type.trim().toLowerCase(),
+            target: values.target.trim()
+          })
+        });
 
-      const tag = prompt("Tag do canal:");
-      if (!tag) return;
-
-      const type = prompt("Tipo do canal (email ou whatsapp):", "email");
-      if (!type) return;
-
-      const target = prompt("Destino:");
-      if (!target) return;
-
-      await apiRequest("/admin/api/canais", {
-        method: "POST",
-        body: JSON.stringify({
-          user_id: Number(userId),
-          tag: normalizeTag(tag),
-          type: type.trim().toLowerCase(),
-          target: target.trim()
-        })
+        await loadAll();
       });
-
-      await loadAll();
     }
 
     async function editChannel(id) {
       const channel = state.channels.find(item => item.id === id);
       if (!channel) return;
 
-      const tag = prompt("Tag do canal:", channel.tag);
-      if (tag === null) return;
+      openFormModal("Editar canal", [
+        { name: "tag", label: "Tag do canal", value: channel.tag },
+        {
+          name: "type",
+          label: "Tipo",
+          type: "select",
+          value: channel.type,
+          options: [
+            { value: "email", label: "Email" },
+            { value: "whatsapp", label: "WhatsApp" }
+          ]
+        },
+        { name: "target", label: "Destino", value: channel.target },
+        {
+          name: "enabled",
+          label: "Ativo",
+          type: "select",
+          value: channel.enabled ? "sim" : "nao",
+          options: [
+            { value: "sim", label: "Sim" },
+            { value: "nao", label: "Não" }
+          ]
+        }
+      ], async values => {
+        await apiRequest(`/admin/api/canais/${id}`, {
+          method: "PUT",
+          body: JSON.stringify({
+            tag: normalizeTag(values.tag),
+            type: values.type.trim().toLowerCase(),
+            target: values.target.trim(),
+            enabled: values.enabled === "sim"
+          })
+        });
 
-      const type = prompt("Tipo do canal:", channel.type);
-      if (type === null) return;
-
-      const target = prompt("Destino:", channel.target);
-      if (target === null) return;
-
-      const enabledText = prompt("Ativo? Use sim ou nao:", channel.enabled ? "sim" : "nao");
-      if (enabledText === null) return;
-
-      await apiRequest(`/admin/api/canais/${id}`, {
-        method: "PUT",
-        body: JSON.stringify({
-          tag: normalizeTag(tag),
-          type: type.trim().toLowerCase(),
-          target: target.trim(),
-          enabled: !["nao", "não", "false", "0"].includes(enabledText.trim().toLowerCase())
-        })
+        await loadAll();
       });
-
-      await loadAll();
     }
 
     async function deleteChannel(id) {
@@ -908,50 +1011,46 @@
     }
 
     async function createGroup() {
-      const userId = prompt("ID do usuário:");
-      if (!userId) return;
+      openFormModal("Criar grupo", [
+        { name: "user_id", label: "ID do usuário", value: "" },
+        { name: "tag", label: "Tag do grupo", value: "" },
+        { name: "targets", label: "Canais separados por vírgula", value: "whatsapp, email" }
+      ], async values => {
+        const targets = values.targets.split(",").map(normalizeTag).filter(Boolean);
 
-      const tag = prompt("Tag do grupo:");
-      if (!tag) return;
+        await apiRequest("/admin/api/grupos", {
+          method: "POST",
+          body: JSON.stringify({
+            user_id: Number(values.user_id),
+            tag: normalizeTag(values.tag),
+            targets
+          })
+        });
 
-      const targetsText = prompt("Canais do grupo separados por vírgula:", "whatsapp, email");
-      if (!targetsText) return;
-
-      const targets = targetsText.split(",").map(normalizeTag).filter(Boolean);
-
-      await apiRequest("/admin/api/grupos", {
-        method: "POST",
-        body: JSON.stringify({
-          user_id: Number(userId),
-          tag: normalizeTag(tag),
-          targets
-        })
+        await loadAll();
       });
-
-      await loadAll();
     }
 
     async function editGroup(id) {
       const group = state.groups.find(item => item.id === id);
       if (!group) return;
 
-      const tag = prompt("Tag do grupo:", group.tag);
-      if (tag === null) return;
+      openFormModal("Editar grupo", [
+        { name: "tag", label: "Tag do grupo", value: group.tag },
+        { name: "targets", label: "Canais separados por vírgula", value: (group.targets || []).join(", ") }
+      ], async values => {
+        const targets = values.targets.split(",").map(normalizeTag).filter(Boolean);
 
-      const targetsText = prompt("Canais do grupo separados por vírgula:", (group.targets || []).join(", "));
-      if (targetsText === null) return;
+        await apiRequest(`/admin/api/grupos/${id}`, {
+          method: "PUT",
+          body: JSON.stringify({
+            tag: normalizeTag(values.tag),
+            targets
+          })
+        });
 
-      const targets = targetsText.split(",").map(normalizeTag).filter(Boolean);
-
-      await apiRequest(`/admin/api/grupos/${id}`, {
-        method: "PUT",
-        body: JSON.stringify({
-          tag: normalizeTag(tag),
-          targets
-        })
+        await loadAll();
       });
-
-      await loadAll();
     }
 
     async function deleteGroup(id) {
@@ -1031,5 +1130,4 @@
     }, 3000);
   </script>
 </body>
-
 </html>
