@@ -173,6 +173,7 @@
             <h2>Meus Canais</h2>
             <ul id="lista-canais"></ul>
             <h2>Meus Grupos</h2>
+            <button class="btn-edit" onclick="criarGrupo()">Criar grupo</button>
             <ul id="lista-grupos"></ul>
         </div>
 
@@ -277,12 +278,17 @@
                 const targets = (g.targets || []).map(t => `@${t}`).join(', ');
 
                 lista.innerHTML += `
-        <li>
-            @${g.tag} → ${targets}
-            <button class="btn" onclick="deletarItem('grupos', ${g.id}, '${token}')">Excluir</button>
-        </li>`;
+                <li>
+                    @${g.tag} → ${targets}
+                    <button class="btn-edit" onclick="editarGrupo(${g.id}, '${g.tag}', '${(g.targets || []).join(',')}')">Editar</button>
+                    <button class="btn" onclick="deletarItem('grupos', ${g.id}, '${token}')">Excluir</button>
+                </li>`;
             });
         }
+
+
+
+
         async function deletarItem(tipo, id, token) {
             if (!confirm('Tem certeza que deseja excluir?')) return;
 
@@ -311,6 +317,76 @@
             document.getElementById('painel-status').innerText = 'Sessão encerrada. Solicite um novo link via WhatsApp.';
 
             window.history.replaceState({}, document.title, window.location.pathname);
+        }
+
+        async function criarGrupo() {
+            const token = localStorage.getItem('user_session_token');
+
+            const tag = prompt('Nome do grupo, sem @:');
+            if (!tag) return;
+
+            const targetsText = prompt('Canais do grupo separados por vírgula. Ex: whatsapp, email');
+            if (!targetsText) return;
+
+            const targets = targetsText
+                .split(',')
+                .map(item => item.trim().replace('@', ''))
+                .filter(Boolean);
+
+            try {
+                const response = await fetch(`${backendUrl}/api/painel/grupos`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ tag, targets })
+                });
+
+                if (response.ok) {
+                    carregarDados(token);
+                } else {
+                    const data = await response.json();
+                    alert(data.error || 'Erro ao criar grupo.');
+                }
+            } catch (error) {
+                alert('Falha na comunicação com o servidor.');
+            }
+        }
+
+        async function editarGrupo(id, tagAtual, targetsAtuais) {
+            const token = localStorage.getItem('user_session_token');
+
+            const tag = prompt('Nome do grupo, sem @:', tagAtual);
+            if (!tag) return;
+
+            const targetsText = prompt('Canais do grupo separados por vírgula:', targetsAtuais);
+            if (!targetsText) return;
+
+            const targets = targetsText
+                .split(',')
+                .map(item => item.trim().replace('@', ''))
+                .filter(Boolean);
+
+            try {
+                const response = await fetch(`${backendUrl}/api/painel/grupos/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ tag, targets })
+                });
+
+                if (response.ok) {
+                    carregarDados(token);
+                } else {
+                    const data = await response.json();
+                    alert(data.error || 'Erro ao editar grupo.');
+                }
+            } catch (error) {
+                alert('Falha na comunicação com o servidor.');
+            }
         }
         iniciarPainel();
     </script>
