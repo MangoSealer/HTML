@@ -92,6 +92,21 @@
             border-radius: 3px;
         }
 
+        .btn-logout {
+            background-color: #555;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 13px;
+            border-radius: 3px;
+            float: right;
+        }
+
+        .btn-logout:hover {
+            background-color: #333;
+        }
+
         .btn-delete:hover {
             background-color: #aa0000;
         }
@@ -150,12 +165,15 @@
         <p id="painel-status">Carregando dados...</p>
 
         <div id="painel-conteudo" style="display: none;">
+            <button class="btn-logout" onclick="logoutPainel()">Sair</button>
+
             <h2>Meus Lembretes</h2>
             <ul id="lista-lembretes"></ul>
 
             <h2>Meus Canais</h2>
             <ul id="lista-canais"></ul>
         </div>
+
     </div>
 
     <script>
@@ -261,7 +279,15 @@
                 alert('Falha na comunicação com o servidor.');
             }
         }
+        function logoutPainel() {
+            localStorage.removeItem('user_session_token');
 
+            document.getElementById('painel-conteudo').style.display = 'none';
+            document.getElementById('painel-status').style.display = 'block';
+            document.getElementById('painel-status').innerText = 'Sessão encerrada. Solicite um novo link via WhatsApp.';
+
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
         iniciarPainel();
     </script>
 </body>
