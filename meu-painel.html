@@ -172,6 +172,8 @@
 
             <h2>Meus Canais</h2>
             <ul id="lista-canais"></ul>
+            <h2>Meus Grupos</h2>
+            <ul id="lista-grupos"></ul>
         </div>
 
     </div>
@@ -221,6 +223,7 @@
 
                 renderizarLembretes(data.reminders, token);
                 renderizarCanais(data.channels, token);
+                renderizarGrupos(data.groups || [], token);
             } catch (error) {
                 document.getElementById('painel-status').innerText = 'Erro de conexão com o servidor.';
             }
@@ -237,7 +240,7 @@
                 const dataLocal = new Date(r.remind_at).toLocaleString();
                 lista.innerHTML += `
                 <li>
-                    ${r.description} - ${dataLocal} (@${r.channel_tag})
+                    ${r.description} - ${dataLocal} (@${r.display_tag || r.channel_tag})
                     <button class="btn" onclick="deletarItem('lembretes', ${r.id}, '${token}')">Excluir</button>
                 </li>`;
             });
@@ -259,6 +262,27 @@
             });
         }
 
+
+
+        function renderizarGrupos(grupos, token) {
+            const lista = document.getElementById('lista-grupos');
+            lista.innerHTML = '';
+
+            if (grupos.length === 0) {
+                lista.innerHTML = '<li>Nenhum grupo cadastrado.</li>';
+                return;
+            }
+
+            grupos.forEach(g => {
+                const targets = (g.targets || []).map(t => `@${t}`).join(', ');
+
+                lista.innerHTML += `
+        <li>
+            @${g.tag} → ${targets}
+            <button class="btn" onclick="deletarItem('grupos', ${g.id}, '${token}')">Excluir</button>
+        </li>`;
+            });
+        }
         async function deletarItem(tipo, id, token) {
             if (!confirm('Tem certeza que deseja excluir?')) return;
 
