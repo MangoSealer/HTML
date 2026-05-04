@@ -1,23 +1,24 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Schedule Notify — Admin</title>
   <style>
     :root {
-      --bg: #f3f5f8;
-      --card: #ffffff;
-      --text: #1f2937;
-      --muted: #6b7280;
-      --border: #d9dee7;
-      --primary: #155eef;
-      --primary-hover: #0f46b8;
-      --danger: #c1121f;
-      --danger-hover: #8f0d17;
-      --warning: #b7791f;
-      --success: #1f7a4d;
-      --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      --bg: #0f172a;
+      --card: #111827;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --border: #263244;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --danger: #dc2626;
+      --danger-hover: #b91c1c;
+      --warning: #f59e0b;
+      --success: #22c55e;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
       --radius: 14px;
     }
 
@@ -39,7 +40,7 @@
 
     .sidebar {
       width: 260px;
-      background: #111827;
+      background: #020617;
       color: white;
       padding: 24px 18px;
       position: sticky;
@@ -162,7 +163,7 @@
       border-radius: 10px;
       padding: 10px 12px;
       font-size: 14px;
-      background: white;
+      background: #0b1220;
       color: var(--text);
     }
 
@@ -207,7 +208,7 @@
     }
 
     button.ghost:hover {
-      background: #edf1f7;
+      background: #1f2937;
     }
 
     table {
@@ -225,8 +226,8 @@
     }
 
     th {
-      color: #374151;
-      background: #f8fafc;
+      color: #cbd5e1;
+      background: #0f172a;
       font-weight: 700;
       position: sticky;
       top: 0;
@@ -288,7 +289,7 @@
 
     .login-card {
       width: min(420px, 100%);
-      background: white;
+      background: var(--card);
       border: 1px solid var(--border);
       border-radius: 18px;
       box-shadow: var(--shadow);
@@ -335,8 +336,8 @@
     }
 
     .danger-zone {
-      border-color: #fecaca;
-      background: #fffafa;
+      border-color: #7f1d1d;
+      background: #1f1113;
     }
 
     .modal-backdrop {
@@ -351,7 +352,7 @@
 
     .modal {
       width: min(560px, 100%);
-      background: white;
+      background: var(--card);
       border-radius: 18px;
       box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
       padding: 22px;
@@ -424,6 +425,7 @@
     }
   </style>
 </head>
+
 <body>
   <div id="login-screen" class="login-screen">
     <form id="login-form" class="login-card">
@@ -492,12 +494,19 @@
       <section id="section-users" class="hidden">
         <div class="card">
           <div class="toolbar">
-            <input class="filter" id="filter-users" placeholder="Filtrar por ID, telefone ou status..." oninput="renderUsers()" />
+            <input class="filter" id="filter-users" placeholder="Filtrar por ID, telefone ou status..."
+              oninput="renderUsers()" />
           </div>
           <div class="table-wrap">
             <table>
               <thead>
-                <tr><th>ID</th><th>Telefone</th><th>Status</th><th>Criado em</th><th>Ações</th></tr>
+                <tr>
+                  <th>ID</th>
+                  <th>Telefone</th>
+                  <th>Status</th>
+                  <th>Criado em</th>
+                  <th>Ações</th>
+                </tr>
               </thead>
               <tbody id="users-body"></tbody>
             </table>
@@ -508,13 +517,23 @@
       <section id="section-reminders" class="hidden">
         <div class="card">
           <div class="toolbar">
-            <input class="filter" id="filter-reminders" placeholder="Filtrar por texto, canal, ID..." oninput="renderReminders()" />
+            <input class="filter" id="filter-reminders" placeholder="Filtrar por texto, canal, ID..."
+              oninput="renderReminders()" />
             <button onclick="createReminder()">Criar lembrete</button>
           </div>
           <div class="table-wrap">
             <table>
               <thead>
-                <tr><th>ID</th><th>Usuário</th><th>Texto</th><th>Data</th><th>Canal</th><th>Tipo</th><th>Enviado</th><th>Ações</th></tr>
+                <tr>
+                  <th>ID</th>
+                  <th>Usuário</th>
+                  <th>Texto</th>
+                  <th>Data</th>
+                  <th>Canal</th>
+                  <th>Tipo</th>
+                  <th>Enviado</th>
+                  <th>Ações</th>
+                </tr>
               </thead>
               <tbody id="reminders-body"></tbody>
             </table>
@@ -525,13 +544,22 @@
       <section id="section-channels" class="hidden">
         <div class="card">
           <div class="toolbar">
-            <input class="filter" id="filter-channels" placeholder="Filtrar por tag, tipo, destino..." oninput="renderChannels()" />
+            <input class="filter" id="filter-channels" placeholder="Filtrar por tag, tipo, destino..."
+              oninput="renderChannels()" />
             <button onclick="createChannel()">Criar canal</button>
           </div>
           <div class="table-wrap">
             <table>
               <thead>
-                <tr><th>ID</th><th>Usuário</th><th>Tag</th><th>Tipo</th><th>Destino</th><th>Ativo</th><th>Ações</th></tr>
+                <tr>
+                  <th>ID</th>
+                  <th>Usuário</th>
+                  <th>Tag</th>
+                  <th>Tipo</th>
+                  <th>Destino</th>
+                  <th>Ativo</th>
+                  <th>Ações</th>
+                </tr>
               </thead>
               <tbody id="channels-body"></tbody>
             </table>
@@ -542,13 +570,20 @@
       <section id="section-groups" class="hidden">
         <div class="card">
           <div class="toolbar">
-            <input class="filter" id="filter-groups" placeholder="Filtrar por tag, usuário, canais..." oninput="renderGroups()" />
+            <input class="filter" id="filter-groups" placeholder="Filtrar por tag, usuário, canais..."
+              oninput="renderGroups()" />
             <button onclick="createGroup()">Criar grupo</button>
           </div>
           <div class="table-wrap">
             <table>
               <thead>
-                <tr><th>ID</th><th>Usuário</th><th>Tag</th><th>Canais</th><th>Ações</th></tr>
+                <tr>
+                  <th>ID</th>
+                  <th>Usuário</th>
+                  <th>Tag</th>
+                  <th>Canais</th>
+                  <th>Ações</th>
+                </tr>
               </thead>
               <tbody id="groups-body"></tbody>
             </table>
@@ -954,8 +989,29 @@
             { value: "countdown", label: "Countdown" }
           ]
         },
-        { name: "recurrence_value", label: "Valor da recorrência, se necessário", value: "" }
+        { name: "recurrence_value", label: "Valor da recorrência", value: "" }
       ], async values => {
+        let recurrenceValue = values.recurrence_value.trim() || null;
+
+        if (["", "daily", "business_days", "task", "countdown"].includes(values.recurrence_type)) {
+          recurrenceValue = null;
+        }
+
+        if (values.recurrence_type === "weekly" && !/^[0-6]$/.test(values.recurrence_value.trim())) {
+          alert("Para semanal, use 0=seg, 1=ter, 2=qua, 3=qui, 4=sex, 5=sab, 6=dom.");
+          return;
+        }
+
+        if (values.recurrence_type === "monthly" && !/^([1-9]|[12][0-9]|3[01])$/.test(values.recurrence_value.trim())) {
+          alert("Para mensal, informe o dia do mês. Ex: 5");
+          return;
+        }
+
+        if (values.recurrence_type === "yearly" && !/^\d{2}\/\d{2}$/.test(values.recurrence_value.trim())) {
+          alert("Para anual, use DD/MM. Ex: 12/10");
+          return;
+        }
+
         await apiRequest("/admin/api/lembretes", {
           method: "POST",
           body: JSON.stringify({
@@ -964,12 +1020,43 @@
             remind_at: values.remind_at,
             channel_tags: splitTags(values.channel_tags || "whatsapp"),
             recurrence_type: values.recurrence_type || null,
-            recurrence_value: values.recurrence_value.trim() || null
+            recurrence_value: recurrenceValue
           })
         });
 
         await loadAll();
       });
+
+      const recurrenceTypeInput = document.getElementById("modal-field-recurrence_type");
+      const recurrenceValueInput = document.getElementById("modal-field-recurrence_value");
+      const recurrenceValueWrapper = recurrenceValueInput.closest(".field");
+      const recurrenceValueLabel = recurrenceValueWrapper.querySelector("label");
+
+      function updateRecurrenceValueField() {
+        const type = recurrenceTypeInput.value;
+
+        if (["", "daily", "business_days", "task", "countdown"].includes(type)) {
+          recurrenceValueWrapper.style.display = "none";
+          recurrenceValueInput.value = "";
+          return;
+        }
+
+        recurrenceValueWrapper.style.display = "grid";
+
+        if (type === "weekly") {
+          recurrenceValueLabel.textContent = "Dia da semana: 0=seg, 1=ter, 2=qua, 3=qui, 4=sex, 5=sab, 6=dom";
+          recurrenceValueInput.placeholder = "0";
+        } else if (type === "monthly") {
+          recurrenceValueLabel.textContent = "Dia do mês";
+          recurrenceValueInput.placeholder = "5";
+        } else if (type === "yearly") {
+          recurrenceValueLabel.textContent = "Dia/mês";
+          recurrenceValueInput.placeholder = "12/10";
+        }
+      }
+
+      recurrenceTypeInput.addEventListener("change", updateRecurrenceValueField);
+      updateRecurrenceValueField();
     }
 
     async function editReminder(id) {
@@ -1196,4 +1283,5 @@
     }, 3000);
   </script>
 </body>
+
 </html>
