@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -425,7 +424,6 @@
     }
   </style>
 </head>
-
 <body>
   <div id="login-screen" class="login-screen">
     <form id="login-form" class="login-card">
@@ -494,19 +492,12 @@
       <section id="section-users" class="hidden">
         <div class="card">
           <div class="toolbar">
-            <input class="filter" id="filter-users" placeholder="Filtrar por ID, telefone ou status..."
-              oninput="renderUsers()" />
+            <input class="filter" id="filter-users" placeholder="Filtrar por ID, telefone ou status..." oninput="renderUsers()" />
           </div>
           <div class="table-wrap">
             <table>
               <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Telefone</th>
-                  <th>Status</th>
-                  <th>Criado em</th>
-                  <th>Ações</th>
-                </tr>
+                <tr><th>ID</th><th>Telefone</th><th>Status</th><th>Criado em</th><th>Ações</th></tr>
               </thead>
               <tbody id="users-body"></tbody>
             </table>
@@ -517,22 +508,13 @@
       <section id="section-reminders" class="hidden">
         <div class="card">
           <div class="toolbar">
-            <input class="filter" id="filter-reminders" placeholder="Filtrar por texto, canal, ID..."
-              oninput="renderReminders()" />
+            <input class="filter" id="filter-reminders" placeholder="Filtrar por texto, canal, ID..." oninput="renderReminders()" />
+            <button onclick="createReminder()">Criar lembrete</button>
           </div>
           <div class="table-wrap">
             <table>
               <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Usuário</th>
-                  <th>Texto</th>
-                  <th>Data</th>
-                  <th>Canal</th>
-                  <th>Tipo</th>
-                  <th>Enviado</th>
-                  <th>Ações</th>
-                </tr>
+                <tr><th>ID</th><th>Usuário</th><th>Texto</th><th>Data</th><th>Canal</th><th>Tipo</th><th>Enviado</th><th>Ações</th></tr>
               </thead>
               <tbody id="reminders-body"></tbody>
             </table>
@@ -543,22 +525,13 @@
       <section id="section-channels" class="hidden">
         <div class="card">
           <div class="toolbar">
-            <input class="filter" id="filter-channels" placeholder="Filtrar por tag, tipo, destino..."
-              oninput="renderChannels()" />
+            <input class="filter" id="filter-channels" placeholder="Filtrar por tag, tipo, destino..." oninput="renderChannels()" />
             <button onclick="createChannel()">Criar canal</button>
           </div>
           <div class="table-wrap">
             <table>
               <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Usuário</th>
-                  <th>Tag</th>
-                  <th>Tipo</th>
-                  <th>Destino</th>
-                  <th>Ativo</th>
-                  <th>Ações</th>
-                </tr>
+                <tr><th>ID</th><th>Usuário</th><th>Tag</th><th>Tipo</th><th>Destino</th><th>Ativo</th><th>Ações</th></tr>
               </thead>
               <tbody id="channels-body"></tbody>
             </table>
@@ -569,20 +542,13 @@
       <section id="section-groups" class="hidden">
         <div class="card">
           <div class="toolbar">
-            <input class="filter" id="filter-groups" placeholder="Filtrar por tag, usuário, canais..."
-              oninput="renderGroups()" />
+            <input class="filter" id="filter-groups" placeholder="Filtrar por tag, usuário, canais..." oninput="renderGroups()" />
             <button onclick="createGroup()">Criar grupo</button>
           </div>
           <div class="table-wrap">
             <table>
               <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Usuário</th>
-                  <th>Tag</th>
-                  <th>Canais</th>
-                  <th>Ações</th>
-                </tr>
+                <tr><th>ID</th><th>Usuário</th><th>Tag</th><th>Canais</th><th>Ações</th></tr>
               </thead>
               <tbody id="groups-body"></tbody>
             </table>
@@ -652,6 +618,18 @@
       return date.toLocaleString("pt-BR");
     }
 
+    function toDatetimeLocalValue(date = new Date()) {
+      const offsetMs = date.getTimezoneOffset() * 60000;
+      return new Date(date.getTime() - offsetMs).toISOString().slice(0, 16);
+    }
+
+    function splitTags(value) {
+      return String(value || "")
+        .split(",")
+        .map(normalizeTag)
+        .filter(Boolean);
+    }
+
     function normalizeTag(value) {
       return String(value || "").trim().toLowerCase().replaceAll("@", "");
     }
@@ -677,6 +655,15 @@
             <div class="field">
               <label for="${id}">${label}</label>
               <textarea id="${id}" data-name="${escapeHtml(field.name)}">${value}</textarea>
+            </div>
+          `;
+        }
+
+        if (field.type === "datetime-local") {
+          return `
+            <div class="field">
+              <label for="${id}">${label}</label>
+              <input id="${id}" data-name="${escapeHtml(field.name)}" type="datetime-local" value="${value}" />
             </div>
           `;
         }
@@ -941,6 +928,50 @@
       await loadAll();
     }
 
+    async function createReminder() {
+      const defaultDate = new Date();
+      defaultDate.setHours(defaultDate.getHours() + 1);
+      defaultDate.setMinutes(0, 0, 0);
+
+      openFormModal("Criar lembrete", [
+        { name: "user_id", label: "ID do usuário", value: "" },
+        { name: "description", label: "Texto", type: "textarea", value: "" },
+        { name: "remind_at", label: "Data e hora", type: "datetime-local", value: toDatetimeLocalValue(defaultDate) },
+        { name: "channel_tags", label: "Canais/tags separados por vírgula", value: "whatsapp" },
+        {
+          name: "recurrence_type",
+          label: "Tipo",
+          type: "select",
+          value: "",
+          options: [
+            { value: "", label: "Único" },
+            { value: "daily", label: "Diário" },
+            { value: "business_days", label: "Dias úteis" },
+            { value: "weekly", label: "Semanal" },
+            { value: "monthly", label: "Mensal" },
+            { value: "yearly", label: "Anual" },
+            { value: "task", label: "Tarefa" },
+            { value: "countdown", label: "Countdown" }
+          ]
+        },
+        { name: "recurrence_value", label: "Valor da recorrência, se necessário", value: "" }
+      ], async values => {
+        await apiRequest("/admin/api/lembretes", {
+          method: "POST",
+          body: JSON.stringify({
+            user_id: Number(values.user_id),
+            description: values.description.trim(),
+            remind_at: values.remind_at,
+            channel_tags: splitTags(values.channel_tags || "whatsapp"),
+            recurrence_type: values.recurrence_type || null,
+            recurrence_value: values.recurrence_value.trim() || null
+          })
+        });
+
+        await loadAll();
+      });
+    }
+
     async function editReminder(id) {
       const item = state.reminders.find(reminder => reminder.id === id);
       if (!item) return;
@@ -1165,5 +1196,4 @@
     }, 3000);
   </script>
 </body>
-
 </html>
