@@ -609,7 +609,7 @@
           <h3>Limpeza de dados</h3>
           <p>Use apenas quando tiver certeza.</p>
           <div class="actions">
-            <button class="danger" onclick="clearData('sent_reminders')">Excluir lembretes enviados</button>
+            <button class="danger" onclick="clearData('sent_reminders')">Excluir enviados</button>
             <button class="danger" onclick="clearData('all_reminders')">Excluir todos os lembretes</button>
             <button class="danger" onclick="clearData('all_data')">Excluir lembretes, canais e grupos</button>
           </div>
@@ -1223,17 +1223,26 @@
         all_data: "excluir lembretes, canais e grupos"
       };
 
-      const confirmation = prompt(`Digite CONFIRMAR para ${labels[scope]}.`);
-      if (confirmation !== "CONFIRMAR") return;
+      openFormModal("Confirmar limpeza", [
+        {
+          name: "confirmation",
+          label: `Digite CONFIRMAR para ${labels[scope]}`,
+          value: ""
+        }
+      ], async values => {
+        if (values.confirmation !== "CONFIRMAR") {
+          alert("Confirmação inválida.");
+          return;
+        }
 
-      await apiRequest("/admin/api/clear", {
-        method: "POST",
-        body: JSON.stringify({ scope })
+        await apiRequest("/admin/api/clear", {
+          method: "POST",
+          body: JSON.stringify({ scope })
+        });
+
+        await loadAll();
       });
-
-      await loadAll();
     }
-
     function switchSection(section) {
       state.section = section;
 
