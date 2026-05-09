@@ -1083,112 +1083,100 @@ function showModalMessage(title, message) {
 }
 
     async function createReminder() {
-  const defaultDate = new Date();
-  defaultDate.setHours(defaultDate.getHours() + 1);
-  defaultDate.setMinutes(0, 0, 0);
+      const defaultDate = new Date();
+      defaultDate.setHours(defaultDate.getHours() + 1);
+      defaultDate.setMinutes(0, 0, 0);
 
-  openFormModal("Criar lembrete", [
-    { name: "user_id", label: "ID do usuário", value: "" },
-    { name: "description", label: "Texto", type: "textarea", value: "" },
-    { name: "remind_at", label: "Data e hora", type: "datetime-local", value: toDatetimeLocalValue(defaultDate) },
-    { name: "channel_tags", label: "Canais/tags separados por vírgula", value: "whatsapp" },
-    {
-      name: "recurrence_type",
-      label: "Tipo",
-      type: "select",
-      value: "",
-      options: [
-        { value: "", label: "Único" },
-        { value: "daily", label: "Diário" },
-        { value: "business_days", label: "Dias úteis" },
-        { value: "weekly", label: "Semanal" },
-        { value: "monthly", label: "Mensal" },
-        { value: "yearly", label: "Anual" },
-        { value: "task", label: "Tarefa" },
-        { value: "countdown", label: "Countdown" }
-      ]
-    },
-    { name: "recurrence_value", label: "Valor da recorrência", value: "" }
-  ], async values => {
-    let recurrenceValue = values.recurrence_value.trim() || null;
+      openFormModal("Criar lembrete", [
+        { name: "user_id", label: "ID do usuÃ¡rio", value: "" },
+        { name: "description", label: "Texto", type: "textarea", value: "" },
+        { name: "remind_at", label: "Data e hora", type: "datetime-local", value: toDatetimeLocalValue(defaultDate) },
+        { name: "channel_tags", label: "Canais/tags separados por vÃ­rgula", value: "whatsapp" },
+        {
+          name: "recurrence_type",
+          label: "Tipo",
+          type: "select",
+          value: "",
+          options: [
+            { value: "", label: "Ãšnico" },
+            { value: "daily", label: "DiÃ¡rio" },
+            { value: "business_days", label: "Dias Ãºteis" },
+            { value: "weekly", label: "Semanal" },
+            { value: "monthly", label: "Mensal" },
+            { value: "yearly", label: "Anual" },
+            { value: "task", label: "Tarefa" },
+            { value: "countdown", label: "Countdown" }
+          ]
+        },
+        { name: "recurrence_value", label: "Valor da recorrÃªncia", value: "" }
+      ], async values => {
+        let recurrenceValue = values.recurrence_value.trim() || null;
 
-    if (["", "daily", "business_days", "task", "countdown"].includes(values.recurrence_type)) {
-      recurrenceValue = null;
+        if (["", "daily", "business_days", "task", "countdown"].includes(values.recurrence_type)) {
+          recurrenceValue = null;
+        }
+
+        if (values.recurrence_type === "weekly" && !/^[0-6]$/.test(values.recurrence_value.trim())) {
+          showModalMessage("Valor inválido", "Para semanal, use 0=seg, 1=ter, 2=qua, 3=qui, 4=sex, 5=sab, 6=dom.");
+          return;
+        }
+
+        if (values.recurrence_type === "monthly" && !/^([1-9]|[12][0-9]|3[01])$/.test(values.recurrence_value.trim())) {
+          showModalMessage("Valor inválido", "Para mensal, informe o dia do mês. Ex: 5");
+          return;
+        }
+
+        if (values.recurrence_type === "yearly" && !/^\d{2}\/\d{2}$/.test(values.recurrence_value.trim())) {
+          showModalMessage("Valor inválido", "Para anual, use DD/MM. Ex: 12/10");
+          return;
+        }
+
+        await apiRequest("/admin/api/lembretes", {
+          method: "POST",
+          body: JSON.stringify({
+            user_id: Number(values.user_id),
+            description: values.description.trim(),
+            remind_at: values.remind_at,
+            channel_tags: splitTags(values.channel_tags || "whatsapp"),
+            recurrence_type: values.recurrence_type || null,
+            recurrence_value: recurrenceValue
+          })
+        });
+
+        await loadAll();
+      });
+
+      const recurrenceTypeInput = document.getElementById("modal-field-recurrence_type");
+      const recurrenceValueInput = document.getElementById("modal-field-recurrence_value");
+      const recurrenceValueWrapper = recurrenceValueInput.closest(".field");
+      const recurrenceValueLabel = recurrenceValueWrapper.querySelector("label");
+
+      function updateRecurrenceValueField() {
+        const type = recurrenceTypeInput.value;
+
+        if (["", "daily", "business_days", "task", "countdown"].includes(type)) {
+          recurrenceValueWrapper.style.display = "none";
+          recurrenceValueInput.value = "";
+          return;
+        }
+
+        recurrenceValueWrapper.style.display = "grid";
+
+        if (type === "weekly") {
+          recurrenceValueLabel.textContent = "Dia da semana: 0=seg, 1=ter, 2=qua, 3=qui, 4=sex, 5=sab, 6=dom";
+          recurrenceValueInput.placeholder = "0";
+        } else if (type === "monthly") {
+          recurrenceValueLabel.textContent = "Dia do mÃªs";
+          recurrenceValueInput.placeholder = "5";
+        } else if (type === "yearly") {
+          recurrenceValueLabel.textContent = "Dia/mÃªs";
+          recurrenceValueInput.placeholder = "12/10";
+        }
+      }
+
+      recurrenceTypeInput.addEventListener("change", updateRecurrenceValueField);
+      updateRecurrenceValueField();
     }
-
-    if (values.recurrence_type === "weekly" && !/^[0-6]$/.test(values.recurrence_value.trim())) {
-      showModalMessage("Valor inválido", "Para semanal, use 0=seg, 1=ter, 2=qua, 3=qui, 4=sex, 5=sab, 6=dom.");
-      return;
-    }
-
-    if (values.recurrence_type === "monthly" && !/^([1-9]|[12][0-9]|3[01])$/.test(values.recurrence_value.trim())) {
-      showModalMessage("Valor inválido", "Para mensal, informe o dia do mês. Ex: 5");
-      return;
-    }
-
-    if (values.recurrence_type === "yearly" && !/^\d{2}\/\d{2}$/.test(values.recurrence_value.trim())) {
-      showModalMessage("Valor inválido", "Para anual, use DD/MM. Ex: 12/10");
-      return;
-    }
-
-    const remindAt = values.recurrence_type === "task"
-      ? `${new Date().getFullYear() + 20}-01-01T00:00`
-      : values.remind_at;
-
-    await apiRequest("/admin/api/lembretes", {
-      method: "POST",
-      body: JSON.stringify({
-        user_id: Number(values.user_id),
-        description: values.description.trim(),
-        remind_at: remindAt,
-        channel_tags: splitTags(values.channel_tags || "whatsapp"),
-        recurrence_type: values.recurrence_type || null,
-        recurrence_value: recurrenceValue
-      })
-    });
-
-    await loadAll();
-  });
-
-  const recurrenceTypeInput = document.getElementById("modal-field-recurrence_type");
-  const remindAtInput = document.getElementById("modal-field-remind_at");
-  const remindAtWrapper = remindAtInput.closest(".field");
-  const recurrenceValueInput = document.getElementById("modal-field-recurrence_value");
-  const recurrenceValueWrapper = recurrenceValueInput.closest(".field");
-  const recurrenceValueLabel = recurrenceValueWrapper.querySelector("label");
-
-  function updateRecurrenceValueField() {
-    const type = recurrenceTypeInput.value;
-
-    if (type === "task") {
-      remindAtWrapper.style.display = "none";
-    } else {
-      remindAtWrapper.style.display = "grid";
-    }
-
-    if (["", "daily", "business_days", "task", "countdown"].includes(type)) {
-      recurrenceValueWrapper.style.display = "none";
-      recurrenceValueInput.value = "";
-      return;
-    }
-
-    recurrenceValueWrapper.style.display = "grid";
-
-    if (type === "weekly") {
-      recurrenceValueLabel.textContent = "Dia da semana: 0=seg, 1=ter, 2=qua, 3=qui, 4=sex, 5=sab, 6=dom";
-      recurrenceValueInput.placeholder = "0";
-    } else if (type === "monthly") {
-      recurrenceValueLabel.textContent = "Dia do mês";
-      recurrenceValueInput.placeholder = "5";
-    } else if (type === "yearly") {
-      recurrenceValueLabel.textContent = "Dia/mês";
-      recurrenceValueInput.placeholder = "12/10";
-    }
-  }
-
-  recurrenceTypeInput.addEventListener("change", updateRecurrenceValueField);
-  updateRecurrenceValueField();
-}
 
     async function editReminder(id) {
       const item = state.reminders.find(reminder => reminder.id === id);
@@ -1443,5 +1431,4 @@ function showModalMessage(title, message) {
 </body>
 
 </html>
-
 
