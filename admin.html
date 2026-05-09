@@ -158,34 +158,34 @@
       flex-wrap: wrap;
     }
 
-input,
-select,
-textarea {
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 10px 12px;
-  font-size: 14px;
-  background: #0b1220;
-  color: var(--text);
-  outline: none;
-}
+    input,
+    select,
+    textarea {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 14px;
+      background: #0b1220;
+      color: var(--text);
+      outline: none;
+    }
 
-input:focus,
-select:focus,
-textarea:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
-}
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
+    }
 
-input::placeholder,
-textarea::placeholder {
-  color: #64748b;
-}
+    input::placeholder,
+    textarea::placeholder {
+      color: #64748b;
+    }
 
-select option {
-  background: #0b1220;
-  color: var(--text);
-}
+    select option {
+      background: #0b1220;
+      color: var(--text);
+    }
 
     .filter {
       width: min(420px, 100%);
@@ -336,11 +336,12 @@ select option {
       margin-bottom: 12px;
     }
 
-.field label {
-  font-size: 13px;
-  font-weight: 700;
-  color: #cbd5e1;
-}
+    .field label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #cbd5e1;
+    }
+
     .field input {
       width: 100%;
     }
@@ -400,18 +401,18 @@ select option {
       gap: 12px;
     }
 
-.modal textarea {
-  width: 100%;
-  min-height: 90px;
-  resize: vertical;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 10px 12px;
-  font-size: 14px;
-  font-family: inherit;
-  background: #0b1220;
-  color: var(--text);
-}
+    .modal textarea {
+      width: 100%;
+      min-height: 90px;
+      resize: vertical;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 14px;
+      font-family: inherit;
+      background: #0b1220;
+      color: var(--text);
+    }
 
     @media (max-width: 900px) {
       .app {
@@ -458,7 +459,7 @@ select option {
       <p>Painel administrativo</p>
 
       <div class="field">
-        <label for="username">UsuÃ¡rio</label>
+        <label for="username">Usuário</label>
         <input id="username" autocomplete="username" required />
       </div>
 
@@ -480,7 +481,7 @@ select option {
       </div>
 
       <button class="nav-button active" data-section="dashboard">Dashboard</button>
-      <button class="nav-button" data-section="users">UsuÃ¡rios</button>
+      <button class="nav-button" data-section="users">Usuários</button>
       <button class="nav-button" data-section="reminders">Lembretes</button>
       <button class="nav-button" data-section="channels">Canais</button>
       <button class="nav-button" data-section="groups">Grupos</button>
@@ -496,7 +497,7 @@ select option {
       <div class="topbar">
         <div>
           <h2 id="section-title">Dashboard</h2>
-          <p id="section-subtitle">VisÃ£o geral do backend e integraÃ§Ãµes.</p>
+          <p id="section-subtitle">Visão geral do backend e integrações.</p>
         </div>
         <div class="actions">
           <button class="ghost" onclick="loadAll()">Atualizar</button>
@@ -509,7 +510,7 @@ select option {
           <div class="metric"><span>RAM</span><strong id="m-ram">-</strong></div>
           <div class="metric"><span>Disco</span><strong id="m-disk">-</strong></div>
           <div class="metric"><span>Calendar</span><strong id="m-calendar">-</strong></div>
-          <div class="metric"><span>UsuÃ¡rios</span><strong id="m-users">-</strong></div>
+          <div class="metric"><span>Usuários</span><strong id="m-users">-</strong></div>
           <div class="metric"><span>Lembretes</span><strong id="m-reminders">-</strong></div>
           <div class="metric"><span>Canais</span><strong id="m-channels">-</strong></div>
           <div class="metric"><span>Grupos</span><strong id="m-groups">-</strong></div>
@@ -530,7 +531,7 @@ select option {
                   <th>Telefone</th>
                   <th>Status</th>
                   <th>Criado em</th>
-                  <th>AÃ§Ãµes</th>
+                  <th>Ações</th>
                 </tr>
               </thead>
               <tbody id="users-body"></tbody>
@@ -551,13 +552,13 @@ select option {
               <thead>
                 <tr>
                   <th>ID</th>
-                  <th>UsuÃ¡rio</th>
+                  <th>Usuário</th>
                   <th>Texto</th>
                   <th>Data</th>
                   <th>Canal</th>
                   <th>Tipo</th>
                   <th>Enviado</th>
-                  <th>AÃ§Ãµes</th>
+                  <th>Ações</th>
                 </tr>
               </thead>
               <tbody id="reminders-body"></tbody>
@@ -578,12 +579,12 @@ select option {
               <thead>
                 <tr>
                   <th>ID</th>
-                  <th>UsuÃ¡rio</th>
+                  <th>Usuário</th>
                   <th>Tag</th>
                   <th>Tipo</th>
                   <th>Destino</th>
                   <th>Ativo</th>
-                  <th>AÃ§Ãµes</th>
+                  <th>Ações</th>
                 </tr>
               </thead>
               <tbody id="channels-body"></tbody>
@@ -595,7 +596,7 @@ select option {
       <section id="section-groups" class="hidden">
         <div class="card">
           <div class="toolbar">
-            <input class="filter" id="filter-groups" placeholder="Filtrar por tag, usuÃ¡rio, canais..."
+            <input class="filter" id="filter-groups" placeholder="Filtrar por tag, Usuário, canais..."
               oninput="renderGroups()" />
             <button onclick="createGroup()">Criar grupo</button>
           </div>
@@ -604,10 +605,10 @@ select option {
               <thead>
                 <tr>
                   <th>ID</th>
-                  <th>UsuÃ¡rio</th>
+                  <th>Usuário</th>
                   <th>Tag</th>
                   <th>Canais</th>
-                  <th>AÃ§Ãµes</th>
+                  <th>Ações</th>
                 </tr>
               </thead>
               <tbody id="groups-body"></tbody>
@@ -653,13 +654,13 @@ select option {
     };
 
     const sectionMeta = {
-      dashboard: ["Dashboard", "VisÃ£o geral do backend e integraÃ§Ãµes."],
-      users: ["UsuÃ¡rios", "Gerencie usuÃ¡rios e bloqueios."],
+      dashboard: ["Dashboard", "Visão geral do backend e integrações."],
+      users: ["Usuários", "Gerencie Usuários e bloqueios."],
       reminders: ["Lembretes", "Edite ou remova lembretes."],
       channels: ["Canais", "Gerencie canais customizados."],
       groups: ["Grupos", "Gerencie macro-tags de canais."],
       logs: ["Logs", "Acompanhe os logs recentes do backend."],
-      danger: ["Zona de perigo", "OperaÃ§Ãµes destrutivas."]
+      danger: ["Zona de perigo", "Operações destrutivas."]
     };
 
     function escapeHtml(value) {
@@ -783,10 +784,10 @@ select option {
       document.getElementById("modal-root").innerHTML = "";
     }
 
-function openConfirmModal(title, message, confirmLabel, onConfirm) {
-  const root = document.getElementById("modal-root");
+    function openConfirmModal(title, message, confirmLabel, onConfirm) {
+      const root = document.getElementById("modal-root");
 
-  root.innerHTML = `
+      root.innerHTML = `
     <div class="modal-backdrop">
       <div class="modal">
         <h3>${escapeHtml(title)}</h3>
@@ -799,17 +800,17 @@ function openConfirmModal(title, message, confirmLabel, onConfirm) {
     </div>
   `;
 
-  document.getElementById("confirm-cancel").addEventListener("click", closeModal);
-  document.getElementById("confirm-ok").addEventListener("click", async () => {
-    await onConfirm();
-    closeModal();
-  });
-}
+      document.getElementById("confirm-cancel").addEventListener("click", closeModal);
+      document.getElementById("confirm-ok").addEventListener("click", async () => {
+        await onConfirm();
+        closeModal();
+      });
+    }
 
-function showModalMessage(title, message) {
-  const root = document.getElementById("modal-root");
+    function showModalMessage(title, message) {
+      const root = document.getElementById("modal-root");
 
-  root.innerHTML = `
+      root.innerHTML = `
     <div class="modal-backdrop">
       <div class="modal">
         <h3>${escapeHtml(title)}</h3>
@@ -821,8 +822,8 @@ function showModalMessage(title, message) {
     </div>
   `;
 
-  document.getElementById("message-ok").addEventListener("click", closeModal);
-}
+      document.getElementById("message-ok").addEventListener("click", closeModal);
+    }
 
     async function apiRequest(path, options = {}) {
       const response = await fetch(`${backendUrl}${path}`, {
@@ -837,7 +838,7 @@ function showModalMessage(title, message) {
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        throw new Error(data.error || "Erro na requisiÃ§Ã£o.");
+        throw new Error(data.error || "Erro na requisição.");
       }
 
       return data;
@@ -937,7 +938,7 @@ function showModalMessage(title, message) {
         `)
         .join("");
 
-      document.getElementById("users-body").innerHTML = rows || `<tr><td colspan="5">Nenhum usuÃ¡rio encontrado.</td></tr>`;
+      document.getElementById("users-body").innerHTML = rows || `<tr><td colspan="5">Nenhum Usuário encontrado.</td></tr>`;
     }
 
     function renderReminders() {
@@ -1000,8 +1001,8 @@ function showModalMessage(title, message) {
           <td>${escapeHtml(item.description)}</td>
           <td>${formatDate(item.remind_at)}</td>
           <td>${channelsText}</td>
-          <td>${escapeHtml(item.recurrence_type || "Ãºnico")}</td>
-          <td><span class="status-pill ${item.sent ? "ok" : "warn"}">${item.sent ? "Sim" : "NÃ£o"}</span></td>
+          <td>${escapeHtml(item.recurrence_type || "único")}</td>
+          <td><span class="status-pill ${item.sent ? "ok" : "warn"}">${item.sent ? "Sim" : "Não"}</span></td>
           <td>
             <button onclick="editReminder(${firstId})">Editar</button>
             <button class="danger" onclick="deleteReminder(${firstId})">Excluir</button>
@@ -1025,7 +1026,7 @@ function showModalMessage(title, message) {
             <td>@${escapeHtml(channel.tag)}</td>
             <td>${escapeHtml(channel.type)}</td>
             <td>${escapeHtml(channel.target)}</td>
-            <td><span class="status-pill ${channel.enabled ? "ok" : "bad"}">${channel.enabled ? "Sim" : "NÃ£o"}</span></td>
+            <td><span class="status-pill ${channel.enabled ? "ok" : "bad"}">${channel.enabled ? "Sim" : "Não"}</span></td>
             <td>
               <button onclick="editChannel(${channel.id})">Editar</button>
               <button class="danger" onclick="deleteChannel(${channel.id})">Excluir</button>
@@ -1059,136 +1060,136 @@ function showModalMessage(title, message) {
     }
 
     async function toggleUser(id) {
-  openConfirmModal(
-    "Alterar status do usuário",
-    "Deseja alterar o status deste usuário?",
-    "Alterar",
-    async () => {
-      await apiRequest(`/admin/api/usuarios/${id}/toggle-active`, { method: "PUT" });
-      await loadAll();
+      openConfirmModal(
+        "Alterar status do usuário",
+        "Deseja alterar o status deste usuário?",
+        "Alterar",
+        async () => {
+          await apiRequest(`/admin/api/usuarios/${id}/toggle-active`, { method: "PUT" });
+          await loadAll();
+        }
+      );
     }
-  );
-}
 
     async function deleteUser(id) {
-  openConfirmModal(
-    "Excluir usuário",
-    "Deseja excluir este usuário e todos os dados relacionados?",
-    "Excluir",
-    async () => {
-      await apiRequest(`/admin/api/usuarios/${id}`, { method: "DELETE" });
-      await loadAll();
+      openConfirmModal(
+        "Excluir usuário",
+        "Deseja excluir este usuário e todos os dados relacionados?",
+        "Excluir",
+        async () => {
+          await apiRequest(`/admin/api/usuarios/${id}`, { method: "DELETE" });
+          await loadAll();
+        }
+      );
     }
-  );
-}
 
     async function createReminder() {
-  const defaultDate = new Date();
-  defaultDate.setHours(defaultDate.getHours() + 1);
-  defaultDate.setMinutes(0, 0, 0);
+      const defaultDate = new Date();
+      defaultDate.setHours(defaultDate.getHours() + 1);
+      defaultDate.setMinutes(0, 0, 0);
 
-  openFormModal("Criar lembrete", [
-    { name: "user_id", label: "ID do usuário", value: "" },
-    { name: "description", label: "Texto", type: "textarea", value: "" },
-    { name: "remind_at", label: "Data e hora", type: "datetime-local", value: toDatetimeLocalValue(defaultDate) },
-    { name: "channel_tags", label: "Canais/tags separados por vírgula", value: "whatsapp" },
-    {
-      name: "recurrence_type",
-      label: "Tipo",
-      type: "select",
-      value: "",
-      options: [
-        { value: "", label: "Único" },
-        { value: "daily", label: "Diário" },
-        { value: "business_days", label: "Dias úteis" },
-        { value: "weekly", label: "Semanal" },
-        { value: "monthly", label: "Mensal" },
-        { value: "yearly", label: "Anual" },
-        { value: "task", label: "Tarefa" },
-        { value: "countdown", label: "Countdown" }
-      ]
-    },
-    { name: "recurrence_value", label: "Valor da recorrência", value: "" }
-  ], async values => {
-    let recurrenceValue = values.recurrence_value.trim() || null;
+      openFormModal("Criar lembrete", [
+        { name: "user_id", label: "ID do usuário", value: "" },
+        { name: "description", label: "Texto", type: "textarea", value: "" },
+        { name: "remind_at", label: "Data e hora", type: "datetime-local", value: toDatetimeLocalValue(defaultDate) },
+        { name: "channel_tags", label: "Canais/tags separados por vírgula", value: "whatsapp" },
+        {
+          name: "recurrence_type",
+          label: "Tipo",
+          type: "select",
+          value: "",
+          options: [
+            { value: "", label: "Único" },
+            { value: "daily", label: "Diário" },
+            { value: "business_days", label: "Dias úteis" },
+            { value: "weekly", label: "Semanal" },
+            { value: "monthly", label: "Mensal" },
+            { value: "yearly", label: "Anual" },
+            { value: "task", label: "Tarefa" },
+            { value: "countdown", label: "Countdown" }
+          ]
+        },
+        { name: "recurrence_value", label: "Valor da recorrência", value: "" }
+      ], async values => {
+        let recurrenceValue = values.recurrence_value.trim() || null;
 
-    if (["", "daily", "business_days", "task", "countdown"].includes(values.recurrence_type)) {
-      recurrenceValue = null;
+        if (["", "daily", "business_days", "task", "countdown"].includes(values.recurrence_type)) {
+          recurrenceValue = null;
+        }
+
+        if (values.recurrence_type === "weekly" && !/^[0-6]$/.test(values.recurrence_value.trim())) {
+          showModalMessage("Valor inválido", "Para semanal, use 0=seg, 1=ter, 2=qua, 3=qui, 4=sex, 5=sab, 6=dom.");
+          return;
+        }
+
+        if (values.recurrence_type === "monthly" && !/^([1-9]|[12][0-9]|3[01])$/.test(values.recurrence_value.trim())) {
+          showModalMessage("Valor inválido", "Para mensal, informe o dia do mês. Ex: 5");
+          return;
+        }
+
+        if (values.recurrence_type === "yearly" && !/^\d{2}\/\d{2}$/.test(values.recurrence_value.trim())) {
+          showModalMessage("Valor inválido", "Para anual, use DD/MM. Ex: 12/10");
+          return;
+        }
+
+        const remindAt = values.recurrence_type === "task"
+          ? `${new Date().getFullYear() + 20}-01-01T00:00`
+          : values.remind_at;
+
+        await apiRequest("/admin/api/lembretes", {
+          method: "POST",
+          body: JSON.stringify({
+            user_id: Number(values.user_id),
+            description: values.description.trim(),
+            remind_at: remindAt,
+            channel_tags: splitTags(values.channel_tags || "whatsapp"),
+            recurrence_type: values.recurrence_type || null,
+            recurrence_value: recurrenceValue
+          })
+        });
+
+        await loadAll();
+      });
+
+      const recurrenceTypeInput = document.getElementById("modal-field-recurrence_type");
+      const remindAtInput = document.getElementById("modal-field-remind_at");
+      const remindAtWrapper = remindAtInput.closest(".field");
+      const recurrenceValueInput = document.getElementById("modal-field-recurrence_value");
+      const recurrenceValueWrapper = recurrenceValueInput.closest(".field");
+      const recurrenceValueLabel = recurrenceValueWrapper.querySelector("label");
+
+      function updateRecurrenceValueField() {
+        const type = recurrenceTypeInput.value;
+
+        if (type === "task") {
+          remindAtWrapper.style.display = "none";
+        } else {
+          remindAtWrapper.style.display = "grid";
+        }
+
+        if (["", "daily", "business_days", "task", "countdown"].includes(type)) {
+          recurrenceValueWrapper.style.display = "none";
+          recurrenceValueInput.value = "";
+          return;
+        }
+
+        recurrenceValueWrapper.style.display = "grid";
+
+        if (type === "weekly") {
+          recurrenceValueLabel.textContent = "Dia da semana: 0=seg, 1=ter, 2=qua, 3=qui, 4=sex, 5=sab, 6=dom";
+          recurrenceValueInput.placeholder = "0";
+        } else if (type === "monthly") {
+          recurrenceValueLabel.textContent = "Dia do mês";
+          recurrenceValueInput.placeholder = "5";
+        } else if (type === "yearly") {
+          recurrenceValueLabel.textContent = "Dia/mês";
+          recurrenceValueInput.placeholder = "12/10";
+        }
+      }
+
+      recurrenceTypeInput.addEventListener("change", updateRecurrenceValueField);
+      updateRecurrenceValueField();
     }
-
-    if (values.recurrence_type === "weekly" && !/^[0-6]$/.test(values.recurrence_value.trim())) {
-      showModalMessage("Valor inválido", "Para semanal, use 0=seg, 1=ter, 2=qua, 3=qui, 4=sex, 5=sab, 6=dom.");
-      return;
-    }
-
-    if (values.recurrence_type === "monthly" && !/^([1-9]|[12][0-9]|3[01])$/.test(values.recurrence_value.trim())) {
-      showModalMessage("Valor inválido", "Para mensal, informe o dia do mês. Ex: 5");
-      return;
-    }
-
-    if (values.recurrence_type === "yearly" && !/^\d{2}\/\d{2}$/.test(values.recurrence_value.trim())) {
-      showModalMessage("Valor inválido", "Para anual, use DD/MM. Ex: 12/10");
-      return;
-    }
-
-    const remindAt = values.recurrence_type === "task"
-      ? `${new Date().getFullYear() + 20}-01-01T00:00`
-      : values.remind_at;
-
-    await apiRequest("/admin/api/lembretes", {
-      method: "POST",
-      body: JSON.stringify({
-        user_id: Number(values.user_id),
-        description: values.description.trim(),
-        remind_at: remindAt,
-        channel_tags: splitTags(values.channel_tags || "whatsapp"),
-        recurrence_type: values.recurrence_type || null,
-        recurrence_value: recurrenceValue
-      })
-    });
-
-    await loadAll();
-  });
-
-  const recurrenceTypeInput = document.getElementById("modal-field-recurrence_type");
-  const remindAtInput = document.getElementById("modal-field-remind_at");
-  const remindAtWrapper = remindAtInput.closest(".field");
-  const recurrenceValueInput = document.getElementById("modal-field-recurrence_value");
-  const recurrenceValueWrapper = recurrenceValueInput.closest(".field");
-  const recurrenceValueLabel = recurrenceValueWrapper.querySelector("label");
-
-  function updateRecurrenceValueField() {
-    const type = recurrenceTypeInput.value;
-
-    if (type === "task") {
-      remindAtWrapper.style.display = "none";
-    } else {
-      remindAtWrapper.style.display = "grid";
-    }
-
-    if (["", "daily", "business_days", "task", "countdown"].includes(type)) {
-      recurrenceValueWrapper.style.display = "none";
-      recurrenceValueInput.value = "";
-      return;
-    }
-
-    recurrenceValueWrapper.style.display = "grid";
-
-    if (type === "weekly") {
-      recurrenceValueLabel.textContent = "Dia da semana: 0=seg, 1=ter, 2=qua, 3=qui, 4=sex, 5=sab, 6=dom";
-      recurrenceValueInput.placeholder = "0";
-    } else if (type === "monthly") {
-      recurrenceValueLabel.textContent = "Dia do mês";
-      recurrenceValueInput.placeholder = "5";
-    } else if (type === "yearly") {
-      recurrenceValueLabel.textContent = "Dia/mês";
-      recurrenceValueInput.placeholder = "12/10";
-    }
-  }
-
-  recurrenceTypeInput.addEventListener("change", updateRecurrenceValueField);
-  updateRecurrenceValueField();
-}
 
     async function editReminder(id) {
       const item = state.reminders.find(reminder => reminder.id === id);
@@ -1211,20 +1212,20 @@ function showModalMessage(title, message) {
     }
 
     async function deleteReminder(id) {
-  openConfirmModal(
-    "Excluir lembrete",
-    "Deseja excluir este lembrete?",
-    "Excluir",
-    async () => {
-      await apiRequest(`/admin/api/lembretes/${id}`, { method: "DELETE" });
-      await loadAll();
+      openConfirmModal(
+        "Excluir lembrete",
+        "Deseja excluir este lembrete?",
+        "Excluir",
+        async () => {
+          await apiRequest(`/admin/api/lembretes/${id}`, { method: "DELETE" });
+          await loadAll();
+        }
+      );
     }
-  );
-}
 
     async function createChannel() {
       openFormModal("Criar canal", [
-        { name: "user_id", label: "ID do usuÃ¡rio", value: "" },
+        { name: "user_id", label: "ID do Usuário", value: "" },
         { name: "tag", label: "Tag do canal", value: "" },
         {
           name: "type",
@@ -1276,7 +1277,7 @@ function showModalMessage(title, message) {
           value: channel.enabled ? "sim" : "nao",
           options: [
             { value: "sim", label: "Sim" },
-            { value: "nao", label: "NÃ£o" }
+            { value: "nao", label: "Não" }
           ]
         }
       ], async values => {
@@ -1295,22 +1296,22 @@ function showModalMessage(title, message) {
     }
 
     async function deleteChannel(id) {
-  openConfirmModal(
-    "Excluir canal",
-    "Deseja excluir este canal?",
-    "Excluir",
-    async () => {
-      await apiRequest(`/admin/api/canais/${id}`, { method: "DELETE" });
-      await loadAll();
+      openConfirmModal(
+        "Excluir canal",
+        "Deseja excluir este canal?",
+        "Excluir",
+        async () => {
+          await apiRequest(`/admin/api/canais/${id}`, { method: "DELETE" });
+          await loadAll();
+        }
+      );
     }
-  );
-}
 
     async function createGroup() {
       openFormModal("Criar grupo", [
-        { name: "user_id", label: "ID do usuÃ¡rio", value: "" },
+        { name: "user_id", label: "ID do Usuário", value: "" },
         { name: "tag", label: "Tag do grupo", value: "" },
-        { name: "targets", label: "Canais separados por vÃ­rgula", value: "whatsapp, email" }
+        { name: "targets", label: "Canais separados por vírgula", value: "whatsapp, email" }
       ], async values => {
         const targets = values.targets.split(",").map(normalizeTag).filter(Boolean);
 
@@ -1333,7 +1334,7 @@ function showModalMessage(title, message) {
 
       openFormModal("Editar grupo", [
         { name: "tag", label: "Tag do grupo", value: group.tag },
-        { name: "targets", label: "Canais separados por vÃ­rgula", value: (group.targets || []).join(", ") }
+        { name: "targets", label: "Canais separados por vírgula", value: (group.targets || []).join(", ") }
       ], async values => {
         const targets = values.targets.split(",").map(normalizeTag).filter(Boolean);
 
@@ -1350,16 +1351,16 @@ function showModalMessage(title, message) {
     }
 
     async function deleteGroup(id) {
-  openConfirmModal(
-    "Excluir grupo",
-    "Deseja excluir este grupo?",
-    "Excluir",
-    async () => {
-      await apiRequest(`/admin/api/grupos/${id}`, { method: "DELETE" });
-      await loadAll();
+      openConfirmModal(
+        "Excluir grupo",
+        "Deseja excluir este grupo?",
+        "Excluir",
+        async () => {
+          await apiRequest(`/admin/api/grupos/${id}`, { method: "DELETE" });
+          await loadAll();
+        }
+      );
     }
-  );
-}
 
     async function clearData(scope) {
       const labels = {
@@ -1443,5 +1444,3 @@ function showModalMessage(title, message) {
 </body>
 
 </html>
-
-
