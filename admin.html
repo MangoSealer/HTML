@@ -1190,7 +1190,7 @@
       if (!document.getElementById("op-status-backend")) return;
 
       const [statusResult, calendarResult, oracleResult] = await Promise.allSettled([
-        apiRequest("/admin/api/operations/status"),
+        apiRequest("/admin/api/status"),
         apiRequest("/admin/api/operations/calendar/status"),
         apiRequest("/admin/api/operations/oracle-arm-loop/status")
       ]);
