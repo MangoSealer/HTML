@@ -300,6 +300,69 @@
       font-size: 13px;
     }
 
+    .log-box.small {
+      height: 280px;
+    }
+
+    .operations-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .operations-panel h3 {
+      margin: 0 0 10px;
+      font-size: 17px;
+    }
+
+    .operations-panel p {
+      color: var(--muted);
+      line-height: 1.5;
+      margin: 0 0 12px;
+      font-size: 14px;
+    }
+
+    .status-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+      color: #cbd5e1;
+      font-size: 14px;
+    }
+
+    .status-row:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .operations-result {
+      background: #0b1220;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: #cbd5e1;
+      font-family: Consolas, monospace;
+      font-size: 13px;
+      margin-top: 12px;
+      max-height: 260px;
+      overflow: auto;
+      padding: 14px;
+      white-space: pre-wrap;
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.52;
+    }
+
     .hidden {
       display: none !important;
     }
@@ -434,6 +497,10 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
+      .operations-grid {
+        grid-template-columns: 1fr;
+      }
+
       .main {
         padding: 18px;
       }
@@ -485,7 +552,7 @@
       <button class="nav-button" data-section="reminders">Lembretes</button>
       <button class="nav-button" data-section="channels">Canais</button>
       <button class="nav-button" data-section="groups">Grupos</button>
-      <button class="nav-button" data-section="logs">Logs</button>
+      <button class="nav-button" data-section="operations">Operações</button>
       <button class="nav-button" data-section="danger">Zona de perigo</button>
 
       <div class="sidebar-footer">
@@ -617,12 +684,136 @@
         </div>
       </section>
 
-      <section id="section-logs" class="hidden">
-        <div class="card">
-          <div class="toolbar">
-            <button onclick="loadLogs()">Atualizar logs</button>
+      <section id="section-operations" class="hidden">
+        <div class="operations-grid">
+          <div class="card operations-panel">
+            <div class="toolbar">
+              <h3>Status técnico</h3>
+              <button class="ghost" onclick="loadOperationsStatus()">Atualizar</button>
+            </div>
+            <div class="status-list">
+              <div class="status-row"><span>Backend</span><strong id="op-status-backend">-</strong></div>
+              <div class="status-row"><span>Gateway WhatsApp</span><strong id="op-status-gateway">-</strong></div>
+              <div class="status-row"><span>Containers</span><strong id="op-status-containers">-</strong></div>
+              <div class="status-row"><span>Uptime</span><strong id="op-status-uptime">-</strong></div>
+              <div class="status-row"><span>Recursos</span><strong id="op-status-resources">-</strong></div>
+              <div class="status-row"><span>Calendar</span><strong id="op-status-calendar">-</strong></div>
+              <div class="status-row"><span>Oracle ARM Loop</span><strong id="op-status-oracle">-</strong></div>
+              <div class="status-row"><span>Operações destrutivas</span><strong id="op-status-destructive">-</strong></div>
+            </div>
           </div>
-          <pre id="logs-box" class="log-box">Carregando logs...</pre>
+
+          <div class="card operations-panel">
+            <h3>Ações de backend/gateway</h3>
+            <p>Controles operacionais dos serviços principais.</p>
+            <div class="actions">
+              <button onclick="runOperation('Reiniciar backend', '/admin/api/operations/backend/restart')">Reiniciar backend</button>
+              <button onclick="runOperation('Reiniciar gateway WhatsApp', '/admin/api/operations/gateway/restart')">Reiniciar gateway</button>
+              <button onclick="runOperation('Enviar mensagem teste', '/admin/api/operations/test-admin-message')">Mensagem teste</button>
+            </div>
+          </div>
+
+          <div class="card operations-panel">
+            <h3>Clima e resumo</h3>
+            <p>Execução manual de rotinas auxiliares.</p>
+            <div class="actions">
+              <button onclick="runOperation('Rodar Resumo do Dia', '/admin/api/operations/daily-summary')">Rodar resumo</button>
+              <button onclick="runOperation('Testar clima/Open-Meteo', '/admin/api/operations/weather', { method: 'GET' })">Testar clima</button>
+            </div>
+          </div>
+
+          <div class="card operations-panel">
+            <h3>Google Calendar</h3>
+            <p id="op-calendar-message">Status ainda não carregado.</p>
+            <div class="actions">
+              <button onclick="loadCalendarStatus()">Ver status</button>
+              <button onclick="runOperation('Verificar token do Google Calendar', '/admin/api/operations/calendar/token-check')">Verificar token</button>
+            </div>
+          </div>
+
+          <div class="card operations-panel">
+            <h3>Backups</h3>
+            <p>Geração e limpeza de artefatos temporários da VPS.</p>
+            <div class="actions">
+              <button onclick="runOperation('Criar backup do projeto', '/admin/api/operations/backup/project')">Backup projeto</button>
+              <button onclick="runOperation('Criar backup do banco SQLite', '/admin/api/operations/backup/database')">Backup banco</button>
+              <button onclick="runOperation('Criar ZIP seguro para chat', '/admin/api/operations/backup/chat-zip')">Criar ZIP chat</button>
+              <button class="danger" onclick="runOperation('Remover ZIP temporário', '/admin/api/operations/backup/chat-zip', { method: 'DELETE' }, { strongText: 'REMOVER ZIP' })">Remover ZIP</button>
+            </div>
+          </div>
+
+          <div class="card operations-panel">
+            <h3>Nginx</h3>
+            <p>Validação, recarga e leitura de logs recentes.</p>
+            <div class="actions">
+              <button onclick="runOperation('Testar configuração do Nginx', '/admin/api/operations/nginx/test')">Testar config</button>
+              <button onclick="runOperation('Recarregar Nginx', '/admin/api/operations/nginx/reload', { method: 'POST' }, { strongText: 'RECARREGAR NGINX' })">Recarregar</button>
+              <button onclick="loadOperationLog('nginx')">Atualizar logs</button>
+            </div>
+          </div>
+
+          <div class="card operations-panel">
+            <h3>Oracle ARM Loop</h3>
+            <p>Status e controle do processo auxiliar.</p>
+            <div class="actions">
+              <button onclick="loadOracleStatus()">Ver status</button>
+              <button onclick="runOperation('Iniciar Oracle ARM Loop', '/admin/api/operations/oracle-arm-loop/start')">Iniciar</button>
+              <button onclick="runOperation('Reiniciar Oracle ARM Loop', '/admin/api/operations/oracle-arm-loop/restart')">Reiniciar</button>
+              <button class="danger" onclick="runOperation('Parar Oracle ARM Loop', '/admin/api/operations/oracle-arm-loop/stop', { method: 'POST' }, { strongText: 'PARAR ORACLE' })">Parar</button>
+              <button onclick="loadOperationLog('oracle')">Atualizar logs</button>
+            </div>
+          </div>
+
+          <div class="card operations-panel danger-zone">
+            <h3>Zona de perigo operacional</h3>
+            <p id="op-danger-message">Ações destrutivas ficam bloqueadas quando ADMIN_ALLOW_DESTRUCTIVE_OPS não está ativo.</p>
+            <div class="actions">
+              <button id="op-service-down-btn" class="danger" onclick="runOperation('Derrubar todo o serviço', '/admin/api/operations/service/down', { method: 'POST' }, { destructive: true, strongText: 'DERRUBAR SERVICO' })">Derrubar serviço</button>
+              <button id="op-vps-shutdown-btn" class="danger" onclick="runOperation('Desligar VPS', '/admin/api/operations/vps/shutdown', { method: 'POST' }, { destructive: true, strongText: 'DESLIGAR VPS', doubleConfirm: true })">Desligar VPS</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card operations-panel">
+          <div class="toolbar">
+            <h3>Resultado das operações</h3>
+            <button class="ghost" onclick="clearOperationResult()">Limpar</button>
+          </div>
+          <pre id="operations-result" class="operations-result">Nenhuma operação executada nesta sessão.</pre>
+        </div>
+
+        <div class="operations-grid">
+          <div class="card operations-panel">
+            <div class="toolbar">
+              <h3>Logs do backend/app</h3>
+              <button onclick="loadOperationLog('backend')">Atualizar</button>
+            </div>
+            <pre id="op-log-backend" class="log-box small">Carregando logs...</pre>
+          </div>
+
+          <div class="card operations-panel">
+            <div class="toolbar">
+              <h3>Logs do gateway WhatsApp</h3>
+              <button onclick="loadOperationLog('gateway')">Atualizar</button>
+            </div>
+            <pre id="op-log-gateway" class="log-box small">Carregando logs...</pre>
+          </div>
+
+          <div class="card operations-panel">
+            <div class="toolbar">
+              <h3>Logs do Nginx</h3>
+              <button onclick="loadOperationLog('nginx')">Atualizar</button>
+            </div>
+            <pre id="op-log-nginx" class="log-box small">Carregando logs...</pre>
+          </div>
+
+          <div class="card operations-panel">
+            <div class="toolbar">
+              <h3>Logs do Oracle ARM Loop</h3>
+              <button onclick="loadOperationLog('oracle')">Atualizar</button>
+            </div>
+            <pre id="op-log-oracle" class="log-box small">Carregando logs...</pre>
+          </div>
         </div>
       </section>
 
@@ -650,6 +841,12 @@
       channels: [],
       groups: [],
       stats: {},
+      operations: {
+        status: null,
+        calendar: null,
+        oracle: null,
+        logs: {}
+      },
       section: "dashboard"
     };
 
@@ -659,7 +856,7 @@
       reminders: ["Lembretes", "Edite ou remova lembretes."],
       channels: ["Canais", "Gerencie canais customizados."],
       groups: ["Grupos", "Gerencie macro-tags de canais."],
-      logs: ["Logs", "Acompanhe os logs recentes do backend."],
+      operations: ["Operações", "Status técnico, logs e ações seguras da infraestrutura."],
       danger: ["Zona de perigo", "Operações destrutivas."]
     };
 
@@ -769,6 +966,7 @@
 
       document.getElementById("modal-form").addEventListener("submit", async event => {
         event.preventDefault();
+        const form = event.currentTarget;
 
         const values = {};
         root.querySelectorAll("[data-name]").forEach(input => {
@@ -776,7 +974,9 @@
         });
 
         await onSubmit(values);
-        closeModal();
+        if (root.querySelector("#modal-form") === form) {
+          closeModal();
+        }
       });
     }
 
@@ -892,7 +1092,7 @@
     }
 
     async function loadLogs() {
-      if (state.section !== "logs" && !document.getElementById("logs-box")) return;
+      if (!document.getElementById("logs-box")) return;
 
       try {
         const data = await apiRequest("/admin/api/logs?lines=160");
@@ -902,6 +1102,211 @@
       } catch (error) {
         document.getElementById("logs-box").textContent = error.message;
       }
+    }
+
+    function formatOperationPayload(data) {
+      if (typeof data === "string") return data;
+      return JSON.stringify(data || {}, null, 2);
+    }
+
+    function getFirstValue(source, keys) {
+      if (!source) return undefined;
+      for (const key of keys) {
+        if (source[key] !== undefined && source[key] !== null) return source[key];
+      }
+      return undefined;
+    }
+
+    function truthyFlag(value) {
+      return value === true || value === 1 || value === "1" || String(value).toLowerCase() === "true";
+    }
+
+    function statusPill(value, okText = "OK", badText = "Erro") {
+      if (value && typeof value === "object") {
+        value = getFirstValue(value, ["ok", "running", "healthy", "status"]);
+      }
+      if (value === undefined || value === null) return `<span class="status-pill warn">Indefinido</span>`;
+      const ok = truthyFlag(value) || String(value).toLowerCase() === "ok" || String(value).toLowerCase() === "running";
+      return `<span class="status-pill ${ok ? "ok" : "bad"}">${ok ? okText : badText}</span>`;
+    }
+
+    function formatStatusText(value) {
+      if (value === undefined || value === null || value === "") return "-";
+      if (Array.isArray(value)) return value.join(", ");
+      if (typeof value === "object") return JSON.stringify(value);
+      return String(value);
+    }
+
+    function isDestructiveOpsAllowed() {
+      const status = state.operations.status || {};
+      return truthyFlag(getFirstValue(status, [
+        "ADMIN_ALLOW_DESTRUCTIVE_OPS",
+        "admin_allow_destructive_ops",
+        "allow_destructive_ops",
+        "destructive_ops_enabled"
+      ]));
+    }
+
+    function renderOperationsStatus() {
+      const status = state.operations.status || {};
+      const calendar = state.operations.calendar || getFirstValue(status, ["calendar"]) || {};
+      const oracle = state.operations.oracle || getFirstValue(status, ["oracle_arm_loop", "oracleArmLoop"]) || {};
+      const destructiveAllowed = isDestructiveOpsAllowed();
+
+      const backendValue = getFirstValue(status, ["backend", "backend_ok", "backend_running", "ok", "status"]);
+      const gatewayValue = getFirstValue(status, ["gateway", "gateway_ok", "gateway_running", "wa_gateway"]);
+      const calendarValue = getFirstValue(calendar, ["ok", "valid", "status"]);
+      const oracleValue = getFirstValue(oracle, ["ok", "running", "status"]);
+      const uptimeValue = getFirstValue(status, ["uptime", "system_uptime", "backend_uptime"]);
+      const containersValue = getFirstValue(status, ["containers", "services", "docker"]);
+      const resourcesValue = getFirstValue(status, ["resources", "resource_usage"]);
+      const resourcesText = resourcesValue || {
+        cpu: getFirstValue(status, ["cpu"]),
+        ram: getFirstValue(status, ["ram_percent", "memory_percent"]),
+        disk: getFirstValue(status, ["disk_percent"])
+      };
+
+      document.getElementById("op-status-backend").innerHTML = statusPill(backendValue);
+      document.getElementById("op-status-gateway").innerHTML = statusPill(gatewayValue);
+      document.getElementById("op-status-containers").textContent = formatStatusText(containersValue);
+      document.getElementById("op-status-uptime").textContent = formatStatusText(uptimeValue);
+      document.getElementById("op-status-resources").textContent = formatStatusText(resourcesText);
+      document.getElementById("op-status-calendar").innerHTML = statusPill(calendarValue);
+      document.getElementById("op-status-oracle").innerHTML = statusPill(oracleValue);
+      document.getElementById("op-status-destructive").innerHTML = destructiveAllowed
+        ? `<span class="status-pill warn">Ativas</span>`
+        : `<span class="status-pill bad">Bloqueadas</span>`;
+
+      document.getElementById("op-calendar-message").textContent = calendar.message || "Status do Calendar carregado.";
+      document.getElementById("op-danger-message").textContent = destructiveAllowed
+        ? "ADMIN_ALLOW_DESTRUCTIVE_OPS está ativo. Confirmação forte continua obrigatória."
+        : "Ações destrutivas bloqueadas porque ADMIN_ALLOW_DESTRUCTIVE_OPS não está ativo.";
+
+      document.getElementById("op-service-down-btn").disabled = !destructiveAllowed;
+      document.getElementById("op-vps-shutdown-btn").disabled = !destructiveAllowed;
+    }
+
+    async function loadOperationsStatus() {
+      if (!document.getElementById("op-status-backend")) return;
+
+      const [statusResult, calendarResult, oracleResult] = await Promise.allSettled([
+        apiRequest("/admin/api/operations/status"),
+        apiRequest("/admin/api/operations/calendar/status"),
+        apiRequest("/admin/api/operations/oracle-arm-loop/status")
+      ]);
+
+      state.operations.status = statusResult.status === "fulfilled" ? statusResult.value : {};
+      state.operations.calendar = calendarResult.status === "fulfilled" ? calendarResult.value : { ok: false, message: calendarResult.reason.message };
+      state.operations.oracle = oracleResult.status === "fulfilled" ? oracleResult.value : { ok: false, message: oracleResult.reason.message };
+      renderOperationsStatus();
+    }
+
+    async function loadCalendarStatus() {
+      try {
+        state.operations.calendar = await apiRequest("/admin/api/operations/calendar/status");
+        renderOperationsStatus();
+        setOperationResult("Status do Google Calendar", state.operations.calendar);
+      } catch (error) {
+        setOperationResult("Erro ao consultar Google Calendar", { error: error.message });
+      }
+    }
+
+    async function loadOracleStatus() {
+      try {
+        state.operations.oracle = await apiRequest("/admin/api/operations/oracle-arm-loop/status");
+        renderOperationsStatus();
+        setOperationResult("Status do Oracle ARM Loop", state.operations.oracle);
+      } catch (error) {
+        setOperationResult("Erro ao consultar Oracle ARM Loop", { error: error.message });
+      }
+    }
+
+    async function loadOperationLog(kind) {
+      const configs = {
+        backend: ["/admin/api/logs?lines=160", "op-log-backend"],
+        gateway: ["/admin/api/operations/gateway/logs?lines=100", "op-log-gateway"],
+        nginx: ["/admin/api/operations/nginx/logs?lines=100", "op-log-nginx"],
+        oracle: ["/admin/api/operations/oracle-arm-loop/logs?lines=100", "op-log-oracle"]
+      };
+      const config = configs[kind];
+      if (!config) return;
+
+      const [path, elementId] = config;
+      const box = document.getElementById(elementId);
+      if (!box) return;
+
+      try {
+        const data = await apiRequest(path);
+        box.textContent = data.logs || data.output || data.stdout || formatOperationPayload(data);
+        box.scrollTop = box.scrollHeight;
+      } catch (error) {
+        box.textContent = error.message;
+      }
+    }
+
+    async function loadOperationLogs() {
+      if (state.section !== "operations") return;
+      await Promise.all([
+        loadOperationLog("backend"),
+        loadOperationLog("gateway"),
+        loadOperationLog("nginx"),
+        loadOperationLog("oracle")
+      ]);
+    }
+
+    function setOperationResult(title, data) {
+      const box = document.getElementById("operations-result");
+      if (!box) return;
+      box.textContent = `${title}\n\n${formatOperationPayload(data)}`;
+      box.scrollTop = 0;
+    }
+
+    function clearOperationResult() {
+      const box = document.getElementById("operations-result");
+      if (box) box.textContent = "Nenhuma operação executada nesta sessão.";
+    }
+
+    function confirmOperation(title, options, onConfirm) {
+      const strongText = options.strongText;
+
+      if (!strongText) {
+        openConfirmModal(title, `Deseja executar "${title}"?`, "Executar", onConfirm);
+        return;
+      }
+
+      const fields = [
+        { name: "confirmation", label: `Digite ${strongText} para confirmar`, value: "" }
+      ];
+
+      if (options.doubleConfirm) {
+        fields.push({ name: "confirmation_again", label: `Digite ${strongText} novamente`, value: "" });
+      }
+
+      openFormModal(title, fields, async values => {
+        if (values.confirmation !== strongText || (options.doubleConfirm && values.confirmation_again !== strongText)) {
+          showModalMessage("Confirmação inválida", `Digite ${strongText} exatamente para executar esta operação.`);
+          return;
+        }
+
+        await onConfirm();
+      });
+    }
+
+    async function runOperation(title, path, requestOptions = { method: "POST" }, options = {}) {
+      if (options.destructive && !isDestructiveOpsAllowed()) {
+        showModalMessage("Operação bloqueada", "ADMIN_ALLOW_DESTRUCTIVE_OPS não está ativo no backend.");
+        return;
+      }
+
+      confirmOperation(title, options, async () => {
+        try {
+          const data = await apiRequest(path, requestOptions);
+          setOperationResult(title, data);
+          await loadOperationsStatus();
+        } catch (error) {
+          setOperationResult(`${title} falhou`, { error: error.message });
+        }
+      });
     }
 
     function renderDashboard() {
@@ -1406,7 +1811,10 @@
       document.getElementById("section-title").textContent = title;
       document.getElementById("section-subtitle").textContent = subtitle;
 
-      if (section === "logs") loadLogs();
+      if (section === "operations") {
+        loadOperationsStatus();
+        loadOperationLogs();
+      }
     }
 
     document.querySelectorAll(".nav-button").forEach(button => {
@@ -1438,8 +1846,8 @@
 
     setInterval(loadStatusOnly, 3000);
     setInterval(() => {
-      if (state.section === "logs") loadLogs();
-    }, 3000);
+      if (state.section === "operations") loadOperationsStatus();
+    }, 10000);
   </script>
 </body>
 
