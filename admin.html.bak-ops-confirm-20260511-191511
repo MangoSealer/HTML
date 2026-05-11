@@ -694,11 +694,12 @@
             <div class="status-list">
               <div class="status-row"><span>Backend</span><strong id="op-status-backend">-</strong></div>
               <div class="status-row"><span>Gateway WhatsApp</span><strong id="op-status-gateway">-</strong></div>
+              <div class="status-row"><span>Containers</span><strong id="op-status-containers">-</strong></div>
+              <div class="status-row"><span>Uptime</span><strong id="op-status-uptime">-</strong></div>
               <div class="status-row"><span>Recursos</span><strong id="op-status-resources">-</strong></div>
               <div class="status-row"><span>Calendar</span><strong id="op-status-calendar">-</strong></div>
               <div class="status-row"><span>Oracle ARM Loop</span><strong id="op-status-oracle">-</strong></div>
-              <div class="status-row"><span>Operações destrutivas</span><strong id="op-status-destructive">-</strong>
-              </div>
+              <div class="status-row"><span>Operações destrutivas</span><strong id="op-status-destructive">-</strong></div>
             </div>
           </div>
 
@@ -706,14 +707,9 @@
             <h3>Ações de backend/gateway</h3>
             <p>Controles operacionais dos serviços principais.</p>
             <div class="actions">
-              <button onclick="runOperation('Reiniciar backend', '/admin/api/operations/backend/restart')">Reiniciar
-                backend</button>
-              <button
-                onclick="runOperation('Reiniciar gateway WhatsApp', '/admin/api/operations/gateway/restart')">Reiniciar
-                gateway</button>
-              <button
-                onclick="runOperation('Enviar mensagem teste', '/admin/api/operations/test-admin-message')">Mensagem
-                teste</button>
+              <button onclick="runOperation('Reiniciar backend', '/admin/api/operations/backend/restart')">Reiniciar backend</button>
+              <button onclick="runOperation('Reiniciar gateway WhatsApp', '/admin/api/operations/gateway/restart')">Reiniciar gateway</button>
+              <button onclick="runOperation('Enviar mensagem teste', '/admin/api/operations/test-admin-message')">Mensagem teste</button>
             </div>
           </div>
 
@@ -721,11 +717,8 @@
             <h3>Clima e resumo</h3>
             <p>Execução manual de rotinas auxiliares.</p>
             <div class="actions">
-              <button onclick="runOperation('Rodar Resumo do Dia', '/admin/api/operations/daily-summary')">Rodar
-                resumo</button>
-              <button
-                onclick="runOperation('Testar clima/Open-Meteo', '/admin/api/operations/weather', { method: 'GET' })">Testar
-                clima</button>
+              <button onclick="runOperation('Rodar Resumo do Dia', '/admin/api/operations/daily-summary')">Rodar resumo</button>
+              <button onclick="runOperation('Testar clima/Open-Meteo', '/admin/api/operations/weather', { method: 'GET' })">Testar clima</button>
             </div>
           </div>
 
@@ -734,9 +727,7 @@
             <p id="op-calendar-message">Status ainda não carregado.</p>
             <div class="actions">
               <button onclick="loadCalendarStatus()">Ver status</button>
-              <button
-                onclick="runOperation('Verificar token do Google Calendar', '/admin/api/operations/calendar/token-check')">Verificar
-                token</button>
+              <button onclick="runOperation('Verificar token do Google Calendar', '/admin/api/operations/calendar/token-check')">Verificar token</button>
             </div>
           </div>
 
@@ -744,17 +735,10 @@
             <h3>Backups</h3>
             <p>Geração e limpeza de artefatos temporários da VPS.</p>
             <div class="actions">
-              <button onclick="runOperation('Criar backup do projeto', '/admin/api/operations/backup/project')">Backup
-                projeto</button>
-              <button
-                onclick="runOperation('Criar backup do banco SQLite', '/admin/api/operations/backup/database')">Backup
-                banco</button>
-              <button
-                onclick="runOperation('Criar ZIP seguro para chat', '/admin/api/operations/backup/chat-zip')">Criar ZIP
-                chat</button>
-              <button class="danger"
-                onclick="runOperation('Remover ZIP temporário', '/admin/api/operations/backup/chat-zip', { method: 'DELETE' }, { strongText: 'REMOVER ZIP' })">Remover
-                ZIP</button>
+              <button onclick="runOperation('Criar backup do projeto', '/admin/api/operations/backup/project')">Backup projeto</button>
+              <button onclick="runOperation('Criar backup do banco SQLite', '/admin/api/operations/backup/database')">Backup banco</button>
+              <button onclick="runOperation('Criar ZIP seguro para chat', '/admin/api/operations/backup/chat-zip')">Criar ZIP chat</button>
+              <button class="danger" onclick="runOperation('Remover ZIP temporário', '/admin/api/operations/backup/chat-zip', { method: 'DELETE' }, { strongText: 'REMOVER ZIP' })">Remover ZIP</button>
             </div>
           </div>
 
@@ -762,10 +746,8 @@
             <h3>Nginx</h3>
             <p>Validação, recarga e leitura de logs recentes.</p>
             <div class="actions">
-              <button onclick="runOperation('Testar configuração do Nginx', '/admin/api/operations/nginx/test')">Testar
-                config</button>
-              <button
-                onclick="runOperation('Recarregar Nginx', '/admin/api/operations/nginx/reload', { method: 'POST' }, { strongText: 'RECARREGAR NGINX' })">Recarregar</button>
+              <button onclick="runOperation('Testar configuração do Nginx', '/admin/api/operations/nginx/test')">Testar config</button>
+              <button onclick="runOperation('Recarregar Nginx', '/admin/api/operations/nginx/reload', { method: 'POST' }, { strongText: 'RECARREGAR NGINX' })">Recarregar</button>
               <button onclick="loadOperationLog('nginx')">Atualizar logs</button>
             </div>
           </div>
@@ -775,27 +757,19 @@
             <p>Status e controle do processo auxiliar.</p>
             <div class="actions">
               <button onclick="loadOracleStatus()">Ver status</button>
-              <button
-                onclick="runOperation('Iniciar Oracle ARM Loop', '/admin/api/operations/oracle-arm-loop/start')">Iniciar</button>
-              <button
-                onclick="runOperation('Reiniciar Oracle ARM Loop', '/admin/api/operations/oracle-arm-loop/restart')">Reiniciar</button>
-              <button class="danger"
-                onclick="runOperation('Parar Oracle ARM Loop', '/admin/api/operations/oracle-arm-loop/stop', { method: 'POST' }, { strongText: 'PARAR ORACLE' })">Parar</button>
+              <button onclick="runOperation('Iniciar Oracle ARM Loop', '/admin/api/operations/oracle-arm-loop/start')">Iniciar</button>
+              <button onclick="runOperation('Reiniciar Oracle ARM Loop', '/admin/api/operations/oracle-arm-loop/restart')">Reiniciar</button>
+              <button class="danger" onclick="runOperation('Parar Oracle ARM Loop', '/admin/api/operations/oracle-arm-loop/stop', { method: 'POST' }, { strongText: 'PARAR ORACLE' })">Parar</button>
               <button onclick="loadOperationLog('oracle')">Atualizar logs</button>
             </div>
           </div>
 
           <div class="card operations-panel danger-zone">
             <h3>Zona de perigo operacional</h3>
-            <p id="op-danger-message">Ações destrutivas ficam bloqueadas quando ADMIN_ALLOW_DESTRUCTIVE_OPS não está
-              ativo.</p>
+            <p id="op-danger-message">Ações destrutivas ficam bloqueadas quando ADMIN_ALLOW_DESTRUCTIVE_OPS não está ativo.</p>
             <div class="actions">
-              <button id="op-service-down-btn" class="danger"
-                onclick="runOperation('Derrubar todo o serviço', '/admin/api/operations/service/down', { method: 'POST' }, { destructive: true, strongText: 'DERRUBAR SERVICO' })">Derrubar
-                serviço</button>
-              <button id="op-vps-shutdown-btn" class="danger"
-                onclick="runOperation('Desligar VPS', '/admin/api/operations/vps/shutdown', { method: 'POST' }, { destructive: true, strongText: 'DESLIGAR VPS', doubleConfirm: true })">Desligar
-                VPS</button>
+              <button id="op-service-down-btn" class="danger" onclick="runOperation('Derrubar todo o serviço', '/admin/api/operations/service/down', { method: 'POST' }, { destructive: true, strongText: 'DERRUBAR SERVICO' })">Derrubar serviço</button>
+              <button id="op-vps-shutdown-btn" class="danger" onclick="runOperation('Desligar VPS', '/admin/api/operations/vps/shutdown', { method: 'POST' }, { destructive: true, strongText: 'DESLIGAR VPS', doubleConfirm: true })">Desligar VPS</button>
             </div>
           </div>
         </div>
@@ -870,7 +844,7 @@
       operations: {
         status: null,
         calendar: null,
-        oracle: null,\n        gateway: null,
+        oracle: null,
         logs: {}
       },
       section: "dashboard"
@@ -1175,55 +1149,35 @@
 
     function renderOperationsStatus() {
       const status = state.operations.status || {};
-      const gateway = state.operations.gateway || {};
-      const calendarResponse = state.operations.calendar || {};
-      const calendar = calendarResponse.calendar || calendarResponse;
-      const oracle = state.operations.oracle || {};
+      const calendar = state.operations.calendar || getFirstValue(status, ["calendar"]) || {};
+      const oracle = state.operations.oracle || getFirstValue(status, ["oracle_arm_loop", "oracleArmLoop"]) || {};
       const destructiveAllowed = isDestructiveOpsAllowed();
 
-      const backendOk = status && (
-        status.cpu !== undefined ||
-        status.ram !== undefined ||
-        status.ram_percent !== undefined ||
-        status.disk !== undefined ||
-        status.disk_percent !== undefined
-      );
+      const backendValue = getFirstValue(status, ["backend", "backend_ok", "backend_running", "ok", "status"]);
+      const gatewayValue = getFirstValue(status, ["gateway", "gateway_ok", "gateway_running", "wa_gateway"]);
+      const calendarValue = getFirstValue(calendar, ["ok", "valid", "status"]);
+      const oracleValue = getFirstValue(oracle, ["ok", "running", "status"]);
+      const uptimeValue = getFirstValue(status, ["uptime", "system_uptime", "backend_uptime"]);
+      const containersValue = getFirstValue(status, ["containers", "services", "docker"]);
+      const resourcesValue = getFirstValue(status, ["resources", "resource_usage"]);
+      const resourcesText = resourcesValue || {
+        cpu: getFirstValue(status, ["cpu"]),
+        ram: getFirstValue(status, ["ram_percent", "memory_percent"]),
+        disk: getFirstValue(status, ["disk_percent"])
+      };
 
-      const gatewayOk = gateway.status === "sucesso" || gateway.ok === true || gateway.http_status;
-
-      const calendarOk = calendar.ok === true || calendar.valid === true;
-
-      const oracleOk = oracle.ok === true || oracle.status === "sucesso";
-
-      const cpu = status.cpu ?? "-";
-      const ram = status.ram_percent ?? status.ram ?? "-";
-      const disk = status.disk_percent ?? status.disk ?? "-";
-
-      document.getElementById("op-status-backend").innerHTML = backendOk
-        ? `<span class="status-pill ok">Online</span>`
-        : `<span class="status-pill bad">Erro</span>`;
-
-      document.getElementById("op-status-gateway").innerHTML = gatewayOk
-        ? `<span class="status-pill ok">Online</span>`
-        : `<span class="status-pill bad">Erro</span>`;
-
-      document.getElementById("op-status-resources").textContent = `CPU ${cpu}% · RAM ${ram}% · Disco ${disk}%`;
-
-      document.getElementById("op-status-calendar").innerHTML = calendarOk
-        ? `<span class="status-pill ok">OK</span>`
-        : `<span class="status-pill bad">Erro</span>`;
-
-      document.getElementById("op-status-oracle").innerHTML = oracleOk
-        ? `<span class="status-pill ok">Ativo</span>`
-        : `<span class="status-pill bad">Erro</span>`;
-
+      document.getElementById("op-status-backend").innerHTML = statusPill(backendValue);
+      document.getElementById("op-status-gateway").innerHTML = statusPill(gatewayValue);
+      document.getElementById("op-status-containers").textContent = formatStatusText(containersValue);
+      document.getElementById("op-status-uptime").textContent = formatStatusText(uptimeValue);
+      document.getElementById("op-status-resources").textContent = formatStatusText(resourcesText);
+      document.getElementById("op-status-calendar").innerHTML = statusPill(calendarValue);
+      document.getElementById("op-status-oracle").innerHTML = statusPill(oracleValue);
       document.getElementById("op-status-destructive").innerHTML = destructiveAllowed
         ? `<span class="status-pill warn">Ativas</span>`
         : `<span class="status-pill bad">Bloqueadas</span>`;
 
-      document.getElementById("op-calendar-message").textContent =
-        calendar.message || calendar.error || calendarResponse.error || "Status do Calendar carregado.";
-
+      document.getElementById("op-calendar-message").textContent = calendar.message || "Status do Calendar carregado.";
       document.getElementById("op-danger-message").textContent = destructiveAllowed
         ? "ADMIN_ALLOW_DESTRUCTIVE_OPS está ativo. Confirmação forte continua obrigatória."
         : "Ações destrutivas bloqueadas porque ADMIN_ALLOW_DESTRUCTIVE_OPS não está ativo.";
@@ -1246,6 +1200,7 @@
       state.operations.oracle = oracleResult.status === "fulfilled" ? oracleResult.value : { ok: false, message: oracleResult.reason.message };
       renderOperationsStatus();
     }
+
     async function loadCalendarStatus() {
       try {
         state.operations.calendar = await apiRequest("/admin/api/operations/calendar/status");
@@ -1345,16 +1300,7 @@
 
       confirmOperation(title, options, async () => {
         try {
-          const method = String(requestOptions.method || "POST").toUpperCase();
-          const finalOptions = { ...requestOptions };
-
-          if (!finalOptions.body && method !== "GET" && method !== "DELETE") {
-            finalOptions.body = JSON.stringify({
-              confirm: options.destructive ? options.strongText : true
-            });
-          }
-
-          const data = await apiRequest(path, finalOptions);
+          const data = await apiRequest(path, requestOptions);
           setOperationResult(title, data);
           await loadOperationsStatus();
         } catch (error) {
@@ -1906,3 +1852,4 @@
 </body>
 
 </html>
+
