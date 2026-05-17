@@ -1,395 +1,940 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meu Painel - Schedule Notify</title>
+  <link rel="icon" href="./assets/seasky.ico">
+  <link rel="stylesheet" href="./style/admin.css">
+  <style>
+    .split-grid {
+      display: grid;
+      grid-template-columns: minmax(320px, 0.8fr) minmax(0, 1.2fr);
+      gap: 14px;
+      align-items: start;
+    }
 
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
 
-    <style>
-        body {
-            font-family: sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f4f9;
-            color: #333;
-        }
+    .form-grid .wide,
+    .field.wide {
+      grid-column: 1 / -1;
+    }
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
+    .inline-fields {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: end;
+    }
 
-        h1 {
-            color: #0066cc;
-            font-size: 24px;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
-        }
+    .inline-fields .field {
+      min-width: 170px;
+      margin-bottom: 0;
+    }
 
-        h2 {
-            color: #555;
-            font-size: 18px;
-            margin-top: 30px;
-        }
+    .empty-state {
+      color: var(--muted);
+      font-size: 14px;
+      padding: 18px;
+      text-align: center;
+    }
 
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-top: 15px;
-            font-size: 14px;
-        }
+    .notice {
+      background: #0b1220;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: #cbd5e1;
+      font-size: 14px;
+      line-height: 1.5;
+      padding: 14px;
+    }
 
-        th,
-        td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
-        }
+    .token-card {
+      width: min(520px, 100%);
+    }
 
-        th {
-            background-color: #f8f9fa;
-        }
+    .table-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
 
-        .action-cell {
-            display: flex;
-            gap: 8px;
-        }
+    .table-actions button {
+      padding: 7px 10px;
+      font-size: 12px;
+    }
 
+    .details-list {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+    }
 
-        .btn {
-            background-color: #aa0000;
-        }
+    .details-row {
+      display: grid;
+      grid-template-columns: 150px minmax(0, 1fr);
+      gap: 10px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
 
-        .btn-edit {
-            background-color: #e69500;
-            color: white;
-            padding: 6px 12px;
-            text-decoration: none;
-            border: none;
-            cursor: pointer;
-            font-size: 12px;
-            border-radius: 3px;
-            display: inline-block;
-        }
+    .details-row:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
 
-        .btn-edit:hover {
-            background-color: #cc8400;
-        }
+    .details-row dt {
+      color: var(--muted);
+      font-size: 13px;
+      margin: 0;
+    }
 
-        .btn-delete {
-            color: white;
-            background-color: #cc0000;
-            border: none;
-            padding: 6px 12px;
-            cursor: pointer;
-            font-size: 12px;
-            border-radius: 3px;
-        }
+    .details-row dd {
+      color: var(--text);
+      margin: 0;
+      overflow-wrap: anywhere;
+    }
 
-        .btn-logout {
-            background-color: #555;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            cursor: pointer;
-            font-size: 13px;
-            border-radius: 3px;
-            float: right;
-        }
+    .message.ok-message {
+      color: #86efac;
+    }
 
-        .btn-logout:hover {
-            background-color: #333;
-        }
+    @media (max-width: 1000px) {
+      .split-grid {
+        grid-template-columns: 1fr;
+      }
+    }
 
-        .btn-delete:hover {
-            background-color: #aa0000;
-        }
+    @media (max-width: 720px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
 
-        @media (max-width: 600px) {
+      .inline-fields {
+        display: grid;
+      }
 
-            table,
-            thead,
-            tbody,
-            th,
-            td,
-            tr {
-                display: block;
-            }
+      .inline-fields .field {
+        min-width: 0;
+      }
 
-            th {
-                display: none;
-            }
-
-            td {
-                position: relative;
-                padding-left: 50%;
-                border: none;
-                border-bottom: 1px solid #eee;
-                min-height: 35px;
-            }
-
-            td:before {
-                position: absolute;
-                top: 10px;
-                left: 10px;
-                width: 45%;
-                padding-right: 10px;
-                white-space: nowrap;
-                font-weight: bold;
-                content: attr(data-label);
-            }
-
-            .action-cell {
-                padding-left: 50%;
-            }
-        }
-
-        .info-text {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 20px;
-        }
-    </style>
-
+      .details-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 
 <body>
+  <div id="auth-screen" class="login-screen">
+    <form id="token-form" class="login-card token-card">
+      <h1>Schedule Notify</h1>
+      <p>Painel do usuário</p>
 
-    <div id="painel-app">
-        <p id="painel-status">Carregando dados...</p>
+      <div class="notice">
+        Abra pelo link recebido no WhatsApp ou cole o token do magic link abaixo.
+      </div>
 
-        <div id="painel-conteudo" style="display: none;">
-            <button class="btn-logout" onclick="logoutPainel()">Sair</button>
+      <div class="field" style="margin-top: 14px;">
+        <label for="token-input">Token de acesso</label>
+        <input id="token-input" autocomplete="off" placeholder="Cole o token aqui" />
+      </div>
 
-            <h2>Meus Lembretes</h2>
-            <ul id="lista-lembretes"></ul>
+      <button type="submit" style="width: 100%;">Entrar</button>
+      <div id="auth-message" class="message"></div>
+    </form>
+  </div>
 
-            <h2>Meus Canais</h2>
-            <ul id="lista-canais"></ul>
-            <h2>Meus Grupos</h2>
-            <button class="btn-edit" onclick="criarGrupo()">Criar grupo</button>
-            <ul id="lista-grupos"></ul>
+  <div id="app" class="app hidden">
+    <aside class="sidebar">
+      <div class="brand">
+        <h1>Schedule Notify</h1>
+        <span id="user-summary">Meu painel</span>
+      </div>
+
+      <button class="nav-button active" data-section="dashboard">Dashboard</button>
+      <button class="nav-button" data-section="reminders">Lembretes</button>
+      <button class="nav-button" data-section="channels">Canais</button>
+      <button class="nav-button" data-section="groups">Grupos</button>
+
+      <div class="sidebar-footer">
+        <button class="secondary" style="width: 100%;" onclick="logoutPanel()">Sair</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h2 id="section-title">Dashboard</h2>
+          <p id="section-subtitle">Resumo dos seus lembretes, canais e grupos.</p>
+        </div>
+        <div class="actions">
+          <button class="ghost" onclick="loadAll()">Atualizar</button>
+        </div>
+      </div>
+
+      <div id="global-message" class="message"></div>
+
+      <section id="section-dashboard">
+        <div class="grid">
+          <div class="metric"><span>Lembretes pendentes</span><strong id="m-pending">-</strong></div>
+          <div class="metric"><span>Canais ativos</span><strong id="m-channels">-</strong></div>
+          <div class="metric"><span>Grupos</span><strong id="m-groups">-</strong></div>
+          <div class="metric"><span>Status</span><strong id="m-user-status">-</strong></div>
         </div>
 
-    </div>
+        <div class="split-grid" style="margin-top: 14px;">
+          <div class="card">
+            <div class="toolbar">
+              <h3 style="margin: 0;">Criar por texto</h3>
+            </div>
+            <form id="parse-form" class="modal-grid">
+              <div class="field">
+                <label for="parse-text">Comando</label>
+                <textarea id="parse-text" placeholder="10m tomar agua @whatsapp" required></textarea>
+              </div>
+              <button type="submit">Criar lembrete</button>
+            </form>
+            <p class="notice" style="margin: 12px 0 0;">Aceita a mesma sintaxe do WhatsApp: horários, recorrências,
+              countdown e tasks.</p>
+          </div>
 
-    <script>
+          <div class="card">
+            <div class="toolbar">
+              <h3 style="margin: 0;">Próximos lembretes</h3>
+              <button class="ghost" onclick="setSection('reminders')">Ver todos</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Texto</th>
+                    <th>Data</th>
+                    <th>Canal</th>
+                  </tr>
+                </thead>
+                <tbody id="dashboard-reminders-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
 
-        const backendUrl = "https://painel.danilosn.work";
+      <section id="section-reminders" class="hidden">
+        <div class="card">
+          <form id="reminder-form" class="form-grid">
+            <input type="hidden" id="reminder-id" />
+            <div class="field wide">
+              <label for="reminder-description">Descrição</label>
+              <input id="reminder-description" required placeholder="consulta, reunião, pagar boleto..." />
+            </div>
+            <div class="field">
+              <label for="reminder-at">Data e hora</label>
+              <input id="reminder-at" type="datetime-local" required />
+            </div>
+            <div class="field">
+              <label for="reminder-channel-tags">Canais/tags</label>
+              <input id="reminder-channel-tags" required placeholder="whatsapp, email, trabalho" />
+            </div>
+            <div class="field">
+              <label for="reminder-recurrence-type">Recorrência</label>
+              <input id="reminder-recurrence-type" placeholder="daily, weekly..." />
+            </div>
+            <div class="field">
+              <label for="reminder-recurrence-value">Valor da recorrência</label>
+              <input id="reminder-recurrence-value" placeholder="seg 19:00, 2..." />
+            </div>
+            <div class="actions wide">
+              <button type="submit" id="reminder-submit">Criar lembrete</button>
+              <button type="button" class="ghost" onclick="resetReminderForm()">Limpar</button>
+            </div>
+          </form>
+        </div>
 
-        function iniciarPainel() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const tokenUrl = urlParams.get('token');
+        <div class="card">
+          <div class="toolbar">
+            <div class="inline-fields">
+              <div class="field">
+                <label for="reminder-status">Status</label>
+                <select id="reminder-status" onchange="loadReminders()">
+                  <option value="pendentes">Pendentes</option>
+                  <option value="enviados">Enviados</option>
+                  <option value="todos">Todos</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="reminder-type">Tipo</label>
+                <select id="reminder-type" onchange="loadReminders()">
+                  <option value="todos">Todos</option>
+                  <option value="unicos">Únicos</option>
+                  <option value="recorrentes">Recorrentes</option>
+                  <option value="countdown">Countdown</option>
+                  <option value="tasks">Tasks</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="filter-reminders">Filtro</label>
+                <input id="filter-reminders" class="filter" placeholder="Texto, canal, ID..." oninput="renderReminders()" />
+              </div>
+            </div>
+            <button class="ghost" onclick="loadReminders()">Atualizar lista</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Texto</th>
+                  <th>Data</th>
+                  <th>Canal</th>
+                  <th>Tipo</th>
+                  <th>Enviado</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="reminders-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
 
-            if (tokenUrl) {
-                localStorage.setItem('user_session_token', tokenUrl);
-                window.history.replaceState({}, document.title, window.location.pathname);
-            }
+      <section id="section-channels" class="hidden">
+        <div class="card">
+          <form id="channel-form" class="form-grid">
+            <input type="hidden" id="channel-id" />
+            <div class="field">
+              <label for="channel-tag">Tag</label>
+              <input id="channel-tag" required placeholder="trabalho" />
+            </div>
+            <div class="field">
+              <label for="channel-type">Tipo</label>
+              <select id="channel-type">
+                <option value="email">Email</option>
+                <option value="whatsapp">WhatsApp</option>
+              </select>
+            </div>
+            <div class="field wide">
+              <label for="channel-target">Destino</label>
+              <input id="channel-target" required placeholder="email@exemplo.com ou 5511999999999" />
+            </div>
+            <label class="field">
+              <span>Ativo</span>
+              <select id="channel-enabled">
+                <option value="true">Sim</option>
+                <option value="false">Não</option>
+              </select>
+            </label>
+            <div class="actions wide">
+              <button type="submit" id="channel-submit">Criar canal</button>
+              <button type="button" class="ghost" onclick="resetChannelForm()">Limpar</button>
+            </div>
+          </form>
+        </div>
 
-            const token = localStorage.getItem('user_session_token');
+        <div class="card">
+          <div class="toolbar">
+            <input id="filter-channels" class="filter" placeholder="Filtrar por tag, tipo ou destino..."
+              oninput="renderChannels()" />
+            <button class="ghost" onclick="loadChannels()">Atualizar lista</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Tag</th>
+                  <th>Tipo</th>
+                  <th>Destino</th>
+                  <th>Ativo</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="channels-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
 
-            if (!token) {
-                document.getElementById('painel-status').innerText = 'Acesso negado. Solicite um novo link via WhatsApp.';
-                return;
-            }
+      <section id="section-groups" class="hidden">
+        <div class="card">
+          <form id="group-form" class="form-grid">
+            <input type="hidden" id="group-id" />
+            <div class="field">
+              <label for="group-tag">Tag</label>
+              <input id="group-tag" required placeholder="trabalho" />
+            </div>
+            <div class="field wide">
+              <label for="group-targets">Canais do grupo</label>
+              <input id="group-targets" required placeholder="email, agenda, whatsapp" />
+            </div>
+            <div class="actions wide">
+              <button type="submit" id="group-submit">Criar grupo</button>
+              <button type="button" class="ghost" onclick="resetGroupForm()">Limpar</button>
+            </div>
+          </form>
+        </div>
 
-            carregarDados(token);
+        <div class="card">
+          <div class="toolbar">
+            <input id="filter-groups" class="filter" placeholder="Filtrar por tag ou canais..." oninput="renderGroups()" />
+            <button class="ghost" onclick="loadGroups()">Atualizar lista</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Tag</th>
+                  <th>Canais</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="groups-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="modal-root"></div>
+
+  <script>
+    const API_BASE = window.location.protocol.startsWith('http') ? window.location.origin : 'https://painel.danilosn.work';
+    const TOKEN_KEY = 'user_session_token';
+    const state = {
+      user: null,
+      stats: null,
+      reminders: [],
+      channels: [],
+      groups: [],
+      section: 'dashboard'
+    };
+
+    const sectionMeta = {
+      dashboard: ['Dashboard', 'Resumo dos seus lembretes, canais e grupos.'],
+      reminders: ['Lembretes', 'Crie, edite, detalhe e remova seus lembretes.'],
+      channels: ['Canais', 'Gerencie destinos personalizados de email e WhatsApp.'],
+      groups: ['Grupos', 'Agrupe canais oficiais e personalizados em uma tag.']
+    };
+
+    function qs(selector) {
+      return document.querySelector(selector);
+    }
+
+    function getToken() {
+      return localStorage.getItem(TOKEN_KEY);
+    }
+
+    function setToken(token) {
+      localStorage.setItem(TOKEN_KEY, token);
+    }
+
+    function clearToken() {
+      localStorage.removeItem(TOKEN_KEY);
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      }[char]));
+    }
+
+    function normalizeList(value) {
+      return String(value || '')
+        .split(',')
+        .map((item) => item.trim().replace(/^@/, ''))
+        .filter(Boolean);
+    }
+
+    function formatDate(value) {
+      if (!value) return '-';
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return value;
+      return date.toLocaleString('pt-BR');
+    }
+
+    function toDateTimeInput(value) {
+      if (!value) return '';
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return String(value).slice(0, 16);
+      const offset = date.getTimezoneOffset();
+      return new Date(date.getTime() - offset * 60000).toISOString().slice(0, 16);
+    }
+
+    function setGlobalMessage(message, ok = false) {
+      const element = qs('#global-message');
+      element.textContent = message || '';
+      element.classList.toggle('ok-message', Boolean(ok));
+    }
+
+    function showAuth(message = '') {
+      qs('#auth-screen').classList.remove('hidden');
+      qs('#app').classList.add('hidden');
+      qs('#auth-message').textContent = message;
+    }
+
+    function showApp() {
+      qs('#auth-screen').classList.add('hidden');
+      qs('#app').classList.remove('hidden');
+    }
+
+    async function api(path, options = {}) {
+      const token = getToken();
+      const headers = new Headers(options.headers || {});
+      headers.set('Accept', 'application/json');
+      if (!(options.body instanceof FormData)) headers.set('Content-Type', 'application/json');
+      if (token) headers.set('Authorization', `Bearer ${token}`);
+
+      const response = await fetch(`${API_BASE}${path}`, {
+        ...options,
+        headers
+      });
+
+      let data = {};
+      const text = await response.text();
+      if (text) {
+        try {
+          data = JSON.parse(text);
+        } catch {
+          data = { error: text };
         }
+      }
 
-        async function carregarDados(token) {
-            try {
-                const response = await fetch(`${backendUrl}/api/painel/dados`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
+      if (response.status === 401) {
+        clearToken();
+        showAuth('Sessão expirada ou inválida. Solicite um novo link via WhatsApp.');
+        throw new Error('Não autorizado');
+      }
 
-                if (response.status === 401) {
-                    document.getElementById('painel-status').innerText = 'Sessão expirada. Solicite um novo link no WhatsApp.';
-                    localStorage.removeItem('user_session_token');
-                    return;
-                }
+      if (!response.ok) {
+        const details = Array.isArray(data.details) ? ` ${data.details.join(' ')}` : '';
+        throw new Error((data.error || 'Erro ao processar requisição.') + details);
+      }
 
-                const data = await response.json();
-                document.getElementById('painel-status').style.display = 'none';
-                document.getElementById('painel-conteudo').style.display = 'block';
+      return data;
+    }
 
-                renderizarLembretes(data.reminders, token);
-                renderizarCanais(data.channels, token);
-                renderizarGrupos(data.groups || [], token);
-            } catch (error) {
-                document.getElementById('painel-status').innerText = 'Erro de conexão com o servidor.';
-            }
+    function setSection(section) {
+      state.section = section;
+      document.querySelectorAll('.nav-button').forEach((button) => {
+        button.classList.toggle('active', button.dataset.section === section);
+      });
+      document.querySelectorAll('main section').forEach((element) => element.classList.add('hidden'));
+      qs(`#section-${section}`).classList.remove('hidden');
+      qs('#section-title').textContent = sectionMeta[section][0];
+      qs('#section-subtitle').textContent = sectionMeta[section][1];
+    }
+
+    async function loadAll() {
+      setGlobalMessage('');
+      const data = await api('/api/painel/dados');
+      state.user = data.user || null;
+      state.reminders = data.reminders || [];
+      state.channels = data.channels || [];
+      state.groups = data.groups || [];
+      renderUser();
+      renderAll();
+      await loadStatus();
+    }
+
+    async function loadStatus() {
+      const data = await api('/api/painel/status');
+      state.stats = data.stats || {};
+      if (data.user) state.user = data.user;
+      renderMetrics();
+      renderUser();
+    }
+
+    async function loadReminders() {
+      const params = new URLSearchParams({
+        status: qs('#reminder-status').value,
+        tipo: qs('#reminder-type').value
+      });
+      const data = await api(`/api/painel/lembretes?${params.toString()}`);
+      state.reminders = data.reminders || [];
+      renderReminders();
+      renderDashboardReminders();
+      await loadStatus();
+    }
+
+    async function loadChannels() {
+      const data = await api('/api/painel/canais');
+      state.channels = data.channels || [];
+      renderChannels();
+      await loadStatus();
+    }
+
+    async function loadGroups() {
+      const data = await api('/api/painel/grupos');
+      state.groups = data.groups || [];
+      renderGroups();
+      await loadStatus();
+    }
+
+    function renderUser() {
+      const user = state.user || {};
+      qs('#user-summary').textContent = user.phone ? `${user.phone}` : 'Meu painel';
+      qs('#m-user-status').textContent = user.active === false ? 'Inativo' : 'Ativo';
+    }
+
+    function renderMetrics() {
+      const stats = state.stats || {};
+      qs('#m-pending').textContent = stats.pending_reminders ?? state.reminders.filter((item) => !item.sent).length;
+      qs('#m-channels').textContent = stats.active_channels ?? state.channels.filter((item) => item.enabled !== false).length;
+      qs('#m-groups').textContent = stats.channel_groups ?? state.groups.length;
+    }
+
+    function renderAll() {
+      renderMetrics();
+      renderDashboardReminders();
+      renderReminders();
+      renderChannels();
+      renderGroups();
+    }
+
+    function renderDashboardReminders() {
+      const body = qs('#dashboard-reminders-body');
+      const items = [...state.reminders]
+        .filter((item) => !item.sent)
+        .sort((a, b) => new Date(a.remind_at) - new Date(b.remind_at))
+        .slice(0, 8);
+      if (!items.length) {
+        body.innerHTML = '<tr><td colspan="3" class="empty-state">Nenhum lembrete pendente.</td></tr>';
+        return;
+      }
+      body.innerHTML = items.map((item) => `
+        <tr>
+          <td>${escapeHtml(item.description)}</td>
+          <td>${escapeHtml(formatDate(item.remind_at))}</td>
+          <td>@${escapeHtml(item.display_tag || item.channel_tag || '-')}</td>
+        </tr>
+      `).join('');
+    }
+
+    function renderReminders() {
+      const filter = qs('#filter-reminders').value.toLowerCase();
+      const body = qs('#reminders-body');
+      const items = state.reminders.filter((item) => JSON.stringify(item).toLowerCase().includes(filter));
+      if (!items.length) {
+        body.innerHTML = '<tr><td colspan="7" class="empty-state">Nenhum lembrete encontrado.</td></tr>';
+        return;
+      }
+      body.innerHTML = items.map((item) => `
+        <tr>
+          <td>${escapeHtml(item.id)}</td>
+          <td>${escapeHtml(item.description)}</td>
+          <td>${escapeHtml(formatDate(item.remind_at))}</td>
+          <td>@${escapeHtml(item.display_tag || item.channel_tag || '-')}</td>
+          <td>${escapeHtml(item.recurrence_type || 'único')}</td>
+          <td>${item.sent ? '<span class="status-pill ok">Sim</span>' : '<span class="status-pill warn">Não</span>'}</td>
+          <td>
+            <div class="table-actions">
+              <button class="ghost" onclick="showReminderDetails(${item.id})">Detalhar</button>
+              <button onclick="editReminder(${item.id})">Editar</button>
+              <button class="danger" onclick="deleteItem('lembretes', ${item.id})">Excluir</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderChannels() {
+      const filter = qs('#filter-channels').value.toLowerCase();
+      const body = qs('#channels-body');
+      const items = state.channels.filter((item) => JSON.stringify(item).toLowerCase().includes(filter));
+      if (!items.length) {
+        body.innerHTML = '<tr><td colspan="6" class="empty-state">Nenhum canal encontrado.</td></tr>';
+        return;
+      }
+      body.innerHTML = items.map((item) => `
+        <tr>
+          <td>${escapeHtml(item.id)}</td>
+          <td>@${escapeHtml(item.tag)}</td>
+          <td>${escapeHtml(item.type || item.channel_type || '-')}</td>
+          <td>${escapeHtml(item.target)}</td>
+          <td>${item.enabled === false ? '<span class="status-pill bad">Não</span>' : '<span class="status-pill ok">Sim</span>'}</td>
+          <td>
+            <div class="table-actions">
+              <button class="ghost" onclick="showChannelDetails(${item.id})">Detalhar</button>
+              <button onclick="editChannel(${item.id})">Editar</button>
+              <button class="danger" onclick="deleteItem('canais', ${item.id})">Excluir</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderGroups() {
+      const filter = qs('#filter-groups').value.toLowerCase();
+      const body = qs('#groups-body');
+      const items = state.groups.filter((item) => JSON.stringify(item).toLowerCase().includes(filter));
+      if (!items.length) {
+        body.innerHTML = '<tr><td colspan="4" class="empty-state">Nenhum grupo encontrado.</td></tr>';
+        return;
+      }
+      body.innerHTML = items.map((item) => `
+        <tr>
+          <td>${escapeHtml(item.id)}</td>
+          <td>@${escapeHtml(item.tag)}</td>
+          <td>${escapeHtml((item.targets || []).map((target) => `@${target}`).join(', '))}</td>
+          <td>
+            <div class="table-actions">
+              <button class="ghost" onclick="showGroupDetails(${item.id})">Detalhar</button>
+              <button onclick="editGroup(${item.id})">Editar</button>
+              <button class="danger" onclick="deleteItem('grupos', ${item.id})">Excluir</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function resetReminderForm() {
+      qs('#reminder-form').reset();
+      qs('#reminder-id').value = '';
+      qs('#reminder-submit').textContent = 'Criar lembrete';
+    }
+
+    function resetChannelForm() {
+      qs('#channel-form').reset();
+      qs('#channel-id').value = '';
+      qs('#channel-enabled').value = 'true';
+      qs('#channel-submit').textContent = 'Criar canal';
+    }
+
+    function resetGroupForm() {
+      qs('#group-form').reset();
+      qs('#group-id').value = '';
+      qs('#group-submit').textContent = 'Criar grupo';
+    }
+
+    function editReminder(id) {
+      const item = state.reminders.find((reminder) => Number(reminder.id) === Number(id));
+      if (!item) return;
+      setSection('reminders');
+      qs('#reminder-id').value = item.id;
+      qs('#reminder-description').value = item.description || '';
+      qs('#reminder-at').value = toDateTimeInput(item.remind_at);
+      qs('#reminder-channel-tags').value = item.channel_tag || item.display_tag || '';
+      qs('#reminder-recurrence-type').value = item.recurrence_type || '';
+      qs('#reminder-recurrence-value').value = item.recurrence_value || '';
+      qs('#reminder-submit').textContent = 'Salvar lembrete';
+    }
+
+    function editChannel(id) {
+      const item = state.channels.find((channel) => Number(channel.id) === Number(id));
+      if (!item) return;
+      setSection('channels');
+      qs('#channel-id').value = item.id;
+      qs('#channel-tag').value = item.tag || '';
+      qs('#channel-type').value = item.type || item.channel_type || 'email';
+      qs('#channel-target').value = item.target || '';
+      qs('#channel-enabled').value = item.enabled === false ? 'false' : 'true';
+      qs('#channel-submit').textContent = 'Salvar canal';
+    }
+
+    function editGroup(id) {
+      const item = state.groups.find((group) => Number(group.id) === Number(id));
+      if (!item) return;
+      setSection('groups');
+      qs('#group-id').value = item.id;
+      qs('#group-tag').value = item.tag || '';
+      qs('#group-targets').value = (item.targets || []).join(', ');
+      qs('#group-submit').textContent = 'Salvar grupo';
+    }
+
+    async function deleteItem(type, id) {
+      if (!confirm('Tem certeza que deseja excluir?')) return;
+      await api(`/api/painel/${type}/${id}`, { method: 'DELETE' });
+      setGlobalMessage('Item excluído com sucesso.', true);
+      if (type === 'lembretes') await loadReminders();
+      if (type === 'canais') await loadChannels();
+      if (type === 'grupos') await loadGroups();
+    }
+
+    function detailRows(item) {
+      return Object.entries(item || {}).map(([key, value]) => `
+        <div class="details-row">
+          <dt>${escapeHtml(key)}</dt>
+          <dd>${escapeHtml(Array.isArray(value) ? value.join(', ') : value)}</dd>
+        </div>
+      `).join('');
+    }
+
+    function openDetails(title, item) {
+      qs('#modal-root').innerHTML = `
+        <div class="modal-backdrop" onclick="closeModal(event)">
+          <div class="modal" role="dialog" aria-modal="true" aria-label="${escapeHtml(title)}">
+            <h3>${escapeHtml(title)}</h3>
+            <dl class="details-list">${detailRows(item)}</dl>
+            <div class="modal-actions">
+              <button class="ghost" onclick="closeModal()">Fechar</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function closeModal(event) {
+      if (event && !event.target.classList.contains('modal-backdrop')) return;
+      qs('#modal-root').innerHTML = '';
+    }
+
+    async function showReminderDetails(id) {
+      const data = await api(`/api/painel/lembretes/${id}`);
+      openDetails(`Lembrete #${id}`, data.reminder || data);
+    }
+
+    async function showChannelDetails(id) {
+      const data = await api(`/api/painel/canais/${id}`);
+      openDetails(`Canal #${id}`, data.channel || data);
+    }
+
+    async function showGroupDetails(id) {
+      const data = await api(`/api/painel/grupos/${id}`);
+      openDetails(`Grupo #${id}`, data.group || data);
+    }
+
+    async function logoutPanel() {
+      try {
+        await api('/api/painel/logout', { method: 'POST' });
+      } catch {
+        // Mesmo se o cookie nao existir, encerramos a sessao local.
+      }
+      clearToken();
+      showAuth('Sessão encerrada. Solicite um novo link via WhatsApp quando quiser voltar.');
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+    function bindEvents() {
+      document.querySelectorAll('.nav-button').forEach((button) => {
+        button.addEventListener('click', () => setSection(button.dataset.section));
+      });
+
+      qs('#token-form').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const token = qs('#token-input').value.trim();
+        if (!token) {
+          qs('#auth-message').textContent = 'Informe um token de acesso.';
+          return;
         }
-
-        function renderizarLembretes(lembretes, token) {
-            const lista = document.getElementById('lista-lembretes');
-            lista.innerHTML = '';
-            if (lembretes.length === 0) {
-                lista.innerHTML = '<li>Nenhum lembrete pendente.</li>';
-                return;
-            }
-            lembretes.forEach(r => {
-                const dataLocal = new Date(r.remind_at).toLocaleString();
-                lista.innerHTML += `
-                <li>
-                    ${r.description} - ${dataLocal} (@${r.display_tag || r.channel_tag})
-                    <button class="btn" onclick="deletarItem('lembretes', ${r.id}, '${token}')">Excluir</button>
-                </li>`;
-            });
+        setToken(token);
+        try {
+          await startPanel();
+        } catch (error) {
+          qs('#auth-message').textContent = error.message;
         }
+      });
 
-        function renderizarCanais(canais, token) {
-            const lista = document.getElementById('lista-canais');
-            lista.innerHTML = '';
-            if (canais.length === 0) {
-                lista.innerHTML = '<li>Nenhum canal customizado.</li>';
-                return;
-            }
-            canais.forEach(c => {
-                lista.innerHTML += `
-                <li>
-                    @${c.tag} - ${c.target}
-                    <button class="btn" onclick="deletarItem('canais', ${c.id}, '${token}')">Excluir</button>
-                </li>`;
-            });
+      qs('#parse-form').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        await api('/api/painel/lembretes/parse', {
+          method: 'POST',
+          body: JSON.stringify({ text: qs('#parse-text').value.trim() })
+        });
+        qs('#parse-form').reset();
+        setGlobalMessage('Lembrete criado pelo texto informado.', true);
+        await loadReminders();
+      });
+
+      qs('#reminder-form').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const id = qs('#reminder-id').value;
+        const tags = normalizeList(qs('#reminder-channel-tags').value);
+        const body = {
+          description: qs('#reminder-description').value.trim(),
+          remind_at: qs('#reminder-at').value,
+          recurrence_type: qs('#reminder-recurrence-type').value.trim() || null,
+          recurrence_value: qs('#reminder-recurrence-value').value.trim() || null
+        };
+        if (id) {
+          body.channel_tag = tags[0] || '';
+          await api(`/api/painel/lembretes/${id}`, { method: 'PUT', body: JSON.stringify(body) });
+          setGlobalMessage('Lembrete atualizado.', true);
+        } else {
+          body.channel_tags = tags;
+          await api('/api/painel/lembretes', { method: 'POST', body: JSON.stringify(body) });
+          setGlobalMessage('Lembrete criado.', true);
         }
+        resetReminderForm();
+        await loadReminders();
+      });
 
-
-
-        function renderizarGrupos(grupos, token) {
-            const lista = document.getElementById('lista-grupos');
-            lista.innerHTML = '';
-
-            if (grupos.length === 0) {
-                lista.innerHTML = '<li>Nenhum grupo cadastrado.</li>';
-                return;
-            }
-
-            grupos.forEach(g => {
-                const targets = (g.targets || []).map(t => `@${t}`).join(', ');
-
-                lista.innerHTML += `
-                <li>
-                    @${g.tag} → ${targets}
-                    <button class="btn-edit" onclick="editarGrupo(${g.id}, '${g.tag}', '${(g.targets || []).join(',')}')">Editar</button>
-                    <button class="btn" onclick="deletarItem('grupos', ${g.id}, '${token}')">Excluir</button>
-                </li>`;
-            });
+      qs('#channel-form').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const id = qs('#channel-id').value;
+        const body = {
+          tag: qs('#channel-tag').value.trim().replace(/^@/, ''),
+          type: qs('#channel-type').value,
+          target: qs('#channel-target').value.trim()
+        };
+        if (id) {
+          body.enabled = qs('#channel-enabled').value === 'true';
+          await api(`/api/painel/canais/${id}`, { method: 'PUT', body: JSON.stringify(body) });
+          setGlobalMessage('Canal atualizado.', true);
+        } else {
+          await api('/api/painel/canais', { method: 'POST', body: JSON.stringify(body) });
+          setGlobalMessage('Canal criado.', true);
         }
+        resetChannelForm();
+        await loadChannels();
+      });
 
-
-
-
-        async function deletarItem(tipo, id, token) {
-            if (!confirm('Tem certeza que deseja excluir?')) return;
-
-            try {
-                const response = await fetch(`${backendUrl}/api/painel/${tipo}/${id}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                if (response.ok) {
-                    carregarDados(token); // Recarrega a lista
-                } else {
-                    alert('Erro ao excluir item.');
-                }
-            } catch (error) {
-                alert('Falha na comunicação com o servidor.');
-            }
+      qs('#group-form').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const id = qs('#group-id').value;
+        const body = {
+          tag: qs('#group-tag').value.trim().replace(/^@/, ''),
+          targets: normalizeList(qs('#group-targets').value)
+        };
+        if (id) {
+          await api(`/api/painel/grupos/${id}`, { method: 'PUT', body: JSON.stringify(body) });
+          setGlobalMessage('Grupo atualizado.', true);
+        } else {
+          await api('/api/painel/grupos', { method: 'POST', body: JSON.stringify(body) });
+          setGlobalMessage('Grupo criado.', true);
         }
-        function logoutPainel() {
-            localStorage.removeItem('user_session_token');
+        resetGroupForm();
+        await loadGroups();
+      });
+    }
 
-            document.getElementById('painel-conteudo').style.display = 'none';
-            document.getElementById('painel-status').style.display = 'block';
-            document.getElementById('painel-status').innerText = 'Sessão encerrada. Solicite um novo link via WhatsApp.';
+    async function startPanel() {
+      const params = new URLSearchParams(window.location.search);
+      const tokenFromUrl = params.get('token');
+      if (tokenFromUrl) {
+        setToken(tokenFromUrl);
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
 
-            window.history.replaceState({}, document.title, window.location.pathname);
-        }
+      if (!getToken()) {
+        showAuth('');
+        return;
+      }
 
-        async function criarGrupo() {
-            const token = localStorage.getItem('user_session_token');
+      showApp();
+      await loadAll();
+    }
 
-            const tag = prompt('Nome do grupo, sem @:');
-            if (!tag) return;
+    window.addEventListener('unhandledrejection', (event) => {
+      setGlobalMessage(event.reason?.message || 'Erro inesperado.');
+    });
 
-            const targetsText = prompt('Canais do grupo separados por vírgula. Ex: whatsapp, email');
-            if (!targetsText) return;
-
-            const targets = targetsText
-                .split(',')
-                .map(item => item.trim().replace('@', ''))
-                .filter(Boolean);
-
-            try {
-                const response = await fetch(`${backendUrl}/api/painel/grupos`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ tag, targets })
-                });
-
-                if (response.ok) {
-                    carregarDados(token);
-                } else {
-                    const data = await response.json();
-                    alert(data.error || 'Erro ao criar grupo.');
-                }
-            } catch (error) {
-                alert('Falha na comunicação com o servidor.');
-            }
-        }
-
-        async function editarGrupo(id, tagAtual, targetsAtuais) {
-            const token = localStorage.getItem('user_session_token');
-
-            const tag = prompt('Nome do grupo, sem @:', tagAtual);
-            if (!tag) return;
-
-            const targetsText = prompt('Canais do grupo separados por vírgula:', targetsAtuais);
-            if (!targetsText) return;
-
-            const targets = targetsText
-                .split(',')
-                .map(item => item.trim().replace('@', ''))
-                .filter(Boolean);
-
-            try {
-                const response = await fetch(`${backendUrl}/api/painel/grupos/${id}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ tag, targets })
-                });
-
-                if (response.ok) {
-                    carregarDados(token);
-                } else {
-                    const data = await response.json();
-                    alert(data.error || 'Erro ao editar grupo.');
-                }
-            } catch (error) {
-                alert('Falha na comunicação com o servidor.');
-            }
-        }
-        iniciarPainel();
-    </script>
+    bindEvents();
+    startPanel().catch((error) => {
+      setGlobalMessage(error.message || 'Erro ao iniciar painel.');
+    });
+  </script>
 </body>
 
 </html>
