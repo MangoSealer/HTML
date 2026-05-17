@@ -58,3 +58,20 @@
 .apagada {
     opacity: 0.35;
 }
+
+
+.interruptor-luz:hover {
+    opacity: 0.7;
+}
+
+.interruptor-luz:active {
+    transform: scale(0.8);
+
+    /* transform: translateY(2px); */
+}
+
+.interruptor:active {
+    /* transform: scale(0.8); */
+
+    transform: translateY(2px);
+}
