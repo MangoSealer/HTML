@@ -4,7 +4,7 @@
 }
 
 .modo-claro {
-    background-color: rgb(245,245,220);
+    background-color: rgb(245, 245, 220);
 }
 
 .modo-claro ul li {
@@ -40,4 +40,21 @@
 
 .modo-claro a {
     color: black;
+}
+
+.interruptor-luz {
+    position: fixed;
+    top: 5px;
+    right: 60px;
+
+    display: inline-block;
+    z-index: 1000;
+    cursor: pointer;
+    padding: 10px;
+
+    color: inherit;
+}
+
+.apagada {
+    opacity: 0.35;
 }
