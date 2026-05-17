@@ -30,7 +30,7 @@ interruptorLuz.addEventListener("click", alternarLuz);
 
 async function atualizarEstadoInicial() {
     try {
-        const response = await fetch("https://api.danilosn.work/api/smart/quarto/status");
+        const response = await fetch("https://api.danilosn.work/api/smart/quarto/status");''
 
         if (!response.ok) return;
 

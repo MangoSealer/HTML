@@ -374,15 +374,17 @@ function renderOperationsStatus() {
 async function loadOperationsStatus() {
   if (!document.getElementById("op-status-backend")) return;
 
-  const [statusResult, calendarResult, oracleResult] = await Promise.allSettled([
+  const [statusResult, calendarResult, oracleResult, gatewayResult] = await Promise.allSettled([
     apiRequest("/admin/api/status"),
     apiRequest("/admin/api/operations/calendar/status"),
-    apiRequest("/admin/api/operations/oracle-arm-loop/status")
+    apiRequest("/admin/api/operations/oracle-arm-loop/status"),
+    apiRequest("/admin/api/operations/gateway/status")
   ]);
 
   state.operations.status = statusResult.status === "fulfilled" ? statusResult.value : {};
   state.operations.calendar = calendarResult.status === "fulfilled" ? calendarResult.value : { ok: false, message: calendarResult.reason.message };
   state.operations.oracle = oracleResult.status === "fulfilled" ? oracleResult.value : { ok: false, message: oracleResult.reason.message };
+  state.operations.gateway = gatewayResult.status === "fulfilled" ? gatewayResult.value : { ok: false, message: gatewayResult.reason.message };
   renderOperationsStatus();
 }
 async function loadCalendarStatus() {
@@ -1041,3 +1043,19 @@ setInterval(loadStatusOnly, 3000);
 setInterval(() => {
   if (state.section === "operations") loadOperationsStatus();
 }, 10000);
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && e.target.tagName === "INPUT") {
+    const form = e.target.closest("form");
+    if (form) {
+      const inputs = Array.from(form.querySelectorAll("input:not([type='hidden']), select, textarea"));
+      const index = inputs.indexOf(e.target);
+      if (index > -1 && index < inputs.length - 1) {
+        e.preventDefault();
+        inputs[index + 1].focus();
+      }
+    } else {
+      e.target.blur();
+    }
+  }
+});
