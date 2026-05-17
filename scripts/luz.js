@@ -2,7 +2,7 @@ const interruptorLuz = document.querySelector(".interruptor-luz");
 
 async function alternarLuz() {
     try {
-        const response = await fetch("/api/smart/quarto/toggle", {
+        const response = await fetch("http://161.97.114.222/api/smart/quarto/toggle", {
             method: "POST"
         });
 
@@ -30,7 +30,7 @@ interruptorLuz.addEventListener("click", alternarLuz);
 
 async function atualizarEstadoInicial() {
     try {
-        const response = await fetch("/api/smart/quarto/status");
+        const response = await fetch("http://161.97.114.222/api/smart/quarto/status");
 
         if (!response.ok) return;
 
