@@ -188,8 +188,6 @@
               <div class="status-row"><span>Recursos</span><strong id="op-status-resources">-</strong></div>
               <div class="status-row"><span>Calendar</span><strong id="op-status-calendar">-</strong></div>
               <div class="status-row"><span>Oracle ARM Loop</span><strong id="op-status-oracle">-</strong></div>
-              <div class="status-row"><span>Operações destrutivas</span><strong id="op-status-destructive">-</strong>
-              </div>
             </div>
           </div>
 
@@ -278,8 +276,7 @@
 
           <div class="card operations-panel danger-zone">
             <h3>Zona de perigo operacional</h3>
-            <p id="op-danger-message">Ações destrutivas ficam bloqueadas quando ADMIN_ALLOW_DESTRUCTIVE_OPS não está
-              ativo.</p>
+            <p>Ações irreversíveis que podem interromper o serviço.</p>
             <div class="actions">
               <button id="op-service-down-btn" class="danger"
                 onclick="runOperation('Derrubar todo o serviço', '/admin/api/operations/service/down', { method: 'POST' }, { destructive: true, strongText: 'DERRUBAR SERVICO' })">Derrubar

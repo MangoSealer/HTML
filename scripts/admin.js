@@ -302,23 +302,12 @@ function formatStatusText(value) {
   return String(value);
 }
 
-function isDestructiveOpsAllowed() {
-  const status = state.operations.status || {};
-  return truthyFlag(getFirstValue(status, [
-    "ADMIN_ALLOW_DESTRUCTIVE_OPS",
-    "admin_allow_destructive_ops",
-    "allow_destructive_ops",
-    "destructive_ops_enabled"
-  ]));
-}
-
 function renderOperationsStatus() {
   const status = state.operations.status || {};
   const gateway = state.operations.gateway || {};
   const calendarResponse = state.operations.calendar || {};
   const calendar = calendarResponse.calendar || calendarResponse;
   const oracle = state.operations.oracle || {};
-  const destructiveAllowed = isDestructiveOpsAllowed();
 
   const backendOk = status && (
     status.cpu !== undefined ||
@@ -356,19 +345,11 @@ function renderOperationsStatus() {
     ? `<span class="status-pill ok">Ativo</span>`
     : `<span class="status-pill bad">Erro</span>`;
 
-  document.getElementById("op-status-destructive").innerHTML = destructiveAllowed
-    ? `<span class="status-pill warn">Ativas</span>`
-    : `<span class="status-pill bad">Bloqueadas</span>`;
-
   document.getElementById("op-calendar-message").textContent =
     calendar.message || calendar.error || calendarResponse.error || "Status do Calendar carregado.";
 
-  document.getElementById("op-danger-message").textContent = destructiveAllowed
-    ? "ADMIN_ALLOW_DESTRUCTIVE_OPS está ativo. Confirmação forte continua obrigatória."
-    : "Ações destrutivas bloqueadas porque ADMIN_ALLOW_DESTRUCTIVE_OPS não está ativo.";
-
-  document.getElementById("op-service-down-btn").disabled = !destructiveAllowed;
-  document.getElementById("op-vps-shutdown-btn").disabled = !destructiveAllowed;
+  document.getElementById("op-service-down-btn").disabled = false;
+  document.getElementById("op-vps-shutdown-btn").disabled = false;
 }
 
 async function loadOperationsStatus() {
@@ -479,11 +460,6 @@ function confirmOperation(title, options, onConfirm) {
 }
 
 async function runOperation(title, path, requestOptions = { method: "POST" }, options = {}) {
-  if (options.destructive && !isDestructiveOpsAllowed()) {
-    showModalMessage("Operação bloqueada", "ADMIN_ALLOW_DESTRUCTIVE_OPS não está ativo no backend.");
-    return;
-  }
-
   confirmOperation(title, options, async () => {
     try {
       const method = String(requestOptions.method || "POST").toUpperCase();
