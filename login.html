@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login</title>
+  <link rel="icon" href="./assets/seasky.ico">
+  <link rel="stylesheet" href="./style/admin.css">
+</head>
+
+<body>
+  <div class="login-screen">
+    <form id="login-form" class="login-card">
+      <h1 style="text-align:center;">Login</h1>
+
+      <div class="field">
+        <label for="username">Usuário</label>
+        <input id="username" autocomplete="username" required />
+      </div>
+
+      <div class="field">
+        <label for="password">Senha</label>
+        <input id="password" type="password" autocomplete="current-password" required />
+      </div>
+
+      <button type="submit" style="width:100%;">Entrar</button>
+      <div id="login-message" class="message"></div>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('login-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var msg = document.getElementById('login-message');
+      msg.textContent = '';
+
+      fetch('https://api.danilosn.work/site/login', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: document.getElementById('username').value.trim(),
+          password: document.getElementById('password').value
+        })
+      })
+        .then(function (res) {
+          if (res.ok) {
+            window.location.replace('/index.html');
+          } else {
+            msg.textContent = 'Usuário ou senha inválidos.';
+          }
+        })
+        .catch(function () {
+          msg.textContent = 'Erro ao conectar. Tente novamente.';
+        });
+    });
+  </script>
+</body>
+
+</html>

@@ -7,9 +7,8 @@
   <title>Página Inicial</title>
   <link rel="stylesheet" href="./style/cards.css">
   <link rel="stylesheet" href="../style/fonte_bonitinha.css">
-  <link rel="stylesheet" href="./style/index-login.css">
-  <script src="./scripts/index-login.js" defer></script>
   <link rel="icon" href="../../assets/seasky.ico">
+  <script src="/auth.js"></script>
 
 </head>
 
@@ -18,27 +17,7 @@
 
 <body>
 
-  <div id="login-screen" class="login-screen">
-    <form id="login-form" class="login-card">
-      <h1 style="text-align: center;">Login</h1>
-      
-
-      <div class="field">
-        <label for="username">Usuário</label>
-        <input id="username" autocomplete="username" required />
-      </div>
-
-      <div class="field">
-        <label for="password">Senha</label>
-        <input id="password" type="password" autocomplete="current-password" required />
-      </div>
-
-      <button type="submit" style="width: 100%;">Entrar</button>
-      <div id="login-message" class="message"></div>
-    </form>
-  </div>
-
-  <div id="site-content" class="cartoes hidden">
+  <div class="cartoes">
 
 
     <!-- checklist -->
@@ -100,9 +79,6 @@
 
 
   </div>
-
-
-
 
 </body>
 
