@@ -81,7 +81,10 @@ window.addEventListener('resize', () => {
 
 function api(path, opts = {}) {
   return fetch(BASE + path, { credentials: 'include', ...opts }).then(res => {
-    if (res.status === 401) { window.location.replace('/admin.html'); }
+    if (res.status === 401) {
+      sessionStorage.setItem('epub_return', window.location.href);
+      window.location.replace('/admin.html');
+    }
     return res;
   });
 }
@@ -506,24 +509,25 @@ function genBookmarkId() {
 async function syncBookmarks(filename) {
   try {
     const res = await api(`/epub/bookmarks/${encodeURIComponent(filename)}`);
-    if (!res.ok) return;
+    if (!res.ok) { showError(`Sync de marcadores falhou (${res.status})`); return; }
     const serverBms = await res.json();
     const data = getFileData(filename);
     data.bookmarks = serverBms;
     saveFileData(filename, data);
     renderBookmarks();
     updateBookmarkButton();
-  } catch (_) {}
+  } catch (e) { showError('Sync de marcadores: ' + (e && e.message ? e.message : 'falha de rede')); }
 }
 
 async function pushBookmark(filename, bm) {
   try {
-    await api(`/epub/bookmarks/${encodeURIComponent(filename)}`, {
+    const res = await api(`/epub/bookmarks/${encodeURIComponent(filename)}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(bm),
     });
-  } catch (_) {}
+    if (!res.ok) showError(`Erro ao salvar marcador (${res.status})`);
+  } catch (e) { showError('Erro ao salvar marcador: ' + (e && e.message ? e.message : 'falha de rede')); }
 }
 
 async function deleteServerBookmark(filename, id) {

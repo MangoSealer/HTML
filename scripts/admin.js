@@ -225,6 +225,12 @@ async function logout() {
   }
 }
 
+function applyReturnRedirect() {
+  const url = sessionStorage.getItem('epub_return');
+  if (url) { sessionStorage.removeItem('epub_return'); window.location.replace(url); return true; }
+  return false;
+}
+
 async function loadAll() {
   const data = await apiRequest("/admin/api/bootstrap");
   state.users = data.users || [];
@@ -232,6 +238,8 @@ async function loadAll() {
   state.channels = data.channels || [];
   state.groups = data.groups || [];
   state.stats = data.stats || {};
+
+  if (applyReturnRedirect()) return;
 
   document.getElementById("login-screen").classList.add("hidden");
   document.getElementById("app").classList.remove("hidden");
