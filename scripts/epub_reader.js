@@ -80,7 +80,10 @@ window.addEventListener('resize', () => {
 // ── API ───────────────────────────────────────────────────────────────────────
 
 function api(path, opts = {}) {
-  return fetch(BASE + path, { credentials: 'include', ...opts });
+  return fetch(BASE + path, { credentials: 'include', ...opts }).then(res => {
+    if (res.status === 401) { window.location.replace('/admin.html'); }
+    return res;
+  });
 }
 
 function escHtml(s) {
@@ -146,7 +149,6 @@ function saveProgressDebounced() {
 async function loadList() {
   try {
     const res = await api('/epub/list');
-    if (res.status === 401) { showError('Não autorizado (401). Verifique o login no painel.'); return; }
     if (!res.ok) { showError('Erro ao carregar lista de EPUBs.'); return; }
     S.epubs = await res.json();
     renderList();
@@ -205,7 +207,6 @@ async function openEpub(filename) {
 
   try {
     const res = await api(`/epub/file/${encodeURIComponent(filename)}`);
-    if (res.status === 401) { showError('Não autorizado (401).'); return; }
     if (!res.ok) { showError('Erro ao baixar o EPUB.'); return; }
     const arrayBuffer = await res.arrayBuffer();
 
@@ -553,7 +554,6 @@ async function uploadFile(file) {
     const fd = new FormData();
     fd.append('file', file);
     const res = await api('/epub/upload', { method: 'POST', body: fd });
-    if (res.status === 401) { showError('Não autorizado (401).'); return; }
     if (!res.ok) { showError('Erro no upload: ' + await res.text()); return; }
     document.getElementById('upload-zone').classList.remove('open');
     await loadList();
@@ -642,7 +642,6 @@ async function deleteEpub(filename) {
   if (!confirm(`Deletar "${label}"?`)) return;
   try {
     const res = await api(`/epub/delete/${encodeURIComponent(filename)}`, { method: 'DELETE' });
-    if (res.status === 401) { showError('Não autorizado (401).'); return; }
     if (!res.ok) { showError('Erro ao deletar.'); return; }
     S.epubs = S.epubs.filter(e => e.filename !== filename);
     if (S.filename === filename) closeBook();
