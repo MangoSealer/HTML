@@ -2,6 +2,45 @@
 
 const BASE = 'https://painel.danilosn.work';
 
+const IFRAME_THEMES = {
+  dark: {
+    body: {
+      'background-color': '#0f172a !important',
+      color: '#e5e7eb !important',
+      'font-family': "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important",
+      padding: '2em !important',
+      'line-height': '1.7 !important',
+    },
+    'h1, h2, h3, h4, h5, h6': { color: '#f1f5f9 !important' },
+    a: { color: '#93c5fd !important' },
+    'p, li, td, th': { color: '#e5e7eb !important' },
+  },
+  sepia: {
+    body: {
+      'background-color': '#f5f0e8 !important',
+      color: '#3d2b1f !important',
+      "font-family": "Georgia, 'Times New Roman', serif !important",
+      padding: '2em !important',
+      'line-height': '1.7 !important',
+    },
+    'h1, h2, h3, h4, h5, h6': { color: '#2c1a0e !important' },
+    a: { color: '#8b5e3c !important' },
+    'p, li, td, th': { color: '#3d2b1f !important' },
+  },
+  white: {
+    body: {
+      'background-color': '#ffffff !important',
+      color: '#1a1a1a !important',
+      'font-family': "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important",
+      padding: '2em !important',
+      'line-height': '1.7 !important',
+    },
+    'h1, h2, h3, h4, h5, h6': { color: '#111111 !important' },
+    a: { color: '#2563eb !important' },
+    'p, li, td, th': { color: '#1a1a1a !important' },
+  },
+};
+
 const S = {
   epubs: [],
   filename: null,
@@ -10,6 +49,8 @@ const S = {
   currentCfi: null,
   progress: 0,
   fontSize: 100,
+  flow: 'paginated',
+  theme: 'dark',
   saveTimer: null,
 };
 
@@ -74,13 +115,13 @@ function itemHTML(epub) {
         </div>
       </div>
       <div class="epub-item-actions">
-        <button class="item-btn" onclick="startRename('${escAttr(epub.filename)}')" title="Renomear">✏️ Renomear</button>
-        <button class="item-btn del" onclick="deleteEpub('${escAttr(epub.filename)}')" title="Deletar">🗑 Deletar</button>
+        <button class="item-btn" onclick="startRename('${escAttr(epub.filename)}')">✏️ Renomear</button>
+        <button class="item-btn del" onclick="deleteEpub('${escAttr(epub.filename)}')">🗑 Deletar</button>
       </div>
     </div>`;
 }
 
-// ── Open / Render ─────────────────────────────────────────────────
+// ── Open / Recreate ───────────────────────────────────────────────
 
 async function openEpub(filename, savedCfi) {
   S.filename = filename;
@@ -99,39 +140,13 @@ async function openEpub(filename, savedCfi) {
     if (!res.ok) { showError('Erro ao baixar o EPUB.'); return; }
     const arrayBuffer = await res.arrayBuffer();
 
-    // Destroy previous book
-    if (S.rendition) {
-      try { S.rendition.destroy(); } catch (_) {}
-      S.rendition = null;
-    }
-    if (S.book) {
-      try { S.book.destroy(); } catch (_) {}
-      S.book = null;
-    }
-
-    // Reset viewer element
-    const viewerEl = document.getElementById('epub-viewer');
-    viewerEl.innerHTML = '';
+    destroyRendition();
+    if (S.book) { try { S.book.destroy(); } catch (_) {} S.book = null; }
 
     S.book = ePub(arrayBuffer);
 
-    S.rendition = S.book.renderTo('epub-viewer', {
-      width: '100%',
-      height: '100%',
-      flow: 'paginated',
-      spread: 'none',
-    });
-
-    applyTheme();
-
-    S.rendition.on('relocated', location => {
-      S.currentCfi = location.start.cfi;
-      S.progress = Math.round(location.start.percentage * 100);
-      updateReaderUI(location);
-      saveProgressDebounced();
-    });
-
-    await S.rendition.display(savedCfi || undefined);
+    await recreateRendition(savedCfi || undefined);
+    await loadToc();
 
     document.getElementById('viewer-loading').classList.add('hidden');
     document.getElementById('viewer-wrap').classList.remove('hidden');
@@ -141,32 +156,95 @@ async function openEpub(filename, savedCfi) {
   }
 }
 
-function applyTheme() {
-  if (!S.rendition) return;
-  S.rendition.themes.register('dark', {
-    body: {
-      background: '#0f172a !important',
-      color: '#e5e7eb !important',
-      'font-family': "-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif !important",
-      padding: '2em !important',
-      'line-height': '1.7 !important',
-    },
-    'h1, h2, h3, h4, h5, h6': { color: '#f1f5f9 !important' },
-    a: { color: '#93c5fd !important' },
-    'p, li': { color: '#e5e7eb !important' },
+function destroyRendition() {
+  if (S.rendition) {
+    try { S.rendition.destroy(); } catch (_) {}
+    S.rendition = null;
+  }
+  document.getElementById('epub-viewer').innerHTML = '';
+}
+
+async function recreateRendition(cfi) {
+  destroyRendition();
+
+  const isScrolled = S.flow === 'scrolled';
+  const viewerWrap = document.getElementById('viewer-wrap');
+  viewerWrap.classList.toggle('scrolled', isScrolled);
+
+  const opts = isScrolled
+    ? { width: '100%', flow: 'scrolled', spread: 'none' }
+    : { width: '100%', height: '100%', flow: 'paginated', spread: 'none' };
+
+  S.rendition = S.book.renderTo('epub-viewer', opts);
+
+  Object.entries(IFRAME_THEMES).forEach(([name, styles]) => {
+    S.rendition.themes.register(name, styles);
   });
-  S.rendition.themes.select('dark');
+  S.rendition.themes.select(S.theme);
   S.rendition.themes.fontSize(S.fontSize + '%');
+
+  S.rendition.on('relocated', location => {
+    S.currentCfi = location.start.cfi;
+    S.progress = Math.round((location.start.percentage || 0) * 100);
+    updateReaderUI(location);
+    highlightTocItem(location.start.href);
+    saveProgressDebounced();
+  });
+
+  await S.rendition.display(cfi || undefined);
 }
 
 function updateReaderUI(location) {
   const spineLen = S.book && S.book.spine ? S.book.spine.items.length : '?';
-  const spineIdx = location.start.index + 1;
+  const spineIdx = (location.start.index || 0) + 1;
   document.getElementById('reader-info').textContent =
     `Cap. ${spineIdx}/${spineLen} · ${S.progress}%`;
   document.getElementById('btn-prev').disabled = !!location.atStart;
   document.getElementById('btn-next').disabled = !!location.atEnd;
   document.getElementById('font-label').textContent = S.fontSize + '%';
+}
+
+// ── TOC ──────────────────────────────────────────────────────────
+
+async function loadToc() {
+  try {
+    const nav = await S.book.loaded.navigation;
+    const toc = (nav && nav.toc) ? nav.toc : [];
+    const tocItemsEl = document.getElementById('toc-items');
+    const tocEmptyEl = document.getElementById('toc-empty');
+    if (!toc.length) {
+      tocItemsEl.innerHTML = '';
+      tocEmptyEl.style.display = '';
+      return;
+    }
+    tocEmptyEl.style.display = 'none';
+    tocItemsEl.innerHTML = renderTocItems(toc, 0);
+  } catch (_) {}
+}
+
+function renderTocItems(items, depth) {
+  return items.map(item => {
+    const label = escHtml((item.label || '').trim());
+    const href = escAttr(item.href || '');
+    const sub = item.subitems && item.subitems.length
+      ? renderTocItems(item.subitems, depth + 1)
+      : '';
+    return `<div class="toc-item" style="padding-left:${12 + depth * 14}px" data-href="${href}" onclick="navigateTo('${href}')">${label}</div>${sub}`;
+  }).join('');
+}
+
+function navigateTo(href) {
+  if (!S.rendition || !href) return;
+  S.rendition.display(href);
+}
+
+function highlightTocItem(currentHref) {
+  if (!currentHref) return;
+  const base = currentHref.split('#')[0];
+  document.querySelectorAll('.toc-item').forEach(el => {
+    const h = el.dataset.href || '';
+    el.classList.toggle('active', h === currentHref || h.split('#')[0] === base);
+  });
 }
 
 // ── Navigation ────────────────────────────────────────────────────
@@ -187,6 +265,47 @@ function changeFontSize(delta) {
   document.getElementById('font-label').textContent = S.fontSize + '%';
 }
 
+// ── Flow ──────────────────────────────────────────────────────────
+
+async function toggleFlow() {
+  S.flow = S.flow === 'paginated' ? 'scrolled' : 'paginated';
+  document.getElementById('btn-flow').textContent = S.flow === 'paginated' ? 'Págs' : 'Rolar';
+  if (!S.book) return;
+  const cfi = S.currentCfi;
+  document.getElementById('viewer-wrap').classList.add('hidden');
+  document.getElementById('viewer-loading').classList.remove('hidden');
+  try {
+    await recreateRendition(cfi || undefined);
+    document.getElementById('viewer-loading').classList.add('hidden');
+    document.getElementById('viewer-wrap').classList.remove('hidden');
+  } catch (e) {
+    showError('Erro ao trocar modo: ' + e.message);
+    document.getElementById('viewer-loading').classList.add('hidden');
+  }
+}
+
+// ── Theme ─────────────────────────────────────────────────────────
+
+function setTheme(name) {
+  S.theme = name;
+  document.documentElement.setAttribute('data-theme', name);
+  if (S.rendition) S.rendition.themes.select(name);
+  document.querySelectorAll('.theme-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.theme === name);
+  });
+}
+
+// ── Tabs ──────────────────────────────────────────────────────────
+
+function showTab(tab) {
+  const isBooks = tab === 'books';
+  document.getElementById('epub-list').classList.toggle('hidden', !isBooks);
+  document.getElementById('toc-list').classList.toggle('hidden', isBooks);
+  document.getElementById('tab-books').classList.toggle('active', isBooks);
+  document.getElementById('tab-toc').classList.toggle('active', !isBooks);
+  if (!isBooks) document.getElementById('upload-zone').classList.remove('open');
+}
+
 // ── Progress ──────────────────────────────────────────────────────
 
 function saveProgressDebounced() {
@@ -201,7 +320,7 @@ function saveProgressDebounced() {
       });
       const epub = S.epubs.find(e => e.filename === S.filename);
       if (epub) { epub.cfi = S.currentCfi; epub.progress = S.progress; }
-    } catch (_) { /* silent */ }
+    } catch (_) {}
   }, 1000);
 }
 
@@ -226,17 +345,12 @@ async function uploadFile(file) {
   const orig = btn.textContent;
   btn.textContent = 'Enviando…';
   btn.disabled = true;
-
   try {
     const fd = new FormData();
     fd.append('file', file);
     const res = await api('/epub/upload', { method: 'POST', body: fd });
     if (res.status === 401) { showError('Não autorizado (401).'); return; }
-    if (!res.ok) {
-      const txt = await res.text();
-      showError('Erro no upload: ' + txt);
-      return;
-    }
+    if (!res.ok) { showError('Erro no upload: ' + await res.text()); return; }
     document.getElementById('upload-zone').classList.remove('open');
     await loadList();
   } catch (e) {
@@ -249,10 +363,7 @@ async function uploadFile(file) {
 
 // Drag-and-drop
 const dropArea = document.getElementById('drop-area');
-dropArea.addEventListener('dragover', e => {
-  e.preventDefault();
-  dropArea.classList.add('drag-over');
-});
+dropArea.addEventListener('dragover', e => { e.preventDefault(); dropArea.classList.add('drag-over'); });
 dropArea.addEventListener('dragleave', () => dropArea.classList.remove('drag-over'));
 dropArea.addEventListener('drop', e => {
   e.preventDefault();
@@ -284,17 +395,13 @@ function startRename(filename) {
     if (saved) return;
     saved = true;
     const newTitle = input.value.trim();
-    if (!newTitle || newTitle === current) {
-      input.replaceWith(makeTitleSpan(current));
-      return;
-    }
+    if (!newTitle || newTitle === current) { input.replaceWith(makeTitleSpan(current)); return; }
     try {
       const res = await api(`/epub/rename/${encodeURIComponent(filename)}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title: newTitle }),
       });
-      if (res.status === 401) { showError('Não autorizado (401).'); input.replaceWith(makeTitleSpan(current)); return; }
       if (!res.ok) { showError('Erro ao renomear.'); input.replaceWith(makeTitleSpan(current)); return; }
       if (epub) epub.title = newTitle;
       input.replaceWith(makeTitleSpan(newTitle));
@@ -318,10 +425,10 @@ function startRename(filename) {
 }
 
 function makeTitleSpan(text) {
-  const span = document.createElement('div');
-  span.className = 'epub-item-title';
-  span.textContent = text;
-  return span;
+  const div = document.createElement('div');
+  div.className = 'epub-item-title';
+  div.textContent = text;
+  return div;
 }
 
 // ── Delete ────────────────────────────────────────────────────────
@@ -330,7 +437,6 @@ async function deleteEpub(filename) {
   const epub = S.epubs.find(e => e.filename === filename);
   const label = epub ? (epub.title || epub.filename) : filename;
   if (!confirm(`Deletar "${label}"?`)) return;
-
   try {
     const res = await api(`/epub/delete/${encodeURIComponent(filename)}`, { method: 'DELETE' });
     if (res.status === 401) { showError('Não autorizado (401).'); return; }
@@ -338,7 +444,7 @@ async function deleteEpub(filename) {
     S.epubs = S.epubs.filter(e => e.filename !== filename);
     if (S.filename === filename) {
       S.filename = null;
-      if (S.rendition) { try { S.rendition.destroy(); } catch (_) {} S.rendition = null; }
+      destroyRendition();
       if (S.book) { try { S.book.destroy(); } catch (_) {} S.book = null; }
       document.getElementById('reader-content').classList.add('hidden');
       document.getElementById('reader-empty').classList.remove('hidden');
@@ -356,6 +462,8 @@ function toggleSidebar() {
   const btn = document.getElementById('btn-toggle-sidebar');
   sidebar.classList.toggle('collapsed');
   btn.textContent = sidebar.classList.contains('collapsed') ? '▶' : '◀';
+  // Fix: resize rendition after CSS transition completes
+  if (S.rendition) setTimeout(() => S.rendition.resize(), 280);
 }
 
 function toggleReaderBar() {
@@ -363,6 +471,7 @@ function toggleReaderBar() {
   const btn = document.getElementById('btn-toggle-bar');
   bar.classList.toggle('collapsed');
   btn.textContent = bar.classList.contains('collapsed') ? '▼' : '▲';
+  if (S.rendition) setTimeout(() => S.rendition.resize(), 230);
 }
 
 // ── Keyboard navigation ───────────────────────────────────────────
@@ -377,10 +486,8 @@ document.addEventListener('keydown', e => {
 
 function escHtml(s) {
   return String(s)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
 function escAttr(s) {

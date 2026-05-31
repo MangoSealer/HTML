@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="dark">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EPUB Reader</title>
+  <title>EPUB</title>
   <link rel="stylesheet" href="../style/epub_reader.css">
-  <link icon="favicon.ico" href="../favicon.ico">
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
 </head>
 
 <body>
@@ -17,6 +17,11 @@
       <button class="btn btn-primary" onclick="toggleUpload()">+ Upload</button>
     </div>
 
+    <div class="sidebar-tabs">
+      <button class="sidebar-tab active" id="tab-books" onclick="showTab('books')">Livros</button>
+      <button class="sidebar-tab" id="tab-toc" onclick="showTab('toc')">Índice</button>
+    </div>
+
     <div id="upload-zone">
       <div class="drop-area" id="drop-area" onclick="document.getElementById('file-input').click()">
         <span>📖</span>
@@ -25,7 +30,12 @@
       <input type="file" id="file-input" accept=".epub" hidden onchange="handleFileSelect(event)">
     </div>
 
-    <div id="epub-list"></div>
+    <div id="epub-list" class="tab-content"></div>
+
+    <div id="toc-list" class="tab-content hidden">
+      <div id="toc-empty" class="empty-list">Abra um livro para ver o índice.</div>
+      <div id="toc-items"></div>
+    </div>
   </aside>
 
   <main id="reader">
@@ -36,15 +46,27 @@
     <div id="reader-content" class="hidden">
       <div class="reader-bar">
         <button class="btn btn-ghost btn-icon" id="btn-toggle-sidebar" onclick="toggleSidebar()" title="Esconder painel">◀</button>
+
         <div class="reader-bar-group">
           <button class="btn btn-ghost btn-icon" id="btn-prev" onclick="changePage(-1)" title="Anterior">&#8592;</button>
           <span class="reader-info" id="reader-info">—</span>
           <button class="btn btn-ghost btn-icon" id="btn-next" onclick="changePage(1)" title="Próximo">&#8594;</button>
         </div>
+
         <div class="reader-bar-group">
           <button class="btn btn-ghost btn-icon" onclick="changeFontSize(-10)" title="Diminuir fonte">A&#8722;</button>
           <span id="font-label" class="reader-info" style="min-width:42px;text-align:center;">100%</span>
           <button class="btn btn-ghost btn-icon" onclick="changeFontSize(10)" title="Aumentar fonte">A&#43;</button>
+        </div>
+
+        <div class="reader-bar-group">
+          <button class="btn btn-ghost btn-flow" id="btn-flow" onclick="toggleFlow()" title="Modo de leitura">Págs</button>
+        </div>
+
+        <div class="reader-bar-group">
+          <button class="theme-btn active" data-theme="dark" onclick="setTheme('dark')" title="Escuro"></button>
+          <button class="theme-btn" data-theme="sepia" onclick="setTheme('sepia')" title="Sépia"></button>
+          <button class="theme-btn" data-theme="white" onclick="setTheme('white')" title="Claro"></button>
         </div>
       </div>
 
