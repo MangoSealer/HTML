@@ -46,6 +46,12 @@ body {
   flex-direction: column;
   border-right: 1px solid var(--border);
   overflow: hidden;
+  transition: width 0.25s ease, border-color 0.25s ease;
+}
+
+#sidebar.collapsed {
+  width: 0;
+  border-right-color: transparent;
 }
 
 .sidebar-header {
@@ -223,6 +229,14 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  position: relative;
+}
+
+#btn-toggle-bar {
+  position: absolute;
+  top: 7px;
+  right: 8px;
+  z-index: 20;
 }
 
 .reader-bar {
@@ -230,10 +244,21 @@ body {
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
+  padding-right: 44px;
   border-bottom: 1px solid var(--border);
   background: var(--card);
   flex-shrink: 0;
   flex-wrap: wrap;
+  overflow: hidden;
+  max-height: 80px;
+  transition: max-height 0.2s ease, padding-top 0.2s ease, padding-bottom 0.2s ease, border-color 0.2s ease;
+}
+
+.reader-bar.collapsed {
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  border-bottom-color: transparent;
 }
 
 .reader-bar-group {

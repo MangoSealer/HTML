@@ -370,6 +370,30 @@ function escId(s) {
   return String(s).replace(/[^a-zA-Z0-9_-]/g, '_');
 }
 
+// ── Toggle UI ─────────────────────────────────────────────────────
+
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const btn = document.getElementById('btn-toggle-sidebar');
+  sidebar.classList.toggle('collapsed');
+  btn.textContent = sidebar.classList.contains('collapsed') ? '▶' : '◀';
+}
+
+function toggleReaderBar() {
+  const bar = document.querySelector('.reader-bar');
+  const btn = document.getElementById('btn-toggle-bar');
+  bar.classList.toggle('collapsed');
+  btn.textContent = bar.classList.contains('collapsed') ? '▼' : '▲';
+}
+
+// ── Keyboard navigation ───────────────────────────────────────────
+
+document.addEventListener('keydown', e => {
+  if (document.activeElement.tagName === 'INPUT') return;
+  if (e.key === 'ArrowLeft') { e.preventDefault(); changePage(-1); }
+  if (e.key === 'ArrowRight') { e.preventDefault(); changePage(1); }
+});
+
 // ── Init ──────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', loadList);
