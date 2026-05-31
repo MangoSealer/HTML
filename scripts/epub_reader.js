@@ -249,6 +249,13 @@ function closeBook() {
   document.getElementById('toc-empty').style.display = '';
   document.getElementById('bookmarks-list').innerHTML = '';
   document.getElementById('bookmarks-empty').style.display = '';
+  if (window.innerWidth <= 768) {
+    const sidebar = document.getElementById('sidebar');
+    sidebar.classList.remove('collapsed');
+    document.getElementById('btn-toggle-sidebar').textContent = '◀';
+    const backdrop = document.getElementById('sidebar-backdrop');
+    if (backdrop) backdrop.classList.remove('visible');
+  }
 }
 
 function destroyRendition() {
@@ -716,11 +723,6 @@ document.addEventListener('keydown', e => {
 // ── Scroll listener for bookmark button state ─────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
-  if (window.innerWidth <= 768) {
-    document.getElementById('sidebar').classList.add('collapsed');
-    document.getElementById('btn-toggle-sidebar').textContent = '▶';
-  }
-
   let _scrollTimer = null;
   document.getElementById('viewer-wrap').addEventListener('scroll', () => {
     clearTimeout(_scrollTimer);
