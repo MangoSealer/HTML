@@ -3,9 +3,22 @@
 const BASE = 'https://painel.danilosn.work';
 const STORAGE_KEY = 'epub_reader_data';
 
-// ── Theme ────────────────────────────────────────────────────────────────────
-// Inject CSS directly into each iframe document — bypasses epub.js theme system
-// which only applies to already-loaded views and can be overridden by epub CSS.
+// ── F11 / resize fix ──────────────────────────────────────────────────────────
+// Registered HERE, before epub.js registers its own window.resize handler
+// (epub.js registers inside renderTo(), which runs later). This guarantees
+// our handler captures S.currentCfi before epub.js reflows and resets it.
+
+window.addEventListener('resize', () => {
+  if (!window._epubCfi && S.currentCfi) window._epubCfi = S.currentCfi;
+  clearTimeout(window._epubResizeTimer);
+  window._epubResizeTimer = setTimeout(() => {
+    const cfi = window._epubCfi;
+    window._epubCfi = null;
+    if (S.rendition && cfi) S.rendition.display(cfi).catch(() => {});
+  }, 400);
+});
+
+// ── Theme ─────────────────────────────────────────────────────────────────────
 
 const THEME_VALS = {
   dark:  { bg: '#0f172a', text: '#e5e7eb', heading: '#f1f5f9', link: '#93c5fd',  font: "-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" },
@@ -15,7 +28,6 @@ const THEME_VALS = {
 
 function getThemeCss(name) {
   const t = THEME_VALS[name] || THEME_VALS.dark;
-  // Use * selector to override any specificity in the epub's own CSS
   return `
     * { background-color: ${t.bg} !important; color: ${t.text} !important; }
     html, body {
@@ -42,8 +54,6 @@ function injectThemeToDoc(doc, name) {
   style.textContent = getThemeCss(name);
 }
 
-// Queries all iframes inside the epub viewer directly — works even when
-// epub.js getContents() returns empty (e.g. in scrolled/continuous mode).
 function injectThemeToAllIframes(name) {
   document.querySelectorAll('#epub-viewer iframe').forEach(iframe => {
     try {
@@ -53,7 +63,7 @@ function injectThemeToAllIframes(name) {
   });
 }
 
-// ── State ────────────────────────────────────────────────────────────────────
+// ── State ─────────────────────────────────────────────────────────────────────
 
 const S = {
   epubs: [],
@@ -65,7 +75,6 @@ const S = {
   fontSize: 100,
   theme: 'dark',
   saveTimer: null,
-  _resizeTimer: null,
 };
 
 // ── API ───────────────────────────────────────────────────────────────────────
@@ -93,8 +102,8 @@ function getFileData(filename) {
   try {
     const all = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
     const d = all[filename] || {};
-    return { cfi: d.cfi || null, progress: d.progress || 0, bookmarks: d.bookmarks || [] };
-  } catch (_) { return { cfi: null, progress: 0, bookmarks: [] }; }
+    return { cfi: d.cfi || null, scrollTop: d.scrollTop || 0, progress: d.progress || 0, bookmarks: d.bookmarks || [] };
+  } catch (_) { return { cfi: null, scrollTop: 0, progress: 0, bookmarks: [] }; }
 }
 
 function saveFileData(filename, data) {
@@ -108,7 +117,9 @@ function saveFileData(filename, data) {
 function saveLastRead() {
   if (!S.filename || !S.currentCfi) return;
   const data = getFileData(S.filename);
+  const vw = document.getElementById('viewer-wrap');
   data.cfi = S.currentCfi;
+  data.scrollTop = vw ? vw.scrollTop : 0;
   data.progress = S.progress;
   saveFileData(S.filename, data);
 }
@@ -160,7 +171,7 @@ function itemHTML(epub) {
     </div>`;
 }
 
-// ── Open / Recreate ───────────────────────────────────────────────────────────
+// ── Open / Close / Recreate ───────────────────────────────────────────────────
 
 async function openEpub(filename) {
   S.filename = filename;
@@ -191,10 +202,34 @@ async function openEpub(filename) {
 
     document.getElementById('viewer-loading').classList.add('hidden');
     document.getElementById('viewer-wrap').classList.remove('hidden');
+
+    // Restore exact scroll position within the chapter
+    if (stored.scrollTop && stored.cfi) {
+      setTimeout(() => {
+        const vw = document.getElementById('viewer-wrap');
+        if (vw) vw.scrollTop = stored.scrollTop;
+      }, 350);
+    }
   } catch (e) {
     showError('Erro ao carregar EPUB: ' + e.message);
     document.getElementById('viewer-loading').classList.add('hidden');
   }
+}
+
+function closeBook() {
+  if (!S.filename) return;
+  S.filename = null;
+  S.currentCfi = null;
+  S.progress = 0;
+  destroyRendition();
+  if (S.book) { try { S.book.destroy(); } catch (_) {} S.book = null; }
+  document.querySelectorAll('.epub-item').forEach(el => el.classList.remove('active'));
+  document.getElementById('reader-content').classList.add('hidden');
+  document.getElementById('reader-empty').classList.remove('hidden');
+  document.getElementById('toc-items').innerHTML = '';
+  document.getElementById('toc-empty').style.display = '';
+  document.getElementById('bookmarks-list').innerHTML = '';
+  document.getElementById('bookmarks-empty').style.display = '';
 }
 
 function destroyRendition() {
@@ -211,7 +246,6 @@ async function recreateRendition(cfi) {
 
   S.rendition = S.book.renderTo('epub-viewer', { width: '100%', flow: 'scrolled', spread: 'none' });
 
-  // Primary theme injection: fires when epub.js loads content into each iframe
   S.rendition.hooks.content.register(contents => {
     try { injectThemeToDoc(contents.document, S.theme); } catch (_) {}
   });
@@ -225,17 +259,8 @@ async function recreateRendition(cfi) {
     updateBookmarkButton();
   });
 
-  // F11 fix: viewport resize causes epub.js to jump to chapter start in scrolled mode
-  S.rendition.on('resized', () => {
-    clearTimeout(S._resizeTimer);
-    S._resizeTimer = setTimeout(() => {
-      if (S.rendition && S.currentCfi) S.rendition.display(S.currentCfi).catch(() => {});
-    }, 250);
-  });
-
   await S.rendition.display(cfi || undefined);
 
-  // Fallback injection after display resolves (hook may not cover all cases)
   setTimeout(() => injectThemeToAllIframes(S.theme), 100);
 
   S.book.ready
@@ -303,9 +328,18 @@ function navigateTo(href) {
   S.rendition.display(href);
 }
 
-function navigateToCfi(cfi) {
+function navigateToCfi(cfi, scrollTop) {
   if (!S.rendition || !cfi) return;
-  S.rendition.display(cfi);
+  S.rendition.display(cfi)
+    .then(() => {
+      if (scrollTop) {
+        setTimeout(() => {
+          const vw = document.getElementById('viewer-wrap');
+          if (vw) vw.scrollTop = scrollTop;
+        }, 200);
+      }
+    })
+    .catch(() => {});
 }
 
 function highlightTocItem(currentHref) {
@@ -331,7 +365,6 @@ function changeFontSize(delta) {
   const next = S.fontSize + delta;
   if (next < 60 || next > 200) return;
   S.fontSize = next;
-  // Font size is baked into getThemeCss, so re-inject to apply
   injectThemeToAllIframes(S.theme);
   document.getElementById('font-label').textContent = S.fontSize + '%';
 }
@@ -361,19 +394,28 @@ function showTab(tab) {
 }
 
 // ── Bookmarks ─────────────────────────────────────────────────────────────────
+// In scrolled mode, location.start.cfi is the section/chapter-level CFI.
+// scrollTop tracks the exact pixel position within that chapter.
+
+function viewerScrollTop() {
+  const vw = document.getElementById('viewer-wrap');
+  return vw ? vw.scrollTop : 0;
+}
 
 function toggleBookmark() {
   if (!S.currentCfi || !S.filename) return;
   const data = getFileData(S.filename);
-  const idx = data.bookmarks.findIndex(b => b.cfi === S.currentCfi);
+  const cfi = S.currentCfi;
+  const scrollTop = viewerScrollTop();
+
+  // Remove if there's a bookmark within 80px of the current scroll position
+  const idx = data.bookmarks.findIndex(b => b.cfi === cfi && Math.abs((b.scrollTop || 0) - scrollTop) < 80);
   if (idx >= 0) {
     data.bookmarks.splice(idx, 1);
   } else {
     const activeToc = document.querySelector('.toc-item.active');
-    const label = activeToc
-      ? activeToc.textContent.trim()
-      : (document.getElementById('reader-info').textContent || 'Posição atual');
-    data.bookmarks.push({ cfi: S.currentCfi, label, date: new Date().toLocaleDateString('pt-BR') });
+    const label = activeToc ? activeToc.textContent.trim() : (document.getElementById('reader-info').textContent || 'Posição atual');
+    data.bookmarks.push({ cfi, scrollTop, label, date: new Date().toLocaleDateString('pt-BR') });
   }
   saveFileData(S.filename, data);
   updateBookmarkButton();
@@ -385,7 +427,11 @@ function updateBookmarkButton() {
   if (!btn) return;
   if (!S.filename || !S.currentCfi) { btn.classList.remove('bookmarked'); return; }
   const data = getFileData(S.filename);
-  btn.classList.toggle('bookmarked', data.bookmarks.some(b => b.cfi === S.currentCfi));
+  const scrollTop = viewerScrollTop();
+  const isBookmarked = data.bookmarks.some(
+    b => b.cfi === S.currentCfi && Math.abs((b.scrollTop || 0) - scrollTop) < 80
+  );
+  btn.classList.toggle('bookmarked', isBookmarked);
 }
 
 function renderBookmarks() {
@@ -396,7 +442,7 @@ function renderBookmarks() {
   if (!bms.length) { emptyEl.style.display = ''; listEl.innerHTML = ''; return; }
   emptyEl.style.display = 'none';
   listEl.innerHTML = bms.map((b, i) => `
-    <div class="bookmark-item" onclick="navigateToCfi('${escAttr(b.cfi)}')">
+    <div class="bookmark-item" onclick="navigateToCfi('${escAttr(b.cfi)}',${b.scrollTop || 0})">
       <div class="bookmark-label">${escHtml(b.label)}</div>
       <div class="bookmark-meta">${escHtml(b.date)}</div>
       <button class="bookmark-del" onclick="removeBookmark(event,${i})" title="Remover">✕</button>
@@ -527,13 +573,7 @@ async function deleteEpub(filename) {
     if (res.status === 401) { showError('Não autorizado (401).'); return; }
     if (!res.ok) { showError('Erro ao deletar.'); return; }
     S.epubs = S.epubs.filter(e => e.filename !== filename);
-    if (S.filename === filename) {
-      S.filename = null;
-      destroyRendition();
-      if (S.book) { try { S.book.destroy(); } catch (_) {} S.book = null; }
-      document.getElementById('reader-content').classList.add('hidden');
-      document.getElementById('reader-empty').classList.remove('hidden');
-    }
+    if (S.filename === filename) closeBook();
     renderList();
   } catch (e) {
     showError('Falha ao deletar: ' + e.message);
@@ -547,7 +587,26 @@ function toggleSidebar() {
   const btn = document.getElementById('btn-toggle-sidebar');
   sidebar.classList.toggle('collapsed');
   btn.textContent = sidebar.classList.contains('collapsed') ? '▶' : '◀';
-  if (S.rendition) setTimeout(() => S.rendition.resize(), 280);
+  if (S.rendition) {
+    // Save CFI NOW, before resize() triggers relocated with chapter start
+    const cfi = S.currentCfi;
+    const scrollTop = viewerScrollTop();
+    setTimeout(() => {
+      S.rendition.resize();
+      if (cfi) setTimeout(() => {
+        S.rendition.display(cfi)
+          .then(() => {
+            if (scrollTop) {
+              setTimeout(() => {
+                const vw = document.getElementById('viewer-wrap');
+                if (vw) vw.scrollTop = scrollTop;
+              }, 100);
+            }
+          })
+          .catch(() => {});
+      }, 100);
+    }, 280);
+  }
 }
 
 function toggleReaderBar() {
@@ -555,7 +614,25 @@ function toggleReaderBar() {
   const btn = document.getElementById('btn-toggle-bar');
   bar.classList.toggle('collapsed');
   btn.textContent = bar.classList.contains('collapsed') ? '▼' : '▲';
-  if (S.rendition) setTimeout(() => S.rendition.resize(), 230);
+  if (S.rendition) {
+    const cfi = S.currentCfi;
+    const scrollTop = viewerScrollTop();
+    setTimeout(() => {
+      S.rendition.resize();
+      if (cfi) setTimeout(() => {
+        S.rendition.display(cfi)
+          .then(() => {
+            if (scrollTop) {
+              setTimeout(() => {
+                const vw = document.getElementById('viewer-wrap');
+                if (vw) vw.scrollTop = scrollTop;
+              }, 100);
+            }
+          })
+          .catch(() => {});
+      }, 100);
+    }, 230);
+  }
 }
 
 // ── Keyboard ──────────────────────────────────────────────────────────────────
@@ -566,20 +643,13 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowRight') { e.preventDefault(); changePage(1); }
 });
 
-// ── Utils ─────────────────────────────────────────────────────────────────────
+// ── Scroll listener for bookmark button state ─────────────────────────────────
 
-function escHtml(s) {
-  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
-
-function escAttr(s) {
-  return String(s).replace(/'/g, "\\'").replace(/"/g, '&quot;');
-}
-
-function escId(s) {
-  return String(s).replace(/[^a-zA-Z0-9_-]/g, '_');
-}
-
-// ── Init ──────────────────────────────────────────────────────────────────────
-
-document.addEventListener('DOMContentLoaded', loadList);
+document.addEventListener('DOMContentLoaded', () => {
+  let _scrollTimer = null;
+  document.getElementById('viewer-wrap').addEventListener('scroll', () => {
+    clearTimeout(_scrollTimer);
+    _scrollTimer = setTimeout(updateBookmarkButton, 150);
+  });
+  loadList();
+});
