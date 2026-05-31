@@ -24,17 +24,17 @@ html[data-theme="dark"] {
 }
 
 html[data-theme="sepia"] {
-  --bg: #e8dcc8;
-  --card: #f5f0e8;
-  --text: #3d2b1f;
-  --muted: #8c7355;
-  --border: #c9b99a;
+  --bg: #b5996e;
+  --card: #c8a97a;
+  --text: #1e0f00;
+  --muted: #5c3d1e;
+  --border: #9a7d52;
   --primary: #3b82f6;
   --primary-hover: #2563eb;
   --danger: #dc2626;
-  --viewer-bg: #f5f0e8;
-  --hover-bg: rgba(0, 0, 0, 0.06);
-  --shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  --viewer-bg: #c8a97a;
+  --hover-bg: rgba(0, 0, 0, 0.08);
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   --radius: 14px;
 }
 
@@ -368,12 +368,12 @@ body {
 .theme-btn[data-theme="sepia"] { background: #f5f0e8; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.2); }
 .theme-btn[data-theme="white"] { background: #ffffff;  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.2); }
 
-/* ── Flow button ── */
-.btn-flow {
-  font-size: 11px;
-  padding: 5px 9px;
-  min-width: 46px;
-  text-align: center;
+/* ── Bar separator ── */
+.bar-sep {
+  width: 1px;
+  height: 18px;
+  background: var(--border);
+  flex-shrink: 0;
 }
 
 /* ── Viewer ── */

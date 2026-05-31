@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EPUB</title>
   <link rel="stylesheet" href="../style/epub_reader.css">
-  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="icon" href="../assets/seasky.ico">
 </head>
 
 <body>
@@ -46,7 +46,7 @@
     <div id="reader-content" class="hidden">
       <div class="reader-bar">
         <button class="btn btn-ghost btn-icon" id="btn-toggle-sidebar" onclick="toggleSidebar()" title="Esconder painel">◀</button>
-
+        <div class="bar-sep"></div>
         <div class="reader-bar-group">
           <button class="btn btn-ghost btn-icon" id="btn-prev" onclick="changePage(-1)" title="Anterior">&#8592;</button>
           <span class="reader-info" id="reader-info">—</span>
@@ -60,13 +60,9 @@
         </div>
 
         <div class="reader-bar-group">
-          <button class="btn btn-ghost btn-flow" id="btn-flow" onclick="toggleFlow()" title="Modo de leitura">Págs</button>
-        </div>
-
-        <div class="reader-bar-group">
-          <button class="theme-btn active" data-theme="dark" onclick="setTheme('dark')" title="Escuro"></button>
-          <button class="theme-btn" data-theme="sepia" onclick="setTheme('sepia')" title="Sépia"></button>
           <button class="theme-btn" data-theme="white" onclick="setTheme('white')" title="Claro"></button>
+          <button class="theme-btn" data-theme="sepia" onclick="setTheme('sepia')" title="Sépia"></button>
+          <button class="theme-btn active" data-theme="dark" onclick="setTheme('dark')" title="Escuro"></button>
         </div>
       </div>
 

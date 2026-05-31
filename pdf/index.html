@@ -4,9 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PDF Reader</title>
+  <title>PDF</title>
   <link rel="stylesheet" href="../style/pdf_reader.css">
-  <link icon="favicon.ico" href="../favicon.ico">>
+  <link rel="icon" href="../assets/seasky.ico">
 </head>
 
 <body>
@@ -36,6 +36,7 @@
     <div id="reader-content" class="hidden">
       <div class="reader-bar">
         <button class="btn btn-ghost btn-icon" id="btn-toggle-sidebar" onclick="toggleSidebar()" title="Esconder painel">◀</button>
+        <div class="bar-sep"></div>
         <div class="reader-bar-group">
           <button class="btn btn-ghost btn-icon" id="btn-prev" onclick="changePage(-1)" title="Página anterior">&#8592;</button>
           <input type="number" id="page-input" class="page-input" min="1" onkeydown="handlePageKey(event)" onblur="handlePageBlur()">

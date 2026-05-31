@@ -366,6 +366,14 @@ body {
   padding: 6px 9px;
 }
 
+/* ── Bar separator ── */
+.bar-sep {
+  width: 1px;
+  height: 18px;
+  background: var(--border);
+  flex-shrink: 0;
+}
+
 .page-input {
   width: 52px;
   background: #0b1220;

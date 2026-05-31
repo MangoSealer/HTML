@@ -17,15 +17,15 @@ const IFRAME_THEMES = {
   },
   sepia: {
     body: {
-      'background-color': '#f5f0e8 !important',
-      color: '#3d2b1f !important',
+      'background-color': '#c8a97a !important',
+      color: '#1e0f00 !important',
       "font-family": "Georgia, 'Times New Roman', serif !important",
       padding: '2em !important',
       'line-height': '1.7 !important',
     },
-    'h1, h2, h3, h4, h5, h6': { color: '#2c1a0e !important' },
-    a: { color: '#8b5e3c !important' },
-    'p, li, td, th': { color: '#3d2b1f !important' },
+    'h1, h2, h3, h4, h5, h6': { color: '#0e0500 !important' },
+    a: { color: '#5c3d1e !important' },
+    'p, li, td, th': { color: '#1e0f00 !important' },
   },
   white: {
     body: {
@@ -49,7 +49,6 @@ const S = {
   currentCfi: null,
   progress: 0,
   fontSize: 100,
-  flow: 'paginated',
   theme: 'dark',
   saveTimer: null,
 };
@@ -167,15 +166,9 @@ function destroyRendition() {
 async function recreateRendition(cfi) {
   destroyRendition();
 
-  const isScrolled = S.flow === 'scrolled';
-  const viewerWrap = document.getElementById('viewer-wrap');
-  viewerWrap.classList.toggle('scrolled', isScrolled);
+  document.getElementById('viewer-wrap').classList.add('scrolled');
 
-  const opts = isScrolled
-    ? { width: '100%', flow: 'scrolled', spread: 'none' }
-    : { width: '100%', height: '100%', flow: 'paginated', spread: 'none' };
-
-  S.rendition = S.book.renderTo('epub-viewer', opts);
+  S.rendition = S.book.renderTo('epub-viewer', { width: '100%', flow: 'scrolled', spread: 'none' });
 
   Object.entries(IFRAME_THEMES).forEach(([name, styles]) => {
     S.rendition.themes.register(name, styles);
@@ -185,13 +178,42 @@ async function recreateRendition(cfi) {
 
   S.rendition.on('relocated', location => {
     S.currentCfi = location.start.cfi;
-    S.progress = Math.round((location.start.percentage || 0) * 100);
+    S.progress = calcProgress(location);
     updateReaderUI(location);
     highlightTocItem(location.start.href);
     saveProgressDebounced();
   });
 
   await S.rendition.display(cfi || undefined);
+
+  // Generate locations in background for accurate percentage
+  S.book.ready
+    .then(() => S.book.locations.generate(1024))
+    .then(() => {
+      if (!S.currentCfi || !S.book) return;
+      try {
+        const pct = S.book.locations.percentageFromCfi(S.currentCfi);
+        if (typeof pct === 'number' && !isNaN(pct)) {
+          S.progress = Math.round(pct * 100);
+          const el = document.getElementById('reader-info');
+          if (el) el.textContent = el.textContent.replace(/\d+%/, S.progress + '%');
+        }
+      } catch (_) {}
+    })
+    .catch(() => {});
+}
+
+function calcProgress(location) {
+  // Use book.locations if generated, else approximate via spine position
+  if (S.book && S.book.locations && S.book.locations.total > 0) {
+    try {
+      const pct = S.book.locations.percentageFromCfi(location.start.cfi);
+      if (typeof pct === 'number' && !isNaN(pct)) return Math.round(pct * 100);
+    } catch (_) {}
+  }
+  const idx = location.start.index || 0;
+  const total = (S.book && S.book.spine && S.book.spine.items.length) || 1;
+  return Math.round((idx / Math.max(total - 1, 1)) * 100);
 }
 
 function updateReaderUI(location) {
@@ -263,25 +285,6 @@ function changeFontSize(delta) {
   S.fontSize = next;
   if (S.rendition) S.rendition.themes.fontSize(S.fontSize + '%');
   document.getElementById('font-label').textContent = S.fontSize + '%';
-}
-
-// ── Flow ──────────────────────────────────────────────────────────
-
-async function toggleFlow() {
-  S.flow = S.flow === 'paginated' ? 'scrolled' : 'paginated';
-  document.getElementById('btn-flow').textContent = S.flow === 'paginated' ? 'Págs' : 'Rolar';
-  if (!S.book) return;
-  const cfi = S.currentCfi;
-  document.getElementById('viewer-wrap').classList.add('hidden');
-  document.getElementById('viewer-loading').classList.remove('hidden');
-  try {
-    await recreateRendition(cfi || undefined);
-    document.getElementById('viewer-loading').classList.add('hidden');
-    document.getElementById('viewer-wrap').classList.remove('hidden');
-  } catch (e) {
-    showError('Erro ao trocar modo: ' + e.message);
-    document.getElementById('viewer-loading').classList.add('hidden');
-  }
 }
 
 // ── Theme ─────────────────────────────────────────────────────────
