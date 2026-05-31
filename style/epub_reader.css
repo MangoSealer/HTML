@@ -423,10 +423,13 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  position: relative;
 }
 
 #viewer-loading {
-  flex: 1;
+  position: absolute;
+  inset: 0;
+  z-index: 5;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -533,17 +536,58 @@ body {
 }
 
 /* ── Mobile ── */
-@media (max-width: 768px) {
-  body { flex-direction: column; }
+#sidebar-backdrop {
+  display: none;
+}
 
+@media (max-width: 768px) {
   #sidebar {
-    width: 100%;
-    height: 42vh;
-    border-right: none;
-    border-bottom: 1px solid var(--border);
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: min(85vw, 300px);
+    z-index: 100;
+    transform: translateX(0);
+    border-right: 1px solid var(--border);
+    transition: transform 0.28s ease, border-color 0.25s ease;
   }
 
-  .reader-bar { gap: 6px; }
+  #sidebar.collapsed {
+    width: min(85vw, 300px);
+    transform: translateX(-100%);
+    border-right-color: var(--border);
+  }
 
-  #search-panel.open { width: 240px; }
+  #sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 99;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.28s ease;
+  }
+
+  #sidebar-backdrop.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .reader-bar {
+    max-height: 110px;
+    gap: 4px;
+    padding: 6px 44px 6px 8px;
+  }
+
+  .reader-info {
+    font-size: 12px;
+    min-width: 60px;
+  }
+
+  #font-label { min-width: 34px !important; }
+
+  .btn { min-height: 38px; }
+  .btn-icon { padding: 7px 10px; min-height: 38px; }
 }

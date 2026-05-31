@@ -191,9 +191,16 @@ async function openEpub(filename) {
   const itemEl = document.getElementById('item-' + escId(filename));
   if (itemEl) itemEl.classList.add('active');
 
+  if (window.innerWidth <= 768) {
+    const sidebar = document.getElementById('sidebar');
+    sidebar.classList.add('collapsed');
+    document.getElementById('btn-toggle-sidebar').textContent = '▶';
+    const backdrop = document.getElementById('sidebar-backdrop');
+    if (backdrop) backdrop.classList.remove('visible');
+  }
+
   document.getElementById('reader-empty').classList.add('hidden');
   document.getElementById('reader-content').classList.remove('hidden');
-  document.getElementById('viewer-wrap').classList.add('hidden');
   document.getElementById('viewer-loading').classList.remove('hidden');
 
   try {
@@ -211,9 +218,9 @@ async function openEpub(filename) {
     await recreateRendition(stored.cfi || undefined);
     await loadToc();
     renderBookmarks();
+    syncBookmarks(filename);
 
     document.getElementById('viewer-loading').classList.add('hidden');
-    document.getElementById('viewer-wrap').classList.remove('hidden');
 
     // Restore exact scroll position within the chapter
     if (stored.scrollTop && stored.cfi) {
@@ -414,7 +421,7 @@ function viewerScrollTop() {
   return vw ? vw.scrollTop : 0;
 }
 
-function toggleBookmark() {
+async function toggleBookmark() {
   if (!S.currentCfi || !S.filename) return;
   const data = getFileData(S.filename);
   const cfi = S.currentCfi;
@@ -423,15 +430,21 @@ function toggleBookmark() {
   // Remove if there's a bookmark within 80px of the current scroll position
   const idx = data.bookmarks.findIndex(b => b.cfi === cfi && Math.abs((b.scrollTop || 0) - scrollTop) < 80);
   if (idx >= 0) {
-    data.bookmarks.splice(idx, 1);
+    const bm = data.bookmarks.splice(idx, 1)[0];
+    saveFileData(S.filename, data);
+    updateBookmarkButton();
+    renderBookmarks();
+    if (bm.id) deleteServerBookmark(S.filename, bm.id);
   } else {
     const activeToc = document.querySelector('.toc-item.active');
     const label = activeToc ? activeToc.textContent.trim() : (document.getElementById('reader-info').textContent || 'Posição atual');
-    data.bookmarks.push({ cfi, scrollTop, label, date: new Date().toLocaleDateString('pt-BR') });
+    const bm = { id: genBookmarkId(), cfi, scrollTop, label, date: new Date().toLocaleDateString('pt-BR') };
+    data.bookmarks.push(bm);
+    saveFileData(S.filename, data);
+    updateBookmarkButton();
+    renderBookmarks();
+    pushBookmark(S.filename, bm);
   }
-  saveFileData(S.filename, data);
-  updateBookmarkButton();
-  renderBookmarks();
 }
 
 function updateBookmarkButton() {
@@ -465,10 +478,48 @@ function removeBookmark(e, index) {
   e.stopPropagation();
   if (!S.filename) return;
   const data = getFileData(S.filename);
-  data.bookmarks.splice(index, 1);
+  const bm = data.bookmarks.splice(index, 1)[0];
   saveFileData(S.filename, data);
   updateBookmarkButton();
   renderBookmarks();
+  if (bm && bm.id) deleteServerBookmark(S.filename, bm.id);
+}
+
+// ── Bookmark server sync ──────────────────────────────────────────────────────
+
+function genBookmarkId() {
+  return typeof crypto !== 'undefined' && crypto.randomUUID
+    ? crypto.randomUUID()
+    : Date.now().toString(36) + Math.random().toString(36).slice(2);
+}
+
+async function syncBookmarks(filename) {
+  try {
+    const res = await api(`/epub/bookmarks/${encodeURIComponent(filename)}`);
+    if (!res.ok) return;
+    const serverBms = await res.json();
+    const data = getFileData(filename);
+    data.bookmarks = serverBms;
+    saveFileData(filename, data);
+    renderBookmarks();
+    updateBookmarkButton();
+  } catch (_) {}
+}
+
+async function pushBookmark(filename, bm) {
+  try {
+    await api(`/epub/bookmarks/${encodeURIComponent(filename)}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(bm),
+    });
+  } catch (_) {}
+}
+
+async function deleteServerBookmark(filename, id) {
+  try {
+    await api(`/epub/bookmarks/${encodeURIComponent(filename)}/${encodeURIComponent(id)}`, { method: 'DELETE' });
+  } catch (_) {}
 }
 
 // ── Upload ────────────────────────────────────────────────────────────────────
@@ -598,8 +649,13 @@ function toggleSidebar() {
   const sidebar = document.getElementById('sidebar');
   const btn = document.getElementById('btn-toggle-sidebar');
   sidebar.classList.toggle('collapsed');
-  btn.textContent = sidebar.classList.contains('collapsed') ? '▶' : '◀';
-  if (S.rendition) {
+  const isCollapsed = sidebar.classList.contains('collapsed');
+  btn.textContent = isCollapsed ? '▶' : '◀';
+
+  const backdrop = document.getElementById('sidebar-backdrop');
+  if (backdrop) backdrop.classList.toggle('visible', !isCollapsed);
+
+  if (window.innerWidth > 768 && S.rendition) {
     // Save CFI NOW, before resize() triggers relocated with chapter start
     const cfi = S.currentCfi;
     const scrollTop = viewerScrollTop();
@@ -658,6 +714,11 @@ document.addEventListener('keydown', e => {
 // ── Scroll listener for bookmark button state ─────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
+  if (window.innerWidth <= 768) {
+    document.getElementById('sidebar').classList.add('collapsed');
+    document.getElementById('btn-toggle-sidebar').textContent = '▶';
+  }
+
   let _scrollTimer = null;
   document.getElementById('viewer-wrap').addEventListener('scroll', () => {
     clearTimeout(_scrollTimer);
