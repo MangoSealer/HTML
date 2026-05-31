@@ -438,7 +438,9 @@ async function toggleBookmark() {
   } else {
     const activeToc = document.querySelector('.toc-item.active');
     const label = activeToc ? activeToc.textContent.trim() : (document.getElementById('reader-info').textContent || 'Posição atual');
-    const bm = { id: genBookmarkId(), cfi, scrollTop, label, date: new Date().toLocaleDateString('pt-BR') };
+    const now = new Date();
+    const date = now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    const bm = { id: genBookmarkId(), cfi, scrollTop, label, date };
     data.bookmarks.push(bm);
     saveFileData(S.filename, data);
     updateBookmarkButton();
