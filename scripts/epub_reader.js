@@ -83,6 +83,18 @@ function api(path, opts = {}) {
   return fetch(BASE + path, { credentials: 'include', ...opts });
 }
 
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function escAttr(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function escId(s) {
+  return String(s).replace(/[^a-zA-Z0-9_-]/g, '_');
+}
+
 function showError(msg) {
   let el = document.getElementById('error-banner');
   if (!el) {
