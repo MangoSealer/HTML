@@ -3,21 +3,6 @@
 const BASE = 'https://painel.danilosn.work';
 const STORAGE_KEY = 'epub_reader_data';
 
-// ── F11 / resize fix ──────────────────────────────────────────────────────────
-// Registered HERE, before epub.js registers its own window.resize handler
-// (epub.js registers inside renderTo(), which runs later). This guarantees
-// our handler captures S.currentCfi before epub.js reflows and resets it.
-
-window.addEventListener('resize', () => {
-  if (!window._epubCfi && S.currentCfi) window._epubCfi = S.currentCfi;
-  clearTimeout(window._epubResizeTimer);
-  window._epubResizeTimer = setTimeout(() => {
-    const cfi = window._epubCfi;
-    window._epubCfi = null;
-    if (S.rendition && cfi) S.rendition.display(cfi).catch(() => {});
-  }, 400);
-});
-
 // ── Theme ─────────────────────────────────────────────────────────────────────
 
 const THEME_VALS = {
@@ -68,6 +53,7 @@ function injectThemeToAllIframes(name) {
 const S = {
   epubs: [],
   filename: null,
+
   book: null,
   rendition: null,
   currentCfi: null,
@@ -76,6 +62,20 @@ const S = {
   theme: 'dark',
   saveTimer: null,
 };
+
+// ── F11 / resize fix ──────────────────────────────────────────────────────────
+// Registered AFTER const S (no TDZ risk) but before any book is opened
+// (epub.js registers its handler inside renderTo(), which runs only on openEpub).
+
+window.addEventListener('resize', () => {
+  if (!window._epubCfi && S.currentCfi) window._epubCfi = S.currentCfi;
+  clearTimeout(window._epubResizeTimer);
+  window._epubResizeTimer = setTimeout(() => {
+    const cfi = window._epubCfi;
+    window._epubCfi = null;
+    if (S.rendition && cfi) S.rendition.display(cfi).catch(() => {});
+  }, 400);
+});
 
 // ── API ───────────────────────────────────────────────────────────────────────
 
@@ -138,8 +138,8 @@ async function loadList() {
     if (!res.ok) { showError('Erro ao carregar lista de EPUBs.'); return; }
     S.epubs = await res.json();
     renderList();
-  } catch (_) {
-    showError('Falha de rede ao carregar lista.');
+  } catch (e) {
+    showError('Erro ao carregar lista: ' + (e && e.message ? e.message : 'falha de rede'));
   }
 }
 
