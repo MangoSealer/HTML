@@ -3,7 +3,9 @@
 const BASE = 'https://painel.danilosn.work';
 const STORAGE_KEY = 'epub_reader_data';
 
-// ── Theme injection (direct DOM — more reliable than epub.js themes API) ──────
+// ── Theme ────────────────────────────────────────────────────────────────────
+// Inject CSS directly into each iframe document — bypasses epub.js theme system
+// which only applies to already-loaded views and can be overridden by epub CSS.
 
 const THEME_VALS = {
   dark:  { bg: '#0f172a', text: '#e5e7eb', heading: '#f1f5f9', link: '#93c5fd',  font: "-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" },
@@ -13,33 +15,42 @@ const THEME_VALS = {
 
 function getThemeCss(name) {
   const t = THEME_VALS[name] || THEME_VALS.dark;
+  // Use * selector to override any specificity in the epub's own CSS
   return `
-    html,body{background-color:${t.bg}!important;color:${t.text}!important;font-family:${t.font}!important;line-height:1.7!important;padding:1.5em 2em!important;margin:0!important;}
-    p,li,td,th,dt,dd,span,div,caption,blockquote{color:${t.text}!important;}
-    h1,h2,h3,h4,h5,h6{color:${t.heading}!important;}
-    a,a:visited,a:active{color:${t.link}!important;}
-    section,article,aside,nav,header,footer,main,figure,div{background-color:transparent!important;}
-    img,svg,canvas{max-width:100%!important;height:auto!important;background:transparent!important;}
+    * { background-color: ${t.bg} !important; color: ${t.text} !important; }
+    html, body {
+      font-family: ${t.font} !important;
+      font-size: ${S.fontSize}% !important;
+      line-height: 1.7 !important;
+      padding: 1.5em 2em !important;
+      margin: 0 !important;
+    }
+    h1, h2, h3, h4, h5, h6 { color: ${t.heading} !important; }
+    a, a:visited, a:active { color: ${t.link} !important; }
+    img, svg, canvas, picture { background-color: transparent !important; }
   `;
 }
 
-function injectThemeToContents(name) {
-  if (!S.rendition) return;
-  try {
-    S.rendition.getContents().forEach(contents => {
-      try {
-        const doc = contents.document;
-        if (!doc || !doc.head) return;
-        let style = doc.getElementById('epub-reader-theme');
-        if (!style) {
-          style = doc.createElement('style');
-          style.id = 'epub-reader-theme';
-          doc.head.appendChild(style);
-        }
-        style.textContent = getThemeCss(name);
-      } catch (_) {}
-    });
-  } catch (_) {}
+function injectThemeToDoc(doc, name) {
+  if (!doc || !doc.head) return;
+  let style = doc.getElementById('epub-reader-theme');
+  if (!style) {
+    style = doc.createElement('style');
+    style.id = 'epub-reader-theme';
+    doc.head.appendChild(style);
+  }
+  style.textContent = getThemeCss(name);
+}
+
+// Queries all iframes inside the epub viewer directly — works even when
+// epub.js getContents() returns empty (e.g. in scrolled/continuous mode).
+function injectThemeToAllIframes(name) {
+  document.querySelectorAll('#epub-viewer iframe').forEach(iframe => {
+    try {
+      const doc = iframe.contentDocument || (iframe.contentWindow && iframe.contentWindow.document);
+      if (doc) injectThemeToDoc(doc, name);
+    } catch (_) {}
+  });
 }
 
 // ── State ────────────────────────────────────────────────────────────────────
@@ -54,7 +65,6 @@ const S = {
   fontSize: 100,
   theme: 'dark',
   saveTimer: null,
-  _searchTimer: null,
   _resizeTimer: null,
 };
 
@@ -200,11 +210,10 @@ async function recreateRendition(cfi) {
   document.getElementById('viewer-wrap').classList.add('scrolled');
 
   S.rendition = S.book.renderTo('epub-viewer', { width: '100%', flow: 'scrolled', spread: 'none' });
-  S.rendition.themes.fontSize(S.fontSize + '%');
 
-  S.rendition.on('rendered', () => {
-    injectThemeToContents(S.theme);
-    try { S.rendition.themes.fontSize(S.fontSize + '%'); } catch (_) {}
+  // Primary theme injection: fires when epub.js loads content into each iframe
+  S.rendition.hooks.content.register(contents => {
+    try { injectThemeToDoc(contents.document, S.theme); } catch (_) {}
   });
 
   S.rendition.on('relocated', location => {
@@ -216,7 +225,7 @@ async function recreateRendition(cfi) {
     updateBookmarkButton();
   });
 
-  // F11 fix: restore scroll position after any viewport resize
+  // F11 fix: viewport resize causes epub.js to jump to chapter start in scrolled mode
   S.rendition.on('resized', () => {
     clearTimeout(S._resizeTimer);
     S._resizeTimer = setTimeout(() => {
@@ -226,8 +235,8 @@ async function recreateRendition(cfi) {
 
   await S.rendition.display(cfi || undefined);
 
-  // Theme injection after first render (rendered event may not fire before display resolves)
-  setTimeout(() => injectThemeToContents(S.theme), 80);
+  // Fallback injection after display resolves (hook may not cover all cases)
+  setTimeout(() => injectThemeToAllIframes(S.theme), 100);
 
   S.book.ready
     .then(() => S.book.locations.generate(1024))
@@ -322,7 +331,8 @@ function changeFontSize(delta) {
   const next = S.fontSize + delta;
   if (next < 60 || next > 200) return;
   S.fontSize = next;
-  if (S.rendition) S.rendition.themes.fontSize(S.fontSize + '%');
+  // Font size is baked into getThemeCss, so re-inject to apply
+  injectThemeToAllIframes(S.theme);
   document.getElementById('font-label').textContent = S.fontSize + '%';
 }
 
@@ -331,7 +341,7 @@ function changeFontSize(delta) {
 function setTheme(name) {
   S.theme = name;
   document.documentElement.setAttribute('data-theme', name);
-  injectThemeToContents(name);
+  injectThemeToAllIframes(name);
   document.querySelectorAll('.theme-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.theme === name);
   });
@@ -401,64 +411,6 @@ function removeBookmark(e, index) {
   saveFileData(S.filename, data);
   updateBookmarkButton();
   renderBookmarks();
-}
-
-// ── Search ────────────────────────────────────────────────────────────────────
-
-function toggleSearch() {
-  const panel = document.getElementById('search-panel');
-  if (panel.classList.contains('open')) {
-    closeSearch();
-  } else {
-    panel.classList.add('open');
-    document.getElementById('search-input').focus();
-    if (S.rendition) setTimeout(() => S.rendition.resize(), 220);
-  }
-}
-
-function closeSearch() {
-  const panel = document.getElementById('search-panel');
-  panel.classList.remove('open');
-  document.getElementById('search-input').value = '';
-  document.getElementById('search-results').innerHTML = '';
-  document.getElementById('search-status').textContent = '';
-  if (S.rendition) setTimeout(() => S.rendition.resize(), 220);
-}
-
-function debouncedSearch() {
-  clearTimeout(S._searchTimer);
-  S._searchTimer = setTimeout(() => {
-    const q = document.getElementById('search-input').value.trim();
-    if (q.length < 2) {
-      document.getElementById('search-results').innerHTML = '';
-      document.getElementById('search-status').textContent = q ? 'Mínimo 2 caracteres.' : '';
-      return;
-    }
-    runSearch(q);
-  }, 400);
-}
-
-async function runSearch(query) {
-  if (!S.book) return;
-  const statusEl = document.getElementById('search-status');
-  const resultsEl = document.getElementById('search-results');
-  statusEl.textContent = 'Pesquisando…';
-  resultsEl.innerHTML = '';
-  try {
-    const results = await S.book.search(query);
-    if (!results || !results.length) { statusEl.textContent = 'Nenhum resultado encontrado.'; return; }
-    statusEl.textContent = `${results.length} resultado${results.length !== 1 ? 's' : ''}`;
-    const re = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-    resultsEl.innerHTML = results.slice(0, 100).map(r => {
-      const excerpt = escHtml(r.excerpt || '').replace(re, '<mark>$1</mark>');
-      return `<div class="search-result" onclick="navigateToCfi('${escAttr(r.cfi)}')">${excerpt}</div>`;
-    }).join('');
-    if (results.length > 100) {
-      resultsEl.innerHTML += `<div class="search-more">+${results.length - 100} resultados não exibidos</div>`;
-    }
-  } catch (_) {
-    statusEl.textContent = 'Erro na pesquisa.';
-  }
 }
 
 // ── Upload ────────────────────────────────────────────────────────────────────

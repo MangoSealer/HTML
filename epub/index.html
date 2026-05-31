@@ -68,7 +68,6 @@
 
         <div class="reader-bar-group">
           <button class="btn btn-ghost btn-icon" id="btn-bookmark" onclick="toggleBookmark()" title="Marcar posição">🔖</button>
-          <button class="btn btn-ghost btn-icon" id="btn-search" onclick="toggleSearch()" title="Pesquisar">🔍</button>
         </div>
 
         <div class="reader-bar-group">
@@ -78,19 +77,9 @@
         </div>
       </div>
 
-      <div class="reader-body">
-        <div id="viewer-loading" class="hidden">Carregando EPUB…</div>
-        <div id="viewer-wrap">
-          <div id="epub-viewer"></div>
-        </div>
-        <div id="search-panel">
-          <div class="search-header">
-            <input type="text" id="search-input" class="search-input-field" placeholder="Pesquisar no livro…" oninput="debouncedSearch()">
-            <button class="btn btn-ghost btn-icon" onclick="closeSearch()" title="Fechar">&#10005;</button>
-          </div>
-          <div id="search-status" class="search-status"></div>
-          <div id="search-results" class="search-results-list"></div>
-        </div>
+      <div id="viewer-loading" class="hidden">Carregando EPUB…</div>
+      <div id="viewer-wrap">
+        <div id="epub-viewer"></div>
       </div>
     </div>
   </main>
