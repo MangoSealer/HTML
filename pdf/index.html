@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Reader</title>
+  <link rel="stylesheet" href="../style/pdf_reader.css">
+</head>
+
+<body>
+
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <h1>PDFs</h1>
+      <button class="btn btn-primary" onclick="toggleUpload()">+ Upload</button>
+    </div>
+
+    <div id="upload-zone">
+      <div class="drop-area" id="drop-area" onclick="document.getElementById('file-input').click()">
+        <span>📄</span>
+        Arraste um PDF ou clique para selecionar
+      </div>
+      <input type="file" id="file-input" accept=".pdf" hidden onchange="handleFileSelect(event)">
+    </div>
+
+    <div id="pdf-list"></div>
+  </aside>
+
+  <main id="reader">
+    <div id="reader-empty">Selecione um PDF na lista</div>
+
+    <div id="reader-content" class="hidden">
+      <div class="reader-bar">
+        <div class="reader-bar-group">
+          <button class="btn btn-ghost btn-icon" id="btn-prev" onclick="changePage(-1)" title="Página anterior">&#8592;</button>
+          <input type="number" id="page-input" class="page-input" min="1" onkeydown="handlePageKey(event)" onblur="handlePageBlur()">
+          <span class="page-info" id="page-info">de —</span>
+          <button class="btn btn-ghost btn-icon" id="btn-next" onclick="changePage(1)" title="Próxima página">&#8594;</button>
+        </div>
+        <div class="reader-bar-group">
+          <button class="btn btn-ghost btn-icon" onclick="changeZoom(-0.2)" title="Diminuir zoom">&#8722;</button>
+          <span id="zoom-label" class="page-info" style="min-width:42px;text-align:center;">120%</span>
+          <button class="btn btn-ghost btn-icon" onclick="changeZoom(0.2)" title="Aumentar zoom">&#43;</button>
+        </div>
+      </div>
+
+      <div id="canvas-loading" class="hidden">Carregando PDF…</div>
+      <div id="canvas-wrap">
+        <canvas id="pdf-canvas"></canvas>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="../scripts/pdf_reader.js"></script>
+</body>
+
+</html>
