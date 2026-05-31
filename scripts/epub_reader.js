@@ -1,45 +1,48 @@
 'use strict';
 
 const BASE = 'https://painel.danilosn.work';
+const STORAGE_KEY = 'epub_reader_data';
 
-const IFRAME_THEMES = {
-  dark: {
-    body: {
-      'background-color': '#0f172a !important',
-      color: '#e5e7eb !important',
-      'font-family': "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important",
-      padding: '2em !important',
-      'line-height': '1.7 !important',
-    },
-    'h1, h2, h3, h4, h5, h6': { color: '#f1f5f9 !important' },
-    a: { color: '#93c5fd !important' },
-    'p, li, td, th': { color: '#e5e7eb !important' },
-  },
-  sepia: {
-    body: {
-      'background-color': '#c8a97a !important',
-      color: '#1e0f00 !important',
-      "font-family": "Georgia, 'Times New Roman', serif !important",
-      padding: '2em !important',
-      'line-height': '1.7 !important',
-    },
-    'h1, h2, h3, h4, h5, h6': { color: '#0e0500 !important' },
-    a: { color: '#5c3d1e !important' },
-    'p, li, td, th': { color: '#1e0f00 !important' },
-  },
-  white: {
-    body: {
-      'background-color': '#ffffff !important',
-      color: '#1a1a1a !important',
-      'font-family': "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important",
-      padding: '2em !important',
-      'line-height': '1.7 !important',
-    },
-    'h1, h2, h3, h4, h5, h6': { color: '#111111 !important' },
-    a: { color: '#2563eb !important' },
-    'p, li, td, th': { color: '#1a1a1a !important' },
-  },
+// ── Theme injection (direct DOM — more reliable than epub.js themes API) ──────
+
+const THEME_VALS = {
+  dark:  { bg: '#0f172a', text: '#e5e7eb', heading: '#f1f5f9', link: '#93c5fd',  font: "-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" },
+  sepia: { bg: '#c8a97a', text: '#1e0f00', heading: '#0e0500', link: '#5c3d1e',  font: "Georgia,'Times New Roman',serif" },
+  white: { bg: '#ffffff', text: '#1a1a1a', heading: '#111111', link: '#2563eb',  font: "-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" },
 };
+
+function getThemeCss(name) {
+  const t = THEME_VALS[name] || THEME_VALS.dark;
+  return `
+    html,body{background-color:${t.bg}!important;color:${t.text}!important;font-family:${t.font}!important;line-height:1.7!important;padding:1.5em 2em!important;margin:0!important;}
+    p,li,td,th,dt,dd,span,div,caption,blockquote{color:${t.text}!important;}
+    h1,h2,h3,h4,h5,h6{color:${t.heading}!important;}
+    a,a:visited,a:active{color:${t.link}!important;}
+    section,article,aside,nav,header,footer,main,figure,div{background-color:transparent!important;}
+    img,svg,canvas{max-width:100%!important;height:auto!important;background:transparent!important;}
+  `;
+}
+
+function injectThemeToContents(name) {
+  if (!S.rendition) return;
+  try {
+    S.rendition.getContents().forEach(contents => {
+      try {
+        const doc = contents.document;
+        if (!doc || !doc.head) return;
+        let style = doc.getElementById('epub-reader-theme');
+        if (!style) {
+          style = doc.createElement('style');
+          style.id = 'epub-reader-theme';
+          doc.head.appendChild(style);
+        }
+        style.textContent = getThemeCss(name);
+      } catch (_) {}
+    });
+  } catch (_) {}
+}
+
+// ── State ────────────────────────────────────────────────────────────────────
 
 const S = {
   epubs: [],
@@ -51,9 +54,11 @@ const S = {
   fontSize: 100,
   theme: 'dark',
   saveTimer: null,
+  _searchTimer: null,
+  _resizeTimer: null,
 };
 
-// ── API helpers ──────────────────────────────────────────────────
+// ── API ───────────────────────────────────────────────────────────────────────
 
 function api(path, opts = {}) {
   return fetch(BASE + path, { credentials: 'include', ...opts });
@@ -72,7 +77,38 @@ function showError(msg) {
   el._t = setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 350); }, 5000);
 }
 
-// ── List ─────────────────────────────────────────────────────────
+// ── localStorage ──────────────────────────────────────────────────────────────
+
+function getFileData(filename) {
+  try {
+    const all = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    const d = all[filename] || {};
+    return { cfi: d.cfi || null, progress: d.progress || 0, bookmarks: d.bookmarks || [] };
+  } catch (_) { return { cfi: null, progress: 0, bookmarks: [] }; }
+}
+
+function saveFileData(filename, data) {
+  try {
+    const all = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    all[filename] = data;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
+  } catch (_) {}
+}
+
+function saveLastRead() {
+  if (!S.filename || !S.currentCfi) return;
+  const data = getFileData(S.filename);
+  data.cfi = S.currentCfi;
+  data.progress = S.progress;
+  saveFileData(S.filename, data);
+}
+
+function saveProgressDebounced() {
+  clearTimeout(S.saveTimer);
+  S.saveTimer = setTimeout(saveLastRead, 1000);
+}
+
+// ── List ──────────────────────────────────────────────────────────────────────
 
 async function loadList() {
   try {
@@ -81,7 +117,7 @@ async function loadList() {
     if (!res.ok) { showError('Erro ao carregar lista de EPUBs.'); return; }
     S.epubs = await res.json();
     renderList();
-  } catch (e) {
+  } catch (_) {
     showError('Falha de rede ao carregar lista.');
   }
 }
@@ -92,26 +128,20 @@ function renderList() {
     el.innerHTML = '<div class="empty-list">Nenhum EPUB salvo ainda.</div>';
     return;
   }
-  el.innerHTML = S.epubs.map(epub => itemHTML(epub)).join('');
+  el.innerHTML = S.epubs.map(itemHTML).join('');
 }
 
 function itemHTML(epub) {
   const title = escHtml(epub.title || epub.filename);
-  const date = epub.uploaded_at
-    ? new Date(epub.uploaded_at).toLocaleDateString('pt-BR')
-    : '';
+  const date = epub.uploaded_at ? new Date(epub.uploaded_at).toLocaleDateString('pt-BR') : '';
   const active = epub.filename === S.filename ? ' active' : '';
-  const badge = epub.progress
-    ? `<span class="progress-badge">${epub.progress}%</span>`
-    : '';
+  const stored = getFileData(epub.filename);
+  const badge = stored.progress ? `<span class="progress-badge">${stored.progress}%</span>` : '';
   return `
     <div class="epub-item${active}" id="item-${escId(epub.filename)}">
-      <div class="epub-item-body" onclick="openEpub('${escAttr(epub.filename)}', '${escAttr(epub.cfi || '')}')">
+      <div class="epub-item-body" onclick="openEpub('${escAttr(epub.filename)}')">
         <div class="epub-item-title">${title}</div>
-        <div class="epub-item-meta">
-          <span>${date}</span>
-          ${badge}
-        </div>
+        <div class="epub-item-meta"><span>${date}</span>${badge}</div>
       </div>
       <div class="epub-item-actions">
         <button class="item-btn" onclick="startRename('${escAttr(epub.filename)}')">✏️ Renomear</button>
@@ -120,9 +150,9 @@ function itemHTML(epub) {
     </div>`;
 }
 
-// ── Open / Recreate ───────────────────────────────────────────────
+// ── Open / Recreate ───────────────────────────────────────────────────────────
 
-async function openEpub(filename, savedCfi) {
+async function openEpub(filename) {
   S.filename = filename;
   document.querySelectorAll('.epub-item').forEach(el => el.classList.remove('active'));
   const itemEl = document.getElementById('item-' + escId(filename));
@@ -144,8 +174,10 @@ async function openEpub(filename, savedCfi) {
 
     S.book = ePub(arrayBuffer);
 
-    await recreateRendition(savedCfi || undefined);
+    const stored = getFileData(filename);
+    await recreateRendition(stored.cfi || undefined);
     await loadToc();
+    renderBookmarks();
 
     document.getElementById('viewer-loading').classList.add('hidden');
     document.getElementById('viewer-wrap').classList.remove('hidden');
@@ -165,16 +197,15 @@ function destroyRendition() {
 
 async function recreateRendition(cfi) {
   destroyRendition();
-
   document.getElementById('viewer-wrap').classList.add('scrolled');
 
   S.rendition = S.book.renderTo('epub-viewer', { width: '100%', flow: 'scrolled', spread: 'none' });
-
-  Object.entries(IFRAME_THEMES).forEach(([name, styles]) => {
-    S.rendition.themes.register(name, styles);
-  });
-  S.rendition.themes.select(S.theme);
   S.rendition.themes.fontSize(S.fontSize + '%');
+
+  S.rendition.on('rendered', () => {
+    injectThemeToContents(S.theme);
+    try { S.rendition.themes.fontSize(S.fontSize + '%'); } catch (_) {}
+  });
 
   S.rendition.on('relocated', location => {
     S.currentCfi = location.start.cfi;
@@ -182,11 +213,22 @@ async function recreateRendition(cfi) {
     updateReaderUI(location);
     highlightTocItem(location.start.href);
     saveProgressDebounced();
+    updateBookmarkButton();
+  });
+
+  // F11 fix: restore scroll position after any viewport resize
+  S.rendition.on('resized', () => {
+    clearTimeout(S._resizeTimer);
+    S._resizeTimer = setTimeout(() => {
+      if (S.rendition && S.currentCfi) S.rendition.display(S.currentCfi).catch(() => {});
+    }, 250);
   });
 
   await S.rendition.display(cfi || undefined);
 
-  // Generate locations in background for accurate percentage
+  // Theme injection after first render (rendered event may not fire before display resolves)
+  setTimeout(() => injectThemeToContents(S.theme), 80);
+
   S.book.ready
     .then(() => S.book.locations.generate(1024))
     .then(() => {
@@ -204,7 +246,6 @@ async function recreateRendition(cfi) {
 }
 
 function calcProgress(location) {
-  // Use book.locations if generated, else approximate via spine position
   if (S.book && S.book.locations && S.book.locations.total > 0) {
     try {
       const pct = S.book.locations.percentageFromCfi(location.start.cfi);
@@ -219,14 +260,13 @@ function calcProgress(location) {
 function updateReaderUI(location) {
   const spineLen = S.book && S.book.spine ? S.book.spine.items.length : '?';
   const spineIdx = (location.start.index || 0) + 1;
-  document.getElementById('reader-info').textContent =
-    `Cap. ${spineIdx}/${spineLen} · ${S.progress}%`;
+  document.getElementById('reader-info').textContent = `Cap. ${spineIdx}/${spineLen} · ${S.progress}%`;
   document.getElementById('btn-prev').disabled = !!location.atStart;
   document.getElementById('btn-next').disabled = !!location.atEnd;
   document.getElementById('font-label').textContent = S.fontSize + '%';
 }
 
-// ── TOC ──────────────────────────────────────────────────────────
+// ── TOC ───────────────────────────────────────────────────────────────────────
 
 async function loadToc() {
   try {
@@ -234,11 +274,7 @@ async function loadToc() {
     const toc = (nav && nav.toc) ? nav.toc : [];
     const tocItemsEl = document.getElementById('toc-items');
     const tocEmptyEl = document.getElementById('toc-empty');
-    if (!toc.length) {
-      tocItemsEl.innerHTML = '';
-      tocEmptyEl.style.display = '';
-      return;
-    }
+    if (!toc.length) { tocItemsEl.innerHTML = ''; tocEmptyEl.style.display = ''; return; }
     tocEmptyEl.style.display = 'none';
     tocItemsEl.innerHTML = renderTocItems(toc, 0);
   } catch (_) {}
@@ -248,9 +284,7 @@ function renderTocItems(items, depth) {
   return items.map(item => {
     const label = escHtml((item.label || '').trim());
     const href = escAttr(item.href || '');
-    const sub = item.subitems && item.subitems.length
-      ? renderTocItems(item.subitems, depth + 1)
-      : '';
+    const sub = item.subitems && item.subitems.length ? renderTocItems(item.subitems, depth + 1) : '';
     return `<div class="toc-item" style="padding-left:${12 + depth * 14}px" data-href="${href}" onclick="navigateTo('${href}')">${label}</div>${sub}`;
   }).join('');
 }
@@ -258,6 +292,11 @@ function renderTocItems(items, depth) {
 function navigateTo(href) {
   if (!S.rendition || !href) return;
   S.rendition.display(href);
+}
+
+function navigateToCfi(cfi) {
+  if (!S.rendition || !cfi) return;
+  S.rendition.display(cfi);
 }
 
 function highlightTocItem(currentHref) {
@@ -269,7 +308,7 @@ function highlightTocItem(currentHref) {
   });
 }
 
-// ── Navigation ────────────────────────────────────────────────────
+// ── Navigation ────────────────────────────────────────────────────────────────
 
 function changePage(delta) {
   if (!S.rendition) return;
@@ -277,7 +316,7 @@ function changePage(delta) {
   else S.rendition.prev();
 }
 
-// ── Font size ─────────────────────────────────────────────────────
+// ── Font size ─────────────────────────────────────────────────────────────────
 
 function changeFontSize(delta) {
   const next = S.fontSize + delta;
@@ -287,47 +326,142 @@ function changeFontSize(delta) {
   document.getElementById('font-label').textContent = S.fontSize + '%';
 }
 
-// ── Theme ─────────────────────────────────────────────────────────
+// ── Theme ─────────────────────────────────────────────────────────────────────
 
 function setTheme(name) {
   S.theme = name;
   document.documentElement.setAttribute('data-theme', name);
-  if (S.rendition) S.rendition.themes.select(name);
+  injectThemeToContents(name);
   document.querySelectorAll('.theme-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.theme === name);
   });
 }
 
-// ── Tabs ──────────────────────────────────────────────────────────
+// ── Tabs ──────────────────────────────────────────────────────────────────────
 
 function showTab(tab) {
-  const isBooks = tab === 'books';
-  document.getElementById('epub-list').classList.toggle('hidden', !isBooks);
-  document.getElementById('toc-list').classList.toggle('hidden', isBooks);
-  document.getElementById('tab-books').classList.toggle('active', isBooks);
-  document.getElementById('tab-toc').classList.toggle('active', !isBooks);
-  if (!isBooks) document.getElementById('upload-zone').classList.remove('open');
+  document.getElementById('epub-list').classList.toggle('hidden', tab !== 'books');
+  document.getElementById('toc-list').classList.toggle('hidden', tab !== 'toc');
+  document.getElementById('bookmarks-content').classList.toggle('hidden', tab !== 'bookmarks');
+  ['books', 'toc', 'bookmarks'].forEach(t => {
+    document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+  });
+  if (tab !== 'books') document.getElementById('upload-zone').classList.remove('open');
+  if (tab === 'bookmarks') renderBookmarks();
 }
 
-// ── Progress ──────────────────────────────────────────────────────
+// ── Bookmarks ─────────────────────────────────────────────────────────────────
 
-function saveProgressDebounced() {
-  clearTimeout(S.saveTimer);
-  S.saveTimer = setTimeout(async () => {
-    if (!S.filename || !S.currentCfi) return;
-    try {
-      await api(`/epub/progress/${encodeURIComponent(S.filename)}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cfi: S.currentCfi, progress: S.progress }),
-      });
-      const epub = S.epubs.find(e => e.filename === S.filename);
-      if (epub) { epub.cfi = S.currentCfi; epub.progress = S.progress; }
-    } catch (_) {}
-  }, 1000);
+function toggleBookmark() {
+  if (!S.currentCfi || !S.filename) return;
+  const data = getFileData(S.filename);
+  const idx = data.bookmarks.findIndex(b => b.cfi === S.currentCfi);
+  if (idx >= 0) {
+    data.bookmarks.splice(idx, 1);
+  } else {
+    const activeToc = document.querySelector('.toc-item.active');
+    const label = activeToc
+      ? activeToc.textContent.trim()
+      : (document.getElementById('reader-info').textContent || 'Posição atual');
+    data.bookmarks.push({ cfi: S.currentCfi, label, date: new Date().toLocaleDateString('pt-BR') });
+  }
+  saveFileData(S.filename, data);
+  updateBookmarkButton();
+  renderBookmarks();
 }
 
-// ── Upload ────────────────────────────────────────────────────────
+function updateBookmarkButton() {
+  const btn = document.getElementById('btn-bookmark');
+  if (!btn) return;
+  if (!S.filename || !S.currentCfi) { btn.classList.remove('bookmarked'); return; }
+  const data = getFileData(S.filename);
+  btn.classList.toggle('bookmarked', data.bookmarks.some(b => b.cfi === S.currentCfi));
+}
+
+function renderBookmarks() {
+  const emptyEl = document.getElementById('bookmarks-empty');
+  const listEl = document.getElementById('bookmarks-list');
+  if (!S.filename) { emptyEl.style.display = ''; listEl.innerHTML = ''; return; }
+  const bms = getFileData(S.filename).bookmarks || [];
+  if (!bms.length) { emptyEl.style.display = ''; listEl.innerHTML = ''; return; }
+  emptyEl.style.display = 'none';
+  listEl.innerHTML = bms.map((b, i) => `
+    <div class="bookmark-item" onclick="navigateToCfi('${escAttr(b.cfi)}')">
+      <div class="bookmark-label">${escHtml(b.label)}</div>
+      <div class="bookmark-meta">${escHtml(b.date)}</div>
+      <button class="bookmark-del" onclick="removeBookmark(event,${i})" title="Remover">✕</button>
+    </div>`).join('');
+}
+
+function removeBookmark(e, index) {
+  e.stopPropagation();
+  if (!S.filename) return;
+  const data = getFileData(S.filename);
+  data.bookmarks.splice(index, 1);
+  saveFileData(S.filename, data);
+  updateBookmarkButton();
+  renderBookmarks();
+}
+
+// ── Search ────────────────────────────────────────────────────────────────────
+
+function toggleSearch() {
+  const panel = document.getElementById('search-panel');
+  if (panel.classList.contains('open')) {
+    closeSearch();
+  } else {
+    panel.classList.add('open');
+    document.getElementById('search-input').focus();
+    if (S.rendition) setTimeout(() => S.rendition.resize(), 220);
+  }
+}
+
+function closeSearch() {
+  const panel = document.getElementById('search-panel');
+  panel.classList.remove('open');
+  document.getElementById('search-input').value = '';
+  document.getElementById('search-results').innerHTML = '';
+  document.getElementById('search-status').textContent = '';
+  if (S.rendition) setTimeout(() => S.rendition.resize(), 220);
+}
+
+function debouncedSearch() {
+  clearTimeout(S._searchTimer);
+  S._searchTimer = setTimeout(() => {
+    const q = document.getElementById('search-input').value.trim();
+    if (q.length < 2) {
+      document.getElementById('search-results').innerHTML = '';
+      document.getElementById('search-status').textContent = q ? 'Mínimo 2 caracteres.' : '';
+      return;
+    }
+    runSearch(q);
+  }, 400);
+}
+
+async function runSearch(query) {
+  if (!S.book) return;
+  const statusEl = document.getElementById('search-status');
+  const resultsEl = document.getElementById('search-results');
+  statusEl.textContent = 'Pesquisando…';
+  resultsEl.innerHTML = '';
+  try {
+    const results = await S.book.search(query);
+    if (!results || !results.length) { statusEl.textContent = 'Nenhum resultado encontrado.'; return; }
+    statusEl.textContent = `${results.length} resultado${results.length !== 1 ? 's' : ''}`;
+    const re = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    resultsEl.innerHTML = results.slice(0, 100).map(r => {
+      const excerpt = escHtml(r.excerpt || '').replace(re, '<mark>$1</mark>');
+      return `<div class="search-result" onclick="navigateToCfi('${escAttr(r.cfi)}')">${excerpt}</div>`;
+    }).join('');
+    if (results.length > 100) {
+      resultsEl.innerHTML += `<div class="search-more">+${results.length - 100} resultados não exibidos</div>`;
+    }
+  } catch (_) {
+    statusEl.textContent = 'Erro na pesquisa.';
+  }
+}
+
+// ── Upload ────────────────────────────────────────────────────────────────────
 
 function toggleUpload() {
   document.getElementById('upload-zone').classList.toggle('open');
@@ -340,10 +474,7 @@ function handleFileSelect(e) {
 }
 
 async function uploadFile(file) {
-  if (!file.name.toLowerCase().endsWith('.epub')) {
-    showError('Apenas arquivos .epub são aceitos.');
-    return;
-  }
+  if (!file.name.toLowerCase().endsWith('.epub')) { showError('Apenas arquivos .epub são aceitos.'); return; }
   const btn = document.querySelector('.sidebar-header .btn-primary');
   const orig = btn.textContent;
   btn.textContent = 'Enviando…';
@@ -364,7 +495,6 @@ async function uploadFile(file) {
   }
 }
 
-// Drag-and-drop
 const dropArea = document.getElementById('drop-area');
 dropArea.addEventListener('dragover', e => { e.preventDefault(); dropArea.classList.add('drag-over'); });
 dropArea.addEventListener('dragleave', () => dropArea.classList.remove('drag-over'));
@@ -375,7 +505,7 @@ dropArea.addEventListener('drop', e => {
   if (file) uploadFile(file);
 });
 
-// ── Rename ────────────────────────────────────────────────────────
+// ── Rename ────────────────────────────────────────────────────────────────────
 
 function startRename(filename) {
   const itemEl = document.getElementById('item-' + escId(filename));
@@ -434,7 +564,7 @@ function makeTitleSpan(text) {
   return div;
 }
 
-// ── Delete ────────────────────────────────────────────────────────
+// ── Delete ────────────────────────────────────────────────────────────────────
 
 async function deleteEpub(filename) {
   const epub = S.epubs.find(e => e.filename === filename);
@@ -458,14 +588,13 @@ async function deleteEpub(filename) {
   }
 }
 
-// ── Toggle UI ─────────────────────────────────────────────────────
+// ── Toggle UI ─────────────────────────────────────────────────────────────────
 
 function toggleSidebar() {
   const sidebar = document.getElementById('sidebar');
   const btn = document.getElementById('btn-toggle-sidebar');
   sidebar.classList.toggle('collapsed');
   btn.textContent = sidebar.classList.contains('collapsed') ? '▶' : '◀';
-  // Fix: resize rendition after CSS transition completes
   if (S.rendition) setTimeout(() => S.rendition.resize(), 280);
 }
 
@@ -477,7 +606,7 @@ function toggleReaderBar() {
   if (S.rendition) setTimeout(() => S.rendition.resize(), 230);
 }
 
-// ── Keyboard navigation ───────────────────────────────────────────
+// ── Keyboard ──────────────────────────────────────────────────────────────────
 
 document.addEventListener('keydown', e => {
   if (document.activeElement.tagName === 'INPUT') return;
@@ -485,12 +614,10 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowRight') { e.preventDefault(); changePage(1); }
 });
 
-// ── Utils ─────────────────────────────────────────────────────────
+// ── Utils ─────────────────────────────────────────────────────────────────────
 
 function escHtml(s) {
-  return String(s)
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
 function escAttr(s) {
@@ -501,6 +628,6 @@ function escId(s) {
   return String(s).replace(/[^a-zA-Z0-9_-]/g, '_');
 }
 
-// ── Init ──────────────────────────────────────────────────────────
+// ── Init ──────────────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', loadList);

@@ -20,6 +20,7 @@
     <div class="sidebar-tabs">
       <button class="sidebar-tab active" id="tab-books" onclick="showTab('books')">Livros</button>
       <button class="sidebar-tab" id="tab-toc" onclick="showTab('toc')">Índice</button>
+      <button class="sidebar-tab" id="tab-bookmarks" onclick="showTab('bookmarks')">Marcadores</button>
     </div>
 
     <div id="upload-zone">
@@ -36,6 +37,11 @@
       <div id="toc-empty" class="empty-list">Abra um livro para ver o índice.</div>
       <div id="toc-items"></div>
     </div>
+
+    <div id="bookmarks-content" class="tab-content hidden">
+      <div id="bookmarks-empty" class="empty-list">Abra um livro para ver os marcadores.</div>
+      <div id="bookmarks-list"></div>
+    </div>
   </aside>
 
   <main id="reader">
@@ -47,6 +53,7 @@
       <div class="reader-bar">
         <button class="btn btn-ghost btn-icon" id="btn-toggle-sidebar" onclick="toggleSidebar()" title="Esconder painel">◀</button>
         <div class="bar-sep"></div>
+
         <div class="reader-bar-group">
           <button class="btn btn-ghost btn-icon" id="btn-prev" onclick="changePage(-1)" title="Anterior">&#8592;</button>
           <span class="reader-info" id="reader-info">—</span>
@@ -60,15 +67,30 @@
         </div>
 
         <div class="reader-bar-group">
+          <button class="btn btn-ghost btn-icon" id="btn-bookmark" onclick="toggleBookmark()" title="Marcar posição">🔖</button>
+          <button class="btn btn-ghost btn-icon" id="btn-search" onclick="toggleSearch()" title="Pesquisar">🔍</button>
+        </div>
+
+        <div class="reader-bar-group">
           <button class="theme-btn" data-theme="white" onclick="setTheme('white')" title="Claro"></button>
           <button class="theme-btn" data-theme="sepia" onclick="setTheme('sepia')" title="Sépia"></button>
           <button class="theme-btn active" data-theme="dark" onclick="setTheme('dark')" title="Escuro"></button>
         </div>
       </div>
 
-      <div id="viewer-loading" class="hidden">Carregando EPUB…</div>
-      <div id="viewer-wrap">
-        <div id="epub-viewer"></div>
+      <div class="reader-body">
+        <div id="viewer-loading" class="hidden">Carregando EPUB…</div>
+        <div id="viewer-wrap">
+          <div id="epub-viewer"></div>
+        </div>
+        <div id="search-panel">
+          <div class="search-header">
+            <input type="text" id="search-input" class="search-input-field" placeholder="Pesquisar no livro…" oninput="debouncedSearch()">
+            <button class="btn btn-ghost btn-icon" onclick="closeSearch()" title="Fechar">&#10005;</button>
+          </div>
+          <div id="search-status" class="search-status"></div>
+          <div id="search-results" class="search-results-list"></div>
+        </div>
       </div>
     </div>
   </main>
