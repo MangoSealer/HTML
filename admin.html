@@ -5,33 +5,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Painelson</title>
-  <link rel="icon" href="./assets/seasky.ico">
-  <link rel="stylesheet" href="./style/admin.css">
-  <script src="./scripts/admin.js" defer></script>
+  <link rel="icon" href="/assets/seasky.ico">
+  <link rel="stylesheet" href="/style/fonte_bonitinha.css">
+  <link rel="stylesheet" href="/style/admin.css">
   <script src="/auth.js"></script>
+  <script src="/scripts/admin.js" defer></script>
 </head>
 
 <body>
-  <div id="login-screen" class="login-screen">
-    <form id="login-form" class="login-card">
-      <h1>Schedule Notify</h1>
-      <p>Painel administrativo</p>
-
-      <div class="field">
-        <label for="username">Usuário</label>
-        <input id="username" autocomplete="username" required />
-      </div>
-
-      <div class="field">
-        <label for="password">Senha</label>
-        <input id="password" type="password" autocomplete="current-password" required />
-      </div>
-
-      <button type="submit" style="width: 100%;">Entrar</button>
-      <div id="login-message" class="message"></div>
-    </form>
-  </div>
-
   <div id="app" class="app hidden">
     <aside class="sidebar">
       <div class="brand">
@@ -46,10 +27,6 @@
       <button class="nav-button" data-section="groups">Grupos</button>
       <button class="nav-button" data-section="operations">Operações</button>
       <button class="nav-button" data-section="danger">Zona de perigo</button>
-
-      <div class="sidebar-footer">
-        <button class="secondary" style="width: 100%;" onclick="logout()">Sair</button>
-      </div>
     </aside>
 
     <main class="main">

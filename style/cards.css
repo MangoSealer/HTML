@@ -1,3 +1,5 @@
+@import "./cores.css";
+
 * {
     padding: 0;
     margin: 0;
@@ -6,8 +8,9 @@
 }
 
 body {
-    background-color: #151320;
+    background-color: var(--bg-alt);
     height: 100vh;
+    font-family: var(--font), sans-serif;
 }
 
 .cartoes {
@@ -18,7 +21,7 @@ body {
 }
 
 .cartao {
-    background-color: #1c1b29;
+    background-color: var(--card-alt);
     border-radius: 20px;
     box-shadow: 10px 10px 20px;
     transition: transform 0.1s;
@@ -52,14 +55,14 @@ img {
 }
 
 .detalhes>h3 {
-    color: #ffffff;
+    color: var(--text);
     font-weight: 600;
     font-size: 18px;
     margin: 10px 0 15px 0;
 }
 
 .detalhes>p {
-    color: #a0a0a0;
+    color: var(--text-muted);
     font-size: 15px;
     line-height: 30px;
     font-weight: 400;

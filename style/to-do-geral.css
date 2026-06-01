@@ -1,3 +1,5 @@
+@import "./cores.css";
+
 body {
     margin: 0;
     padding: 0;
@@ -98,7 +100,7 @@ ul {
 li a,
 .dropbtn {
     display: inline-block;
-    color: white;
+    color: var(--text);
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;

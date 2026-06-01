@@ -1,3 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+/* Fonte padrão do projeto — mesma carregada em style/fonte_bonitinha.css */
+
 :root {
-    
+  /* Paleta principal (dark theme) */
+  --bg:            #0f172a;
+  --bg-alt:        #151320;
+  --card:          #111827;
+  --card-alt:      #1c1b29;
+  --text:          #e5e7eb;
+  --text-muted:    #9ca3af;
+  --border:        #263244;
+
+  /* Ações */
+  --primary:       #3b82f6;
+  --primary-hover: #2563eb;
+  --danger:        #dc2626;
+  --danger-hover:  #b91c1c;
+  --warning:       #f59e0b;
+  --success:       #22c55e;
+
+  /* Tokens de layout */
+  --radius:        14px;
+  --radius-sm:     10px;
+  --radius-pill:   999px;
+  --shadow:        0 10px 30px rgba(0, 0, 0, 0.35);
+
+  /* Botão logout */
+  --logout-size:   34px;
+
+  /* Tipografia */
+  --font:          'Roboto Mono';
 }

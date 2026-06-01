@@ -156,7 +156,7 @@ function openConfirmModal(title, message, confirmLabel, onConfirm) {
 <div class="modal-backdrop">
   <div class="modal">
     <h3>${escapeHtml(title)}</h3>
-    <p style="color: var(--muted); line-height: 1.5; margin: 0 0 16px;">${escapeHtml(message)}</p>
+    <p style="color: var(--text-muted); line-height: 1.5; margin: 0 0 16px;">${escapeHtml(message)}</p>
     <div class="modal-actions">
       <button type="button" class="ghost" id="confirm-cancel">Cancelar</button>
       <button type="button" class="danger" id="confirm-ok">${escapeHtml(confirmLabel || "Confirmar")}</button>
@@ -179,7 +179,7 @@ function showModalMessage(title, message) {
 <div class="modal-backdrop">
   <div class="modal">
     <h3>${escapeHtml(title)}</h3>
-    <p style="color: var(--muted); line-height: 1.5; margin: 0 0 16px;">${escapeHtml(message)}</p>
+    <p style="color: var(--text-muted); line-height: 1.5; margin: 0 0 16px;">${escapeHtml(message)}</p>
     <div class="modal-actions">
       <button type="button" id="message-ok">OK</button>
     </div>
@@ -209,22 +209,6 @@ async function apiRequest(path, options = {}) {
   return data;
 }
 
-async function login(username, password) {
-  return apiRequest("/admin/api/login", {
-    method: "POST",
-    body: JSON.stringify({ username, password })
-  });
-}
-
-async function logout() {
-  try {
-    await apiRequest("/admin/api/logout", { method: "POST" });
-  } finally {
-    document.getElementById("app").classList.add("hidden");
-    document.getElementById("login-screen").classList.remove("hidden");
-  }
-}
-
 function applyReturnRedirect() {
   const url = sessionStorage.getItem('epub_return');
   if (url) { sessionStorage.removeItem('epub_return'); window.location.replace(url); return true; }
@@ -241,7 +225,6 @@ async function loadAll() {
 
   if (applyReturnRedirect()) return;
 
-  document.getElementById("login-screen").classList.add("hidden");
   document.getElementById("app").classList.remove("hidden");
 
   renderDashboard();
@@ -1000,27 +983,10 @@ document.querySelectorAll(".nav-button").forEach(button => {
   button.addEventListener("click", () => switchSection(button.dataset.section));
 });
 
-document.getElementById("login-form").addEventListener("submit", async event => {
-  event.preventDefault();
-
-  const message = document.getElementById("login-message");
-  message.textContent = "";
-
-  try {
-    await login(
-      document.getElementById("username").value.trim(),
-      document.getElementById("password").value
-    );
-
-    await loadAll();
-  } catch (error) {
-    message.textContent = error.message || "Falha no login.";
-  }
-});
-
-loadAll().catch(() => {
-  document.getElementById("login-screen").classList.remove("hidden");
-  document.getElementById("app").classList.add("hidden");
+loadAll().catch((error) => {
+  // Autenticação é garantida por auth.js (redireciona em 401 antes de chegar aqui).
+  // Uma falha em loadAll aqui é erro de carregamento de dados, não de auth.
+  console.warn("Falha ao carregar o painel:", error);
 });
 
 setInterval(loadStatusOnly, 3000);
