@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <!-- CTRL K CTRL , -->
 
 <head>
@@ -8,69 +8,68 @@
     <!-- irrelevantes  -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <link rel="apple-touch-icon" sizes="180x180" href="../../img/icon-180x180.png">
-    <link rel="apple-touch-icon" href="../../img/icon-512x512.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/img/icon-180x180.png">
+    <link rel="apple-touch-icon" href="/img/icon-512x512.png">
 
     <!-- CSS -->
-    <link rel="icon" href="../../assets/seasky.ico">
-    <link rel="stylesheet" href="../../style/fonte_bonitinha.css">
-    <link rel="stylesheet" href="../../style/interruptor.css">
-    <link rel="stylesheet" href="./to-do.css">
+    <link rel="icon" href="/assets/seasky.ico">
+    <link rel="stylesheet" href="/style/fonte_bonitinha.css">
+    <link rel="stylesheet" href="/style/interruptor.css">
+    <link rel="stylesheet" href="/hub/assistir/to-do.css">
 
     <!-- Scripts -->
+    <script src="/auth.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.js"></script>
     <script src="https://kit.fontawesome.com/a4aed1fa5c.js" crossorigin="anonymous"></script>
-    <script src="/auth.js"></script>
-    <script src="../../scripts/modoescuro.js"></script>
-    <script type="module" src="./to-do.js"></script>
-
+    <script src="/scripts/modoescuro.js"></script>
+    <script type="module" src="/hub/assistir/to-do.js"></script>
 </head>
 
-<header>
-
-    <ul class="testa">
-
-        <li class="cabecalho"><a href="../../index.html">Home</a></li>
-
-        <li class="dropdown cabecalho">
-            <a href="javascript:void(0)" class="dropbtn">Outras Listas</a>
-            <div class="dropdown-content">
-                <a href="../../hub/daily/index.html">Daily</a>
-                <a href="../../hub/pessoal/index.html">Pessoal</a>
-                <a href="../../hub/site/index.html">Site</a>
-                <a href="../../hub/reminders/index.html">Reminders</a>
-                <a href="../../hub/trabalho/index.html">Trabalho</a>
-                <a href="../../hub/comprar/index.html">Comprar</a>
-                <a href="../../hub/assistir/index.html">Assistir</a>
-                <a href="../../hub/livros/index.html">Livros</a>
-                <a href="../../hub/testes/index.html">Testes</a>
-            </div>
-        </li>
-    </ul>
-
-    <span class="interruptor">
-        <i class="fa-solid fa-circle-half-stroke fa-flip"></i>
-    </span>
-
-    <!-- interruptor da luz -->
-    <span class="interruptor-luz">
-        <i class="fa-solid fa-lightbulb"></i>
-    </span>
-
-    <h1>Assistir</h1>
-
-    <input type="text" id="tarefa" placeholder="digite sua tarefa">
-
-    <span id="btn"><i class="fas fa-plus-circle"></i></span>
-
-</header>
-
 <body class="modo-escuro">
+
+    <header>
+
+        <ul class="testa">
+
+            <li class="cabecalho"><a href="/index.html">Home</a></li>
+
+            <li class="dropdown cabecalho">
+                <a href="javascript:void(0)" class="dropbtn">Outras Listas</a>
+                <div class="dropdown-content">
+                    <a href="/hub/daily/index.html">Daily</a>
+                    <a href="/hub/pessoal/index.html">Pessoal</a>
+                    <a href="/hub/site/index.html">Site</a>
+                    <a href="/hub/reminders/index.html">Reminders</a>
+                    <a href="/hub/trabalho/index.html">Trabalho</a>
+                    <a href="/hub/comprar/index.html">Comprar</a>
+                    <a href="/hub/assistir/index.html">Assistir</a>
+                    <a href="/hub/livros/index.html">Livros</a>
+                    <a href="/hub/testes/index.html">Testes</a>
+                </div>
+            </li>
+        </ul>
+
+        <span class="interruptor">
+            <i class="fa-solid fa-circle-half-stroke fa-flip"></i>
+        </span>
+
+        <!-- interruptor da luz -->
+        <span class="interruptor-luz">
+            <i class="fa-solid fa-lightbulb"></i>
+        </span>
+
+        <h1>Assistir</h1>
+
+        <input type="text" id="tarefa" placeholder="digite sua tarefa">
+
+        <span id="btn"><i class="fas fa-plus-circle"></i></span>
+
+    </header>
 
     <ul id="lista">
     </ul>
 
-    <script src="../../scripts/luz.js"></script>
+    <script src="/scripts/luz.js"></script>
 
 </body>
 
