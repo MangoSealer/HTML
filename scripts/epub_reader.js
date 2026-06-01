@@ -82,8 +82,9 @@ window.addEventListener('resize', () => {
 function api(path, opts = {}) {
   return fetch(BASE + path, { credentials: 'include', ...opts }).then(res => {
     if (res.status === 401) {
-      sessionStorage.setItem('epub_return', window.location.href);
-      window.location.replace('/admin.html');
+      // Auth unificado: a sessão é validada por auth.js (GET /me) e o login
+      // único vive em /login.html. Redireciona direto para lá em 401.
+      window.location.replace('/login.html');
     }
     return res;
   });
