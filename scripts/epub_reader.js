@@ -82,9 +82,11 @@ window.addEventListener('resize', () => {
 function api(path, opts = {}) {
   return fetch(BASE + path, { credentials: 'include', ...opts }).then(res => {
     if (res.status === 401) {
-      // Auth unificado: a sessão é validada por auth.js (GET /me) e o login
-      // único vive em /login.html. Redireciona direto para lá em 401.
-      window.location.replace('/login.html');
+      // NÃO redirecionar aqui. auth.js já valida a sessão do site na carga da
+      // página; um 401 vindo do backend do EPUB (painel.danilosn.work) com a
+      // sessão do site válida causaria um loop de redirect para /login.html.
+      // Apenas sinaliza o erro (mesmo comportamento do pdf_reader.js).
+      showError('Não autorizado (401). Verifique a sessão / permissão do leitor de EPUB.');
     }
     return res;
   });
